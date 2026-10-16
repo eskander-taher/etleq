@@ -1,1 +1,104 @@
-{}
+{
+  "list": {
+    "crumb": "Careers",
+    "title": "Join the Etleq team",
+    "lead": "We build software products for Gulf business owners and take them live in 30 days. If you like careful work and clear deadlines, you may fit right in.",
+    "openRoles": "Open roles",
+    "filterTeam": "Filter by team",
+    "filterWorkplace": "Filter by workplace",
+    "allTeams": "All teams",
+    "anyWorkplace": "Any workplace",
+    "viewRole": "View role",
+    "empty": "No open roles right now",
+    "noMatch": "No roles match this filter",
+    "emptyBody": "New roles are posted here first. Check back later.",
+    "clearFilters": "Show all roles"
+  },
+  "teams": {
+    "engineering": "Engineering",
+    "design": "Design",
+    "growth": "Growth",
+    "operations": "Operations"
+  },
+  "workplace": {
+    "onsite": "On-site",
+    "hybrid": "Hybrid",
+    "remote": "Remote"
+  },
+  "employmentType": {
+    "FULL_TIME": "Full-time",
+    "PART_TIME": "Part-time",
+    "CONTRACTOR": "Contract",
+    "TEMPORARY": "Temporary",
+    "INTERN": "Internship"
+  },
+  "salaryUnit": {
+    "HOUR": "per hour",
+    "MONTH": "per month",
+    "YEAR": "per year"
+  },
+  "hiring": {
+    "title": "How we hire",
+    "steps": {
+      "apply": { "title": "Apply", "body": "Send your application from the role page. A person reads every one." },
+      "call": { "title": "Intro call", "body": "A short call to get to know you and answer your questions." },
+      "task": { "title": "Practical task", "body": "A short task close to the real work, with a clear time box." },
+      "meet": { "title": "Meet the founders", "body": "We talk through the task, how you work and what you expect from us." },
+      "offer": { "title": "Offer", "body": "A written offer with every detail. Every applicant hears back, whatever the outcome." }
+    }
+  },
+  "life": {
+    "title": "What working here is like",
+    "points": {
+      "ownership": { "title": "Real ownership", "body": "You own your work from first commit to launch, without layers of management." },
+      "craft": { "title": "Careful work", "body": "We build on one shared codebase that keeps getting better, and we sweat the details." },
+      "arabic": { "title": "Arabic first", "body": "Our products are designed and written in Arabic first, for customers in the Gulf." },
+      "cycles": { "title": "Clear deadlines", "body": "We work in 30-day launch cycles with the scope agreed up front." },
+      "small": { "title": "A small team", "body": "A small senior team, so your impact shows from day one." },
+      "honest": { "title": "Honest with clients", "body": "We never promise clients revenue. We promise what we control: launching on time and support after." }
+    }
+  },
+  "job": {
+    "location": "Location",
+    "employmentType": "Employment type",
+    "team": "Team",
+    "salary": "Salary",
+    "posted": "Posted",
+    "closes": "Applications close",
+    "applyNow": "Apply now",
+    "about": "About the role",
+    "responsibilities": "What you'll do",
+    "requirements": "What you'll need",
+    "metaDescription": "{title} at Etleq, {location}. See the responsibilities and requirements, and apply directly on the page."
+  },
+  "form": {
+    "title": "Apply for {title}",
+    "lead": "It takes a few minutes. We review every application ourselves and reply to everyone.",
+    "phone": "Mobile number",
+    "cv": "CV",
+    "cvHint": "PDF only, 5 MB or less.",
+    "linkedin": "LinkedIn profile",
+    "portfolio": "Portfolio or GitHub",
+    "optional": "(optional)",
+    "consent": "I agree that Etleq may process my details and CV for recruitment, as described in the <privacy>privacy policy</privacy>. They are kept for a limited time and then deleted.",
+    "honeypot": "Leave this field empty",
+    "submit": "Send application",
+    "submitting": "Sending…",
+    "note": "Your details are only shared with the hiring team."
+  },
+  "errors": {
+    "invalid": "Please check the highlighted fields and send again.",
+    "rateLimited": "You've sent several applications in a short time. Please wait a few minutes and try again.",
+    "spam": "We couldn't verify the submission. Refresh the page and try again.",
+    "closed": "This role is no longer accepting applications. Have a look at our other open roles.",
+    "server": "Something went wrong on our side and your application wasn't saved. Please try again shortly."
+  },
+  "closed": {
+    "metaTitle": "{title} (closed)",
+    "title": "Applications for {title} are closed",
+    "body": "Thanks for your interest. This role is no longer open, but one of our current roles may suit you.",
+    "openRoles": "Open roles right now",
+    "noneOpen": "There are no open roles right now. New roles are posted on the careers page first.",
+    "allRoles": "All roles"
+  }
+}

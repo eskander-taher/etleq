@@ -1,1 +1,26 @@
-{}
+{
+  "title": "Your privacy choices",
+  "body": "We use necessary cookies to run this site. With your permission we also use analytics cookies to understand how the site is used, and marketing cookies to measure our ads. Nothing optional loads until you choose.",
+  "policyLink": "Cookie policy",
+  "acceptAll": "Accept all",
+  "rejectAll": "Reject all",
+  "settings": "Settings",
+  "save": "Save my choices",
+  "close": "Close",
+  "settingsTitle": "Cookie settings",
+  "alwaysOn": "Always on",
+  "categories": {
+    "necessary": {
+      "name": "Necessary",
+      "description": "Keep the site working and secure, and remember your cookie choice. Cannot be turned off."
+    },
+    "analytics": {
+      "name": "Analytics",
+      "description": "Google Analytics and Microsoft Clarity help us see which pages work. Form fields are always masked."
+    },
+    "marketing": {
+      "name": "Marketing",
+      "description": "Meta, Snapchat and TikTok pixels measure whether our ads bring visitors who find us useful."
+    }
+  }
+}

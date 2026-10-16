@@ -1,1 +1,237 @@
-{}
+{
+  "nav": {
+    "home": "Home",
+    "models": "Models",
+    "solutions": "Solutions",
+    "projects": "Projects",
+    "cost": "Cost guides",
+    "compare": "Comparisons",
+    "blog": "Blog",
+    "news": "News",
+    "about": "About"
+  },
+  "common": {
+    "all": "All",
+    "by": "By",
+    "from": "From",
+    "exVat": "excl. VAT",
+    "perMonth": "per month",
+    "published": "Published",
+    "updated": "Updated",
+    "lastReviewed": "Last reviewed",
+    "reviewedBy": "reviewed by",
+    "source": "Source",
+    "sources": "Sources",
+    "accessed": "accessed",
+    "faq": "Frequently asked questions",
+    "toc": "On this page",
+    "keyTakeaways": "Key takeaways",
+    "shortAnswer": "The short answer",
+    "transcript": "Full transcript",
+    "playVideo": "Play video",
+    "related": "You may also like",
+    "pagination": "Pagination",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "cta": {
+    "scorecard": "Take the scorecard",
+    "book": "Book a fit call",
+    "playbook": "Get the launch playbook",
+    "whatsapp": "Chat on WhatsApp",
+    "whatsappMessage": "Hi, I'm browsing the Etleq site and have a question."
+  },
+  "mrr": {
+    "label": "Reported monthly recurring revenue",
+    "perMonth": "/month",
+    "company": "Company",
+    "source": "Source",
+    "reported": "Reported",
+    "reportedOn": "Figure reported on {date}.",
+    "disclaimerTitle": "Note:",
+    "disclaimer": "This figure belongs to {company}, as reported by or about the company. It is not a forecast of your revenue. Your results depend on your market, marketing and operations.",
+    "disclaimerShort": "{company}'s reported figure, not a forecast for you.",
+    "disclaimerLink": "Read the disclaimer"
+  },
+  "tiers": {
+    "core": "Launch 30 Core",
+    "pro": "Launch 30 Pro",
+    "vertical": "Launch 30 Vertical"
+  },
+  "models": {
+    "h1": "{model}: how to build its Gulf version",
+    "indexTitle": "Proven SaaS models you can launch in the Gulf",
+    "indexTitleCategory": "{category} SaaS models",
+    "indexLead": "Real software businesses with their reported revenue and sources, plus what a Gulf version needs, what it costs and how long it takes.",
+    "filterLabel": "Filter models by category",
+    "empty": "No models in this category yet",
+    "emptyBody": "Every model is researched and reviewed by hand before it goes live. Try another category or check back soon.",
+    "cardGulf": "Gulf version from {price} in {days} days",
+    "cardGulfNoPrice": "Gulf version in {days} days",
+    "categories": {
+      "booking": "Booking",
+      "membership": "Memberships",
+      "marketplace": "Marketplaces",
+      "directory": "Directories",
+      "b2b": "B2B portals",
+      "vertical": "Vertical software",
+      "creator": "Creator products",
+      "other": "Other"
+    },
+    "facts": {
+      "title": "Facts and sources",
+      "fact": "Fact",
+      "value": "Value",
+      "whatItDoes": "What it does",
+      "whoPays": "Who pays",
+      "pricingModel": "Pricing model",
+      "mrr": "Reported MRR",
+      "ourAnalysis": "Etleq analysis"
+    },
+    "whyItWorks": "Why does this model work?",
+    "runningCosts": {
+      "title": "What does it cost to run each month?",
+      "item": "Item",
+      "monthly": "Monthly cost",
+      "note": "Estimates from dated public sources. Actual costs depend on usage and provider."
+    },
+    "gulf": {
+      "title": "The Gulf version: what we would build",
+      "mvp": "Features in the first version",
+      "changes": "What changes for the Gulf market?",
+      "change": {
+        "arabic": "Arabic-first interface, with English",
+        "mada": "Payments with mada, cards and Apple Pay",
+        "zatca": "ZATCA-ready e-invoicing",
+        "whatsapp": "WhatsApp notifications and confirmations"
+      },
+      "tier": "Package",
+      "price": "Price",
+      "timeline": "Time to launch",
+      "days": "{days} working days",
+      "care": "Care plan after launch",
+      "offerLink": "See the Launch 30 offer and guarantee"
+    },
+    "fit": {
+      "title": "Who should build this?"
+    },
+    "reel": {
+      "title": "Watch the {model} story"
+    },
+    "cta": {
+      "title": "Want a Gulf version of {model}?",
+      "body": "Answer 12 questions in under two minutes. We'll tell you honestly whether it's a fit right now and what it would cost."
+    },
+    "whatsappMessage": "I watched the {model} video and want to know more",
+    "relatedModel": "Similar model",
+    "relatedSolution": "Ready-made for your sector",
+    "relatedPost": "From the blog",
+    "indexCtaTitle": "Found a model that fits?",
+    "indexCtaBody": "Take the scorecard to see if now is the right time to launch it, and which package suits you."
+  },
+  "solutions": {
+    "indexTitle": "Arabic-first software for your sector",
+    "indexLead": "Systems for clinics, gyms, salons, restaurants and training centres, with mada payments, e-invoicing and WhatsApp notifications, live in 30 days.",
+    "empty": "Solution pages are on their way",
+    "verticals": {
+      "clinics": "Clinics",
+      "gyms": "Gyms",
+      "salons": "Salons",
+      "restaurants": "Restaurants",
+      "training-centres": "Training centres",
+      "other": "Software"
+    },
+    "problems": "Problems you deal with every day",
+    "features": "What the system does",
+    "workflow": "See how it works",
+    "integrations": "Integrations",
+    "price": "What does it cost?",
+    "priceNote": "A fixed price agreed after the scoping session. No open-ended hours, no surprises.",
+    "steps": "How we roll it out",
+    "caseStudies": "Case studies",
+    "cta": "Book a demo call",
+    "ctaTitle": "Want {name} for your business?",
+    "ctaBody": "Start with the short scorecard, then we'll book a call to walk you through the system for your case.",
+    "whatsappMessage": "Hi, I saw the {name} page and want to know more",
+    "indexCtaTitle": "Don't see your sector?"
+  },
+  "projects": {
+    "indexTitle": "Projects we've launched",
+    "indexLead": "Real case studies, published with written client consent. We only show results we have verified.",
+    "emptyTitle": "No case studies published yet",
+    "emptyBody": "We're just starting out, and we won't show projects or results that aren't real. Our first clients get founding terms in return for letting us document the build.",
+    "emptyFounding": "We're just starting out, and we won't show projects or results that aren't real. Our first {slots} clients get a founding price from {price} in return for letting us document the build and publish it with their consent.",
+    "seeOffer": "See the offer",
+    "client": "Client",
+    "challenge": "The challenge",
+    "solution": "The solution",
+    "scope": "Scope",
+    "stack": "Stack",
+    "timeline": "Timeline: planned vs actual",
+    "planned": "Planned",
+    "actual": "Actual",
+    "days": "{days} days",
+    "results": "Verified results",
+    "verified": "Verified",
+    "resultsDisclaimer": "These results belong to this client in their circumstances. They are not a promise of similar results for your project.",
+    "gallery": "Screens",
+    "testimonial": "What the client said",
+    "ctaSimilar": "Build something like this",
+    "ctaSimilarModel": "This project is based on the {model} model.",
+    "ctaSimilarLabel": "Take the scorecard",
+    "ctaTitle": "Want your project to be the next one here?",
+    "whatsappMessage": "Hi, I read about the {project} project and want something similar"
+  },
+  "cost": {
+    "indexTitle": "What does software cost to build in the Gulf?",
+    "indexLead": "Straight answers with sourced numbers: market price ranges, what pushes cost up or down, and our fixed price.",
+    "empty": "Cost guides are on their way",
+    "tableTitle": "Cost comparison",
+    "ctaTitle": "Get a fixed quote for your project",
+    "ctaBody": "Take the short scorecard. If it's a fit, we'll book a scoping session that ends with a fixed quote within 48 hours.",
+    "ctaLabel": "Get a fixed quote",
+    "whatsappMessage": "Hi, I read \"{title}\" and want a quote for my project"
+  },
+  "compare": {
+    "indexTitle": "Fair comparisons: how should you build your product?",
+    "indexLead": "Agency, freelancer or no-code builder? We say when each one is the better choice, even when it isn't us.",
+    "empty": "Comparisons are on their way",
+    "tableTitle": "Side by side",
+    "ctaTitle": "Is Launch 30 the right choice for you?",
+    "ctaBody": "The scorecard gives you an honest answer in two minutes. Sometimes the answer is another option.",
+    "ctaLabel": "Take the scorecard",
+    "whatsappMessage": "Hi, I read \"{title}\" and have a question"
+  },
+  "blog": {
+    "indexTitle": "The Etleq blog",
+    "indexLead": "Practical lessons on building and launching SaaS in the Gulf: costs, mada payments, e-invoicing, data protection and marketing.",
+    "categories": "Categories",
+    "categoryTitle": "Articles about {name}",
+    "searchLabel": "Search the blog",
+    "searchPlaceholder": "Search article titles",
+    "searchSubmit": "Search",
+    "searchTitle": "Results for \"{q}\"",
+    "noResults": "No articles match that title. Try another word.",
+    "empty": "No articles published here yet",
+    "relatedPosts": "Related articles",
+    "ctaTitle": "Is your idea ready to launch?",
+    "ctaBody": "The scorecard takes two minutes and tells you the right next step.",
+    "whatsappMessage": "Hi, I read \"{title}\" and have a question"
+  },
+  "news": {
+    "indexTitle": "Etleq news",
+    "indexLead": "Launches, partnerships and announcements from the Etleq team.",
+    "empty": "No news published yet",
+    "ctaTitle": "Want your launch to be our next announcement?",
+    "newsletterTitle": "Get our news by email",
+    "newsletterBody": "A short email when we launch something or publish a new model. No spam; unsubscribe any time."
+  },
+  "author": {
+    "title": "About the author",
+    "titlePlural": "About the authors",
+    "credentials": "Experience and credentials",
+    "profiles": "Profiles",
+    "posts": "Articles by {name}",
+    "noPosts": "No published articles by this author yet"
+  }
+}
