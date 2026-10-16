@@ -1,1 +1,253 @@
-{}
+{
+  "brand": {
+    "name": "Etleq",
+    "latin": "Etleq",
+    "tagline": "The SaaS launch studio. Live in 30 days.",
+    "home": "Etleq home"
+  },
+  "nav": {
+    "home": "Home",
+    "launch30": "Launch 30",
+    "howItWorks": "How it works",
+    "models": "Models",
+    "solutions": "Solutions",
+    "projects": "Projects",
+    "blog": "Blog",
+    "news": "News",
+    "about": "About",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "careers": "Careers",
+    "scorecard": "Scorecard",
+    "playbook": "Free playbook"
+  },
+  "cta": {
+    "scorecard": "Take the scorecard",
+    "scorecardLong": "Take the 2-minute scorecard",
+    "scorecardMicro": "12 questions. Instant result. No commitment.",
+    "whatsapp": "Chat with us on WhatsApp",
+    "whatsappShort": "WhatsApp",
+    "bookFitCall": "Book a fit call",
+    "email": "Email us",
+    "readMore": "Read more",
+    "backHome": "Back to home"
+  },
+  "a11y": {
+    "skipToContent": "Skip to content",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "menu": "Menu",
+    "mainNav": "Main navigation",
+    "mobileNav": "Site menu",
+    "footerNav": "Site links",
+    "legalNav": "Legal links",
+    "breadcrumbs": "Breadcrumb",
+    "whatsappIcon": "Chat with us on WhatsApp",
+    "opensNewTab": "(opens in a new tab)",
+    "playVideo": "Play video: {title}",
+    "watchOnInstagram": "Watch on Instagram: {title}",
+    "tableRegion": "Scrollable table",
+    "dismiss": "Dismiss"
+  },
+  "language": {
+    "ar": "العربية",
+    "en": "English",
+    "switchLabel": "Language",
+    "switchTo": "اقرأ بالعربية",
+    "sectionNote": "This page isn't available in Arabic yet, so we'll take you to the matching section.",
+    "bannerText": "هذه الصفحة متاحة أيضًا بالعربية.",
+    "bannerAction": "انتقل إلى العربية",
+    "bannerDismiss": "Stay in English"
+  },
+  "announcement": {
+    "slots": "{n} of {total} launch slots left this month",
+    "link": "See the offer"
+  },
+  "whatsapp": {
+    "defaultMessage": "Hi, I'm reaching out from the Etleq website",
+    "contactMessage": "Hi, I have a question about launching my product",
+    "stickyMessage": "Hi, I'd like to know more about Launch 30"
+  },
+  "footer": {
+    "about": "We build your software product and take it live in 30 days at a fixed price: Arabic-first, with payments, invoicing and hosting.",
+    "explore": "Explore",
+    "company": "Company",
+    "contact": "Contact",
+    "legal": "Legal",
+    "entities": "Legal entities",
+    "crNumber": "CR",
+    "vatNumber": "VAT",
+    "newsletterTitle": "Free launch playbook",
+    "newsletterText": "Practical steps to test your idea before you build.",
+    "newsletterCta": "Get the playbook",
+    "cookieSettings": "Cookie settings",
+    "follow": "Follow us",
+    "rights": "© {year} Etleq. All rights reserved."
+  },
+  "legalLinks": {
+    "privacy": "Privacy policy",
+    "terms": "Terms",
+    "disclaimer": "Disclaimer",
+    "cookies": "Cookie policy",
+    "accessibility": "Accessibility"
+  },
+  "price": {
+    "from": "From",
+    "exclVat": "excl. VAT"
+  },
+  "source": {
+    "label": "Source",
+    "checked": "Checked",
+    "verified": "Verified"
+  },
+  "video": {
+    "play": "Play video",
+    "instagram": "Watch on Instagram"
+  },
+  "notFound": {
+    "metaTitle": "Page not found",
+    "eyebrow": "Error 404",
+    "title": "We couldn't find that page",
+    "lead": "The link may have changed or the page was removed. Search the blog or try one of these links.",
+    "searchLabel": "Search the blog",
+    "searchPlaceholder": "e.g. booking app cost",
+    "searchButton": "Search",
+    "topLinks": "Useful links",
+    "ctaTitle": "Thinking about launching a product?",
+    "ctaText": "Find out in two minutes whether your idea is ready to launch."
+  },
+  "placeholder": {
+    "lawyer": "[Lawyer to write]",
+    "founders": "[Founders to write]",
+    "devOnly": "Placeholder shown in development only"
+  },
+  "about": {
+    "metaTitle": "About",
+    "metaDescription": "Etleq is a SaaS launch studio that builds Arabic-first software products and takes them live in 30 days at a fixed price. Meet the founders.",
+    "eyebrow": "About",
+    "title": "We build your product like it's our own",
+    "lead": "Etleq is a small studio run by two engineers. We build Arabic-first SaaS products on a ready foundation called Etleq Core and take them live in 30 days at a fixed price.",
+    "storyTitle": "Why we started",
+    "story": [
+      "We kept meeting Gulf business owners with a clear idea and customers waiting, who then got stuck on the build: agencies that need months and big budgets, freelancers who disappear after launch, and AI builders that stall at payments, Arabic and invoicing.",
+      "So we built one technical foundation with what every product needs before day one: an Arabic interface, mada and Apple Pay billing, ZATCA-ready invoicing, hosting and backups. That way the build time goes into what makes your idea different."
+    ],
+    "missionTitle": "Our mission",
+    "mission": "Every business owner in the Gulf should be able to own a working product that takes payments, without hiring a tech team.",
+    "foundersTitle": "The founders",
+    "foundersLead": "Built by two senior engineers, not salespeople.",
+    "foundersPlaceholder": "The founders will appear here once they're added in the admin panel.",
+    "entitiesTitle": "Legal entities",
+    "valuesTitle": "What we commit to",
+    "values": [
+      { "title": "Fixed price", "text": "You know the cost before we start. No open-ended hourly bills." },
+      { "title": "Guaranteed launch date", "text": "If we're late, we refund 10% of the build fee for every late week and keep building." },
+      { "title": "Honest promises", "text": "We don't promise you profit. We promise a working product, a launch date and support after launch." },
+      { "title": "Arabic first", "text": "We design and write in Arabic from the start, not as a translation at the end." }
+    ],
+    "ctaTitle": "Is your idea ready to launch?",
+    "ctaText": "Start with the scorecard. If it's a fit, we'll book a 15-minute call with you."
+  },
+  "faq": {
+    "metaTitle": "FAQ",
+    "metaDescription": "Straight answers on price, ownership, timeline, payments and hosting for Etleq Launch 30.",
+    "eyebrow": "FAQ",
+    "title": "What business owners ask before they start",
+    "lead": "Didn't find your answer? Message us on WhatsApp.",
+    "empty": "No questions published yet.",
+    "categories": {
+      "price": "Price",
+      "ownership": "Ownership",
+      "timeline": "Timeline",
+      "payments": "Payments",
+      "hosting": "Hosting",
+      "languages": "Languages",
+      "equity": "Equity",
+      "refunds": "Refunds",
+      "process": "Process",
+      "general": "General"
+    },
+    "ctaTitle": "Ready to see where your idea stands?",
+    "ctaText": "12 questions. Instant result. No commitment."
+  },
+  "contact": {
+    "metaTitle": "Contact",
+    "metaDescription": "Reach Etleq on WhatsApp or by email.",
+    "eyebrow": "Contact",
+    "title": "The fastest way to reach us: WhatsApp",
+    "lead": "Send us your question about your idea or the offer, and one of the founders will reply.",
+    "whatsappTitle": "WhatsApp",
+    "whatsappText": "The quickest way to reach us.",
+    "emailTitle": "Email",
+    "responseTime": "Response time",
+    "addressesTitle": "Our addresses",
+    "formTitle": "Or send a short message",
+    "scorecardHint": "Thinking about building a product? The scorecard saves time on the first call."
+  },
+  "legal": {
+    "updated": "Last updated",
+    "draftNotice": "This is a structural draft. Our lawyer will write the final text before launch.",
+    "privacy": {
+      "title": "Privacy policy",
+      "description": "How we collect, use and protect your personal data under Saudi Arabia's Personal Data Protection Law.",
+      "sections": [
+        "Who we are and how to contact us",
+        "Data we collect",
+        "Why we collect it and the legal basis",
+        "Who we share it with",
+        "Transfers outside Saudi Arabia",
+        "How long we keep data",
+        "Your rights and how to use them",
+        "Cookies and tracking",
+        "Data security",
+        "Changes to this policy"
+      ]
+    },
+    "terms": {
+      "title": "Terms",
+      "description": "Terms of use for the Etleq website and services.",
+      "sections": [
+        "Definitions",
+        "Accepting these terms",
+        "Using the website",
+        "Services and prices",
+        "Intellectual property",
+        "Limitation of liability",
+        "Governing law and disputes",
+        "Changes to these terms"
+      ]
+    },
+    "disclaimer": {
+      "title": "Disclaimer",
+      "description": "Revenue figures shown belong to the companies named and are not a forecast of your results.",
+      "earningsTitle": "Earnings and MRR disclaimer",
+      "earningsDraft": [
+        "Monthly recurring revenue (MRR) figures on model pages belong only to the companies named. They come from public sources, shown with a link and the date they were reported.",
+        "These figures are not a forecast or a promise of your results. Your commercial results depend on your market, marketing and execution, and are your responsibility.",
+        "We promise a working product, a launch date and support after launch. We don't promise profit."
+      ],
+      "sections": ["General information", "External links and sources", "No financial or legal advice"]
+    },
+    "cookies": {
+      "title": "Cookie policy",
+      "description": "Which cookies we use, why, and how you control them.",
+      "intro": "We don't load any analytics or advertising tool before you consent. You can change your choice at any time.",
+      "categoriesTitle": "Cookie categories",
+      "categories": [
+        { "name": "Necessary", "text": "Needed for the site to work and to remember your consent choice. Always on." },
+        { "name": "Analytics", "text": "Help us understand and improve how the site is used. Only with your consent." },
+        { "name": "Marketing", "text": "Measure the results of our ads. Only with your consent." }
+      ],
+      "manage": "Change cookie settings",
+      "sections": ["What cookies are", "Cookie list and lifetimes", "How to delete them in your browser"]
+    },
+    "accessibility": {
+      "title": "Accessibility statement",
+      "description": "Our commitment to making the Etleq website usable by everyone, to WCAG 2.2 level AA.",
+      "commitment": "We build this website to meet WCAG 2.2 level AA in both Arabic and English.",
+      "sections": ["Conformance status", "What we've done", "Known limitations", "Technologies used", "How we test"],
+      "feedbackTitle": "Tell us about a barrier",
+      "feedbackText": "If any part of the site is hard to use, email us and we'll help and fix it."
+    }
+  }
+}

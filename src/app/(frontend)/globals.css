@@ -11,8 +11,8 @@
   --color-sand-100: #f3eee6;
   --color-sand-300: #e3d9ca;
   --color-ignition-500: #ff5a1f;
-  --color-ignition-700: #c2410c;
-  --color-verified-600: #15803d;
+  --color-ignition-700: #bc3f0b; /* brief #C2410C was 4.48:1 on sand-100 */
+  --color-verified-600: #147638; /* brief #15803D was 4.34:1 on sand-100 */
 
   --font-display: var(--font-alexandria), var(--font-plex-arabic), system-ui, sans-serif;
   --font-sans: var(--font-plex-sans), var(--font-plex-arabic), system-ui, sans-serif;
