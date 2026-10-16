@@ -1,0 +1,127 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '24'
+  # A replica set is required (Payload uses transactions). GitHub service containers cannot
+  # pass `--replSet`, so MongoDB is started with `docker run` in each job that needs it.
+  DATABASE_URL: mongodb://127.0.0.1:27017/etleq?replicaSet=rs0&directConnection=true
+  PAYLOAD_SECRET: ci-only-secret-not-used-anywhere-else-000000
+  NEXT_PUBLIC_SITE_URL: http://localhost:3000
+  # 'development' so pages are indexable for Lighthouse SEO and samples are allowed.
+  SITE_ENV: development
+  NEXT_TELEMETRY_DISABLED: '1'
+
+jobs:
+  verify:
+    name: Typecheck, lint, unit tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: ESLint
+        run: pnpm exec eslint .
+      - name: Logical CSS guardrail
+        run: pnpm lint:logical
+      - name: Unit tests
+        run: pnpm vitest run
+
+  build-e2e:
+    name: Build and end-to-end tests
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start MongoDB 8.0 replica set
+        run: |
+          docker run -d --name mongo -p 27017:27017 mongo:8.0 --replSet rs0 --bind_ip_all
+          for i in $(seq 1 30); do
+            docker exec mongo mongosh --quiet --eval "db.adminCommand('ping').ok" && break
+            sleep 2
+          done
+          docker exec mongo mongosh --quiet --eval "rs.initiate({_id:'rs0',members:[{_id:0,host:'127.0.0.1:27017'}]})"
+          for i in $(seq 1 30); do
+            docker exec mongo mongosh --quiet --eval "rs.status().myState === 1 ? quit(0) : quit(1)" && break
+            sleep 2
+          done
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Seed sample content
+        run: pnpm seed
+      - name: Build
+        run: pnpm build
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Playwright
+        # Visual baselines are committed separately; skip screenshot comparisons until they exist.
+        run: |
+          if ls tests/e2e/*-snapshots >/dev/null 2>&1; then
+            pnpm exec playwright test
+          else
+            pnpm exec playwright test --grep-invert "RTL/LTR screenshots"
+          fi
+        env:
+          CI: 'true'
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
+
+  lighthouse:
+    name: Lighthouse CI
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start MongoDB 8.0 replica set
+        run: |
+          docker run -d --name mongo -p 27017:27017 mongo:8.0 --replSet rs0 --bind_ip_all
+          for i in $(seq 1 30); do
+            docker exec mongo mongosh --quiet --eval "db.adminCommand('ping').ok" && break
+            sleep 2
+          done
+          docker exec mongo mongosh --quiet --eval "rs.initiate({_id:'rs0',members:[{_id:0,host:'127.0.0.1:27017'}]})"
+          for i in $(seq 1 30); do
+            docker exec mongo mongosh --quiet --eval "rs.status().myState === 1 ? quit(0) : quit(1)" && break
+            sleep 2
+          done
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm seed
+      - run: pnpm build
+      - name: Lighthouse CI
+        run: npx --yes @lhci/cli@0.15.1 autorun --config=./lighthouserc.json
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}

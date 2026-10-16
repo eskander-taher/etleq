@@ -1,0 +1,85 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        type: choice
+        options: [staging, production]
+        default: staging
+      ref:
+        description: Git ref to deploy to production (default main)
+        required: false
+        default: main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.event.inputs.environment || 'staging' }}
+  cancel-in-progress: false
+
+jobs:
+  staging:
+    name: Deploy to staging
+    if: github.event_name == 'push' || github.event.inputs.environment == 'staging'
+    runs-on: ubuntu-24.04
+    environment: staging
+    timeout-minutes: 20
+    steps:
+      - name: Pull, build and reload over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.STAGING_SSH_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: ${{ secrets.STAGING_SSH_PORT || 22 }}
+          command_timeout: 15m
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.STAGING_APP_DIR || '/srv/etleq/staging' }}"
+            git pull --ff-only
+            pnpm install --frozen-lockfile
+            pnpm build
+            pm2 reload ecosystem.config.cjs --only etleq-staging --update-env
+            pm2 save
+
+  production:
+    name: Deploy to production
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production'
+    runs-on: ubuntu-24.04
+    # Protect this environment with required reviewers in the repository settings.
+    environment: production
+    timeout-minutes: 30
+    steps:
+      - name: New release, build, switch and reload over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          REF: ${{ github.event.inputs.ref || 'main' }}
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          envs: REF
+          command_timeout: 25m
+          script: |
+            set -euo pipefail
+            BASE=/srv/etleq/production
+            REL="$BASE/releases/$(date -u +%Y%m%d%H%M%S)"
+            git -C "$BASE/repo.git" fetch --prune origin '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
+            git clone --quiet --shared "$BASE/repo.git" "$REL"
+            git -C "$REL" checkout --quiet "$REF"
+            ln -sfn "$BASE/shared/.env" "$REL/.env"
+            ln -sfn "$BASE/shared/media" "$REL/media"
+            cd "$REL"
+            pnpm install --frozen-lockfile
+            pnpm build
+            ln -sfn "$REL" "$BASE/current"
+            pm2 reload "$BASE/current/ecosystem.config.cjs" --only etleq-production --update-env
+            pm2 save
+            # Keep the five most recent releases for rollback.
+            ls -1dt "$BASE"/releases/* | tail -n +6 | xargs -r rm -rf
