@@ -329,6 +329,12 @@ export async function Founders({ locale, authors }: { locale: L; authors: Author
           {t('founders.placeholder')}
         </p>
       )}
+      <div className="mt-6 flex flex-col gap-3 rounded-card border border-sand-300 bg-sand-100 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <p className="max-w-2xl text-ink-600">{t('founders.team')}</p>
+        <Link href="/careers" className="font-semibold text-ignition-700 underline underline-offset-4">
+          {t('founders.joinTeam')}
+        </Link>
+      </div>
     </Section>
   )
 }

@@ -99,3 +99,10 @@
 - **Comparison "code ownership"** for Etleq reads «تُحدَّد في العقد» / "Set out in your contract" until the founders decide.
 - Desktop slide-in after 50% scroll: not built (optional).
 - `vitest.config.ts` was missing; created a minimal one (`@` → src, node env). Workstream E owns it.
+
+## Founders, team and nav (owner, 2026-10-16)
+
+- Co-founders are Eskander Taher (اسكندر طاهر) and Hazim Al-Haidari (حازم الحيدري); credentials as supplied by the owner, recorded in the brief §2. Seeded as real (`isSample: false`) author records; photos, LinkedIn links and job titles beyond "Co-founder" still to come.
+- New `authors.isFounder` + `authors.order` fields: Home and About show founders only; other authors are team members or writers.
+- Copy no longer frames Etleq as two people: "Built by two senior engineers" → "Led by engineers, built by an engineering team, not salespeople"; About gets a Team section linking to careers. Brief updated first (§2, §7).
+- Careers added to the header nav (fallback nav + seeded `header` global).

@@ -74,7 +74,7 @@ function withIds(data: unknown, stored: unknown): unknown {
 function makeSeeder(payload: Payload) {
   /** Create a published document in Arabic, then add the English locale. */
   async function create(collection: CollectionSlug, common: Data, loc: Loc): Promise<{ id: string }> {
-    const base = { ...common, isSample: true, translated: { ar: true, en: true }, _status: 'published' }
+    const base = { isSample: true, ...common, translated: { ar: true, en: true }, _status: 'published' }
     const created = (await payload.create({
       collection,
       locale: 'ar',
@@ -163,39 +163,55 @@ async function seed() {
   }
 
   /* Authors --------------------------------------------------------- */
+  // Real co-founders (owner-supplied facts, 2026-10-16). Not samples: they stay in production.
+  // Photos, LinkedIn links and longer bios still to come from the founders.
   const founder1 = await create(
     'authors',
-    { slug: 'founder-1', sameAs: [{ url: 'https://www.linkedin.com/in/example-founder-1' }], user: adminId },
+    { slug: 'eskander-taher', isSample: false, isFounder: true, order: 1, user: adminId },
     {
       ar: {
-        name: '[المؤسس 1]',
-        role: 'مهندس برمجيات أول ومؤسس مشارك',
-        bio: '[عينة] نبذة مؤقتة: مهندس بنى منتجات برمجية لعملاء في الخليج. يستبدلها المؤسس بنبذته الحقيقية قبل الإطلاق.',
-        credentials: [{ text: '[عينة] خبرة في بناء منصّات الدفع والفوترة' }],
+        name: 'اسكندر طاهر',
+        role: 'شريك مؤسس',
+        bio: 'مهندس برمجيات وشريك مؤسس في إطلاق. يحمل بكالوريوس في هندسة البرمجيات، وماجستير في الإدارة المبنية على البيانات من جامعة رودن، وماجستير في علوم البيانات من جامعة ميسيس.',
+        credentials: [
+          { text: 'بكالوريوس في هندسة البرمجيات' },
+          { text: 'ماجستير في الإدارة المبنية على البيانات، جامعة رودن (RUDN)' },
+          { text: 'ماجستير في علوم البيانات، جامعة ميسيس (MISIS)' },
+        ],
       },
       en: {
-        name: '[Founder 1]',
-        role: 'Senior software engineer and co-founder',
-        bio: '[SAMPLE] Placeholder bio: an engineer who has shipped software products for Gulf clients. The founder replaces this before launch.',
-        credentials: [{ text: '[SAMPLE] Experience building payment and invoicing platforms' }],
+        name: 'Eskander Taher',
+        role: 'Co-founder',
+        bio: "Software engineer and co-founder of Etleq. He holds a bachelor's degree in software engineering, a master's in data-driven management from RUDN University and a master's in data science from MISIS University.",
+        credentials: [
+          { text: "Bachelor's degree in software engineering" },
+          { text: "Master's in data-driven management, RUDN University" },
+          { text: "Master's in data science, MISIS University" },
+        ],
       },
     },
   )
   const founder2 = await create(
     'authors',
-    { slug: 'founder-2', sameAs: [{ url: 'https://www.linkedin.com/in/example-founder-2' }] },
+    { slug: 'hazim-al-haidari', isSample: false, isFounder: true, order: 2 },
     {
       ar: {
-        name: '[المؤسس 2]',
-        role: 'مهندس برمجيات أول ومؤسس مشارك',
-        bio: '[عينة] نبذة مؤقتة عن المؤسس الثاني. تُستبدل بالنبذة الحقيقية قبل الإطلاق.',
-        credentials: [{ text: '[عينة] خبرة في البنية السحابية والأمان' }],
+        name: 'حازم الحيدري',
+        role: 'شريك مؤسس',
+        bio: 'شريك مؤسس في إطلاق. يحمل ماجستير في علوم البيانات من جامعة ميسيس، وباحث دكتوراه في جامعة باومان التقنية.',
+        credentials: [
+          { text: 'ماجستير في علوم البيانات، جامعة ميسيس (MISIS)' },
+          { text: 'باحث دكتوراه، جامعة باومان التقنية (Bauman)' },
+        ],
       },
       en: {
-        name: '[Founder 2]',
-        role: 'Senior software engineer and co-founder',
-        bio: '[SAMPLE] Placeholder bio for the second founder, replaced before launch.',
-        credentials: [{ text: '[SAMPLE] Experience in cloud infrastructure and security' }],
+        name: 'Hazim Al-Haidari',
+        role: 'Co-founder',
+        bio: "Co-founder of Etleq. He holds a master's in data science from MISIS University and is a PhD researcher at Bauman Moscow State Technical University.",
+        credentials: [
+          { text: "Master's in data science, MISIS University" },
+          { text: 'PhD researcher, Bauman Moscow State Technical University' },
+        ],
       },
     },
   )
@@ -621,7 +637,7 @@ async function seed() {
           { blockType: 'modelsTeaser', heading: 'نماذج مجرّبة يمكنك إطلاق نسختها الخليجية', models: modelIds },
           { blockType: 'offerStack', heading: 'ماذا تحصل عليه' },
           { blockType: 'guarantee', heading: 'إذا تأخّرنا، ندفع نحن' },
-          { blockType: 'founders', heading: 'يبنيها مهندسان، لا مندوبو مبيعات', authors: [founder1.id, founder2.id] },
+          { blockType: 'founders', heading: 'يقودها مهندسون ويبنيها فريق هندسي، لا مندوبو مبيعات', authors: [founder1.id, founder2.id] },
           { blockType: 'faqList', heading: 'أسئلة شائعة', faqs: faqIds },
           { blockType: 'finalCta', heading: 'اعرف خلال دقيقتين إن كانت فكرتك مناسبة للإطلاق' },
         ],
@@ -642,7 +658,7 @@ async function seed() {
           { blockType: 'modelsTeaser', heading: 'Proven models with a Gulf version', models: modelIds },
           { blockType: 'offerStack', heading: 'What you get' },
           { blockType: 'guarantee', heading: 'If we’re late, we pay' },
-          { blockType: 'founders', heading: 'Built by two senior engineers, not salespeople', authors: [founder1.id, founder2.id] },
+          { blockType: 'founders', heading: 'Led by engineers, built by an engineering team, not salespeople', authors: [founder1.id, founder2.id] },
           { blockType: 'faqList', heading: 'Common questions', faqs: faqIds },
           { blockType: 'finalCta', heading: 'Find out in two minutes whether your idea is ready to launch' },
         ],
@@ -673,6 +689,7 @@ async function seedGlobals(global: (slug: GlobalSlug, common: Data, loc: Loc) =>
     ['المشاريع', 'Projects', '/projects'],
     ['المدوّنة', 'Blog', '/blog'],
     ['من نحن', 'About', '/about'],
+    ['الوظائف', 'Careers', '/careers'],
   ]
   await global('header', {}, {
     ar: { nav: nav.map(([label, , href]) => ({ label, href })), ctaLabel: 'ابدأ التقييم' },

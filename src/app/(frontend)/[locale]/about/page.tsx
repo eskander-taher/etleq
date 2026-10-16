@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props) {
 
 async function getFounders(locale: Locale): Promise<Author[]> {
   try {
-    const res = await findPublic('authors', locale, { limit: 12, sort: 'createdAt', depth: 1 })
+    const res = await findPublic('authors', locale, { where: { isFounder: { equals: true } }, limit: 12, sort: 'order', depth: 1 })
     return res.docs.filter((a) => a.name && a.slug)
   } catch {
     return []
@@ -193,6 +193,26 @@ export default async function AboutPage({ params }: Props) {
           )}
         </Section>
       ) : null}
+
+      <Section aria-labelledby="team-h">
+        <div className="grid gap-6 lg:grid-cols-12 lg:items-center">
+          <div className="lg:col-span-8">
+            <h2 id="team-h" className="text-display-2 font-bold">
+              {t('about.teamTitle')}
+            </h2>
+            <p className="mt-4 text-lg text-ink-600">{t('about.teamText')}</p>
+          </div>
+          <div className="lg:col-span-4 lg:text-end">
+            <Link
+              href="/careers"
+              className="inline-flex min-h-12 items-center gap-2 rounded-button border border-ink-950 px-6 font-semibold hover:bg-ink-950 hover:text-sand-50"
+            >
+              {t('about.teamCta')}
+              <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
+      </Section>
 
       <Section aria-labelledby="values-h">
         <h2 id="values-h" className="text-display-2 font-bold">

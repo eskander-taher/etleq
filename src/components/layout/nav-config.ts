@@ -10,6 +10,7 @@ export const FALLBACK_NAV = [
   { key: 'projects', href: '/projects' },
   { key: 'blog', href: '/blog' },
   { key: 'about', href: '/about' },
+  { key: 'careers', href: '/careers' },
 ] as const
 
 export const FALLBACK_FOOTER_COLUMNS = [

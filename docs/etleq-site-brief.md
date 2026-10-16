@@ -44,7 +44,7 @@ You are the lead engineer, product designer, conversion strategist and technical
 
 ## 2. Business context
 
-**What Etleq is:** a SaaS launch studio. Two senior engineers build a client's software product on a reusable codebase ("Etleq Core") and take it live in 30 days at a fixed price, with Arabic, mada payments, ZATCA-ready invoicing and hosting built in. The client runs the business; Etleq runs the technology. The name means "launch" (إطلاق).
+**What Etleq is:** a SaaS launch studio. An engineering team led by the two co-founders builds a client's software product on a reusable codebase ("Etleq Core") and take it live in 30 days at a fixed price, with Arabic, mada payments, ZATCA-ready invoicing and hosting built in. The client runs the business; Etleq runs the technology. The name means "launch" (إطلاق).
 
 **Positioning statement (use it, don't print it verbatim):** For Gulf business owners and creators who want their own software product without hiring a tech team, Etleq is the SaaS launch studio that takes a proven model live in 30 days at a fixed price. Unlike agencies, we charge for outcomes, not hours; unlike AI app builders, we deliver a business that takes payments, not a demo.
 
@@ -76,6 +76,12 @@ Prices are managed in the CMS, never hard-coded. Show SAR equivalents at the fix
 Most visitors arrive on a phone from a reel, already curious about one specific model. Search and AI visitors arrive with a question ("how much does it cost to build a clinic booking app in Saudi?").
 
 **Markets:** Saudi Arabia first, UAE second, the rest of the Arab world as audience. Arabic is the primary language of the site; English serves UAE and international visitors.
+
+**Founders (owner-supplied, 16 Oct 2026):**
+
+- Eskander Taher (اسكندر طاهر), co-founder: BSc in software engineering; MSc in data-driven management, RUDN University; MSc in data science, MISIS University.
+- Hazim Al-Haidari (حازم الحيدري), co-founder: MSc in data science, MISIS University; PhD researcher, Bauman Moscow State Technical University.
+- Etleq has a team beyond the founders; copy never implies the founders work alone.
 
 **Voice:** direct, specific, warm, never hype. Numbers over adjectives. Show prices openly. Arabic copy in clear Modern Standard Arabic with a light, modern tone; never machine-translated. English copy in plain international English.
 
@@ -285,7 +291,7 @@ The home page is a long-form sales page in a fixed order: promise, proof, mechan
 | # | Section | What it shows | Why it converts | Data source |
 | --- | --- | --- | --- | --- |
 | 0 | Announcement bar | "{n} of {total} launch slots left this month" linking to `/launch-30` | Real scarcity (Priestley: demand before supply) | `SiteSettings` global |
-| 1 | Header | Wordmark, nav (Launch 30, Models, Solutions, Projects, Blog, About), language switch, "Take the scorecard" button, WhatsApp icon | One clear action; WhatsApp is the Gulf default channel | `Header` global |
+| 1 | Header | Wordmark, nav (Launch 30, Models, Solutions, Projects, Blog, About, Careers), language switch, "Take the scorecard" button, WhatsApp icon | One clear action; WhatsApp is the Gulf default channel | `Header` global |
 | 2 | Hero | H1 promise with price and timeline, subhead, primary CTA, secondary 60-second founder video, trust row (mada, Apple Pay, cards; KSA, UAE and Oman entities), animated Arabic product mockup with a Day 1 → Day 30 trajectory | States dream outcome, time and price above the fold (Hormozi value equation) | `Pages` block |
 | 3 | Proof strip | Only true facts: founders' shipped products, years of experience, live client launches once they exist | Credibility before claims | `Pages` block, each item sourced |
 | 4 | Problem | Three cards: agencies (SAR 35k–65k, 4–8 weeks ([Sendan](https://www.sendantech.com/en-SA/mobile-app-development-cost-saudi-arabia))), freelancers (disappear after launch), AI app builders (from $25/month ([eesel](https://eesel.ai/blog/lovable-pricing)), stall at payments, Arabic, ZATCA and hosting) | Names the visitor's current options and their failure points | `Pages` block with sources |
@@ -295,7 +301,7 @@ The home page is a long-form sales page in a fixed order: promise, proof, mechan
 | 8 | How it works | 7-step stepper: Scorecard → Fit call → Blueprint → 30-day build (demo on day 10) → Launch → First 10 customers sprint → Care | Reduces uncertainty and effort | `Pages` block |
 | 9 | Guarantee | Launch-date guarantee and Blueprint satisfaction, plus the honest line about revenue | Risk reversal; honesty builds trust | `Offer` global |
 | 10 | Comparison table | Etleq vs agency vs freelancer vs AI builder on price, time, mada, ZATCA, code ownership, support after launch | Makes the choice obvious; every cell sourced | `Pages` block |
-| 11 | Founders | Photos, two-line bios, 60-second video, links to their accounts | People buy from people (Key Person of Influence) | `Authors` collection |
+| 11 | Founders and team | The two co-founders (photos, two-line bios, 60-second video, links to their accounts) plus a line on the wider team linking to careers | People buy from people (Key Person of Influence) | `Authors` collection |
 | 12 | Projects and testimonials | Real case studies and verified testimonials; until they exist, the founding-client offer (3 clients at $4,500 in exchange for a filmed case study) | Social proof without fabrication | `Projects`, `Testimonials` |
 | 13 | FAQ | 8–10 objections: price, ownership, delays, payments, hosting location, languages, equity, refunds | Handles objections before the call | `FAQs` collection |
 | 14 | Final CTA | Scorecard, booking and WhatsApp side by side | Last chance, three channels | `Pages` block |
@@ -339,8 +345,9 @@ The home page is a long-form sales page in a fixed order: promise, proof, mechan
 
 **Founders**
 
-- AR: «يبنيها مهندسان، لا مندوبو مبيعات»
-- EN: "Built by two senior engineers, not salespeople"
+- AR: «يقودها مهندسون ويبنيها فريق هندسي، لا مندوبو مبيعات»
+- EN: "Led by engineers, built by an engineering team, not salespeople"
+- Never present Etleq as a two-person shop: the founders lead a team of engineers and specialists (owner decision, 16 Oct 2026).
 
 **Final CTA**
 

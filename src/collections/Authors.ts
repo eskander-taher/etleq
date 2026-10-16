@@ -19,6 +19,13 @@ export const Authors: CollectionConfig = {
     { name: 'credentials', type: 'array', fields: [{ name: 'text', type: 'text', localized: true }] },
     { name: 'sameAs', type: 'array', admin: { description: 'Profile links (LinkedIn, X, GitHub…).' }, fields: [{ name: 'url', type: 'text' }] },
     { name: 'user', type: 'relationship', relationTo: 'users', admin: { position: 'sidebar' } },
+    {
+      name: 'isFounder',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: { position: 'sidebar', description: 'Shown in the founders sections on Home and About. Other authors are team members or writers.' },
+    },
+    { name: 'order', type: 'number', admin: { position: 'sidebar', description: 'Display order (lowest first).' } },
     translatedField(),
     isSampleField(),
   ],

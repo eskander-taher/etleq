@@ -122,7 +122,7 @@ const COPY = {
     heading: 'English, left to right',
     h1: 'A proven idea, live and taking payments in 30 days.',
     h2: 'Etleq Core: most of your product exists before day one',
-    h3: 'Built by two senior engineers, not salespeople',
+    h3: 'Led by engineers, built by an engineering team',
     body: 'We build your complete software product, Arabic-first, with mada and Apple Pay, ZATCA-ready invoicing, hosting and maintenance, at a fixed price from $5,900.',
     mixed: 'Test WhatsApp number',
     small: 'Small text for captions and sources.',

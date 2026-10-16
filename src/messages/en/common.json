@@ -126,7 +126,7 @@
     "metaDescription": "Etleq is a SaaS launch studio that builds Arabic-first software products and takes them live in 30 days at a fixed price. Meet the founders.",
     "eyebrow": "About",
     "title": "We build your product like it's our own",
-    "lead": "Etleq is a small studio run by two engineers. We build Arabic-first SaaS products on a ready foundation called Etleq Core and take them live in 30 days at a fixed price.",
+    "lead": "Etleq is a SaaS launch studio founded by engineers and run by a team of engineers and specialists. We build Arabic-first SaaS products on a ready foundation called Etleq Core and take them live in 30 days at a fixed price.",
     "storyTitle": "Why we started",
     "story": [
       "We kept meeting Gulf business owners with a clear idea and customers waiting, who then got stuck on the build: agencies that need months and big budgets, freelancers who disappear after launch, and AI builders that stall at payments, Arabic and invoicing.",
@@ -135,18 +135,33 @@
     "missionTitle": "Our mission",
     "mission": "Every business owner in the Gulf should be able to own a working product that takes payments, without hiring a tech team.",
     "foundersTitle": "The founders",
-    "foundersLead": "Built by two senior engineers, not salespeople.",
+    "foundersLead": "A background in software engineering and data science.",
     "foundersPlaceholder": "The founders will appear here once they're added in the admin panel.",
     "entitiesTitle": "Legal entities",
     "valuesTitle": "What we commit to",
     "values": [
-      { "title": "Fixed price", "text": "You know the cost before we start. No open-ended hourly bills." },
-      { "title": "Guaranteed launch date", "text": "If we're late, we refund 10% of the build fee for every late week and keep building." },
-      { "title": "Honest promises", "text": "We don't promise you profit. We promise a working product, a launch date and support after launch." },
-      { "title": "Arabic first", "text": "We design and write in Arabic from the start, not as a translation at the end." }
+      {
+        "title": "Fixed price",
+        "text": "You know the cost before we start. No open-ended hourly bills."
+      },
+      {
+        "title": "Guaranteed launch date",
+        "text": "If we're late, we refund 10% of the build fee for every late week and keep building."
+      },
+      {
+        "title": "Honest promises",
+        "text": "We don't promise you profit. We promise a working product, a launch date and support after launch."
+      },
+      {
+        "title": "Arabic first",
+        "text": "We design and write in Arabic from the start, not as a translation at the end."
+      }
     ],
     "ctaTitle": "Is your idea ready to launch?",
-    "ctaText": "Start with the scorecard. If it's a fit, we'll book a 15-minute call with you."
+    "ctaText": "Start with the scorecard. If it's a fit, we'll book a 15-minute call with you.",
+    "teamTitle": "The team",
+    "teamText": "We don't work alone. Every product is built by a team of engineers and specialists, led by the founders, and we're always looking for people who work the way we do.",
+    "teamCta": "Open roles"
   },
   "faq": {
     "metaTitle": "FAQ",
@@ -226,7 +241,11 @@
         "These figures are not a forecast or a promise of your results. Your commercial results depend on your market, marketing and execution, and are your responsibility.",
         "We promise a working product, a launch date and support after launch. We don't promise profit."
       ],
-      "sections": ["General information", "External links and sources", "No financial or legal advice"]
+      "sections": [
+        "General information",
+        "External links and sources",
+        "No financial or legal advice"
+      ]
     },
     "cookies": {
       "title": "Cookie policy",
@@ -234,18 +253,37 @@
       "intro": "We don't load any analytics or advertising tool before you consent. You can change your choice at any time.",
       "categoriesTitle": "Cookie categories",
       "categories": [
-        { "name": "Necessary", "text": "Needed for the site to work and to remember your consent choice. Always on." },
-        { "name": "Analytics", "text": "Help us understand and improve how the site is used. Only with your consent." },
-        { "name": "Marketing", "text": "Measure the results of our ads. Only with your consent." }
+        {
+          "name": "Necessary",
+          "text": "Needed for the site to work and to remember your consent choice. Always on."
+        },
+        {
+          "name": "Analytics",
+          "text": "Help us understand and improve how the site is used. Only with your consent."
+        },
+        {
+          "name": "Marketing",
+          "text": "Measure the results of our ads. Only with your consent."
+        }
       ],
       "manage": "Change cookie settings",
-      "sections": ["What cookies are", "Cookie list and lifetimes", "How to delete them in your browser"]
+      "sections": [
+        "What cookies are",
+        "Cookie list and lifetimes",
+        "How to delete them in your browser"
+      ]
     },
     "accessibility": {
       "title": "Accessibility statement",
       "description": "Our commitment to making the Etleq website usable by everyone, to WCAG 2.2 level AA.",
       "commitment": "We build this website to meet WCAG 2.2 level AA in both Arabic and English.",
-      "sections": ["Conformance status", "What we've done", "Known limitations", "Technologies used", "How we test"],
+      "sections": [
+        "Conformance status",
+        "What we've done",
+        "Known limitations",
+        "Technologies used",
+        "How we test"
+      ],
       "feedbackTitle": "Tell us about a barrier",
       "feedbackText": "If any part of the site is hard to use, email us and we'll help and fix it."
     }

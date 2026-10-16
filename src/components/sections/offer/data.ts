@@ -119,7 +119,7 @@ export const getScorecardSettings = (locale: Locale) =>
 export const getModels = (locale: Locale, limit = 6) =>
   safe('models', async () => asArray<ModelCard>(await f('models', locale, { limit, sort: '-updatedAt', depth: 1 })), [] as ModelCard[])
 
-export const getAuthors = (locale: Locale) => safe('authors', async () => asArray<AuthorCard>(await f('authors', locale, { limit: 4, depth: 1 })), [] as AuthorCard[])
+export const getAuthors = (locale: Locale) => safe('authors', async () => asArray<AuthorCard>(await f('authors', locale, { where: { isFounder: { equals: true } }, sort: 'order', limit: 4, depth: 1 })), [] as AuthorCard[])
 
 export const getProjects = (locale: Locale) =>
   safe('projects', async () => asArray<ProjectCard>(await f('projects', locale, { limit: 3, sort: '-publishedAt', depth: 1 })), [] as ProjectCard[])

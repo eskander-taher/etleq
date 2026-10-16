@@ -914,6 +914,14 @@ export interface Author {
     | null;
   user?: (string | null) | User;
   /**
+   * Shown in the founders sections on Home and About. Other authors are team members or writers.
+   */
+  isFounder?: boolean | null;
+  /**
+   * Display order (lowest first).
+   */
+  order?: number | null;
+  /**
    * Tick a language to publish it. Its required fields become mandatory; unticked languages return 404.
    */
   translated?: {
@@ -2732,6 +2740,8 @@ export interface AuthorsSelect<T extends boolean = true> {
         id?: T;
       };
   user?: T;
+  isFounder?: T;
+  order?: T;
   translated?:
     | T
     | {

@@ -241,9 +241,11 @@
     }
   },
   "founders": {
-    "title": "Built by two senior engineers, not salespeople",
-    "lead": "You talk to the people who write the code, from the fit call to launch day.",
-    "placeholder": "Placeholder: add the founders' author profiles in the admin (shown outside production only)."
+    "title": "Led by engineers, built by an engineering team, not salespeople",
+    "lead": "You talk to the engineers who build your product, from the fit call to launch day.",
+    "placeholder": "Placeholder: add the founders' author profiles in the admin (shown outside production only).",
+    "team": "Behind the founders is a team of engineers and specialists working on every launch.",
+    "joinTeam": "Join the team"
   },
   "projects": {
     "title": "Products we've launched",
