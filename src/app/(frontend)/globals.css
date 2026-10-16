@@ -1,0 +1,94 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-ink-950: #0b0f14;
+  --color-ink-800: #1c2430;
+  --color-ink-600: #3a4553;
+  --color-stone-500: #6b6459;
+  --color-sand-50: #faf7f2;
+  --color-sand-100: #f3eee6;
+  --color-sand-300: #e3d9ca;
+  --color-ignition-500: #ff5a1f;
+  --color-ignition-700: #c2410c;
+  --color-verified-600: #15803d;
+
+  --font-display: var(--font-alexandria), var(--font-plex-arabic), system-ui, sans-serif;
+  --font-sans: var(--font-plex-sans), var(--font-plex-arabic), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --radius-card: 20px;
+  --radius-button: 12px;
+
+  --container-content: 1200px;
+}
+
+@layer base {
+  html {
+    background: var(--color-sand-50);
+    color: var(--color-ink-950);
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem; /* focus/anchor targets never hide under the sticky header (WCAG 2.4.11) */
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  html[lang='ar'] body {
+    font-size: 1.0625rem; /* 17px */
+    line-height: 1.75;
+  }
+  /* Never letter-space or italicise Arabic */
+  html[lang='ar'] * {
+    letter-spacing: 0 !important;
+  }
+  html[lang='ar'] em,
+  html[lang='ar'] i {
+    font-style: normal;
+    font-weight: 600;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+  html[lang='ar'] :is(h1, h2, h3, h4) {
+    line-height: 1.5; /* room for shadda/tanween */
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-ignition-700);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .num,
+  bdi.num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@utility text-display-1 {
+  font-size: clamp(2.125rem, 1.4rem + 3.4vw, 4rem);
+}
+@utility text-display-2 {
+  font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+}
+@utility text-display-3 {
+  font-size: clamp(1.375rem, 1.15rem + 1vw, 1.875rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

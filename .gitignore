@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+.env
+.env.local
+*.log
+coverage
+playwright-report
+test-results
+/media
+/private-media
+.mongo-data
+next-env.d.ts
+*.tsbuildinfo
