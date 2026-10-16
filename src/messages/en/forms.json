@@ -1,1 +1,118 @@
-{}
+{
+  "fields": {
+    "name": "Name",
+    "phone": "WhatsApp number",
+    "phoneCountry": "Country code",
+    "phoneHint": "e.g. 5X XXX XXXX",
+    "email": "Email",
+    "emailOptional": "Email (optional)",
+    "company": "Company or business name (optional)",
+    "message": "Your message",
+    "messagePlaceholder": "Tell us briefly about your idea or question",
+    "consent": "I agree to the <privacy>privacy policy</privacy> and to Etleq contacting me about my request.",
+    "marketing": "Send me new models and launch tips by email (optional).",
+    "honeypot": "Leave this field empty"
+  },
+  "countries": {
+    "SA": "Saudi Arabia",
+    "AE": "United Arab Emirates",
+    "KW": "Kuwait",
+    "QA": "Qatar",
+    "BH": "Bahrain",
+    "OM": "Oman",
+    "EG": "Egypt",
+    "JO": "Jordan",
+    "IQ": "Iraq",
+    "LB": "Lebanon",
+    "MA": "Morocco",
+    "DZ": "Algeria",
+    "TN": "Tunisia",
+    "SD": "Sudan",
+    "YE": "Yemen",
+    "PS": "Palestine",
+    "SY": "Syria",
+    "LY": "Libya",
+    "TR": "Türkiye",
+    "PK": "Pakistan",
+    "IN": "India",
+    "GB": "United Kingdom",
+    "US": "United States and Canada"
+  },
+  "errors": {
+    "summary": "Please check the highlighted fields and try again.",
+    "rateLimited": "You've sent several requests in a short time. Please wait a few minutes and try again.",
+    "spam": "We couldn't verify this request. Refresh the page and try again.",
+    "server": "Something went wrong on our side and your request wasn't saved. Please try again, or message us on WhatsApp.",
+    "invalid": "Some details aren't valid. Please check them and try again."
+  },
+  "contact": {
+    "submit": "Send your message",
+    "submitting": "Sending…",
+    "note": "We read every message ourselves."
+  },
+  "newsletter": {
+    "title": "The Etleq newsletter",
+    "body": "Proven SaaS models and sourced numbers, roughly every two weeks.",
+    "submit": "Subscribe",
+    "submitting": "Subscribing…",
+    "consent": "I agree to the <privacy>privacy policy</privacy> and to receiving the newsletter. I can unsubscribe at any time.",
+    "success": "You're subscribed. Check your inbox."
+  },
+  "playbook": {
+    "meta": {
+      "title": "The free Launch Playbook",
+      "description": "A practical guide to choosing a proven SaaS idea and getting it ready for the Gulf market. Leave your email and we'll send it when it's ready."
+    },
+    "eyebrow": "Free",
+    "h1": "The Launch Playbook: from idea to first customer",
+    "lead": "We're writing a practical guide to choosing a proven model, estimating costs and lining up your first customers. Leave your email and we'll send it as soon as it's ready.",
+    "points": [
+      "How to pick a model with real demand in the Gulf",
+      "What running a SaaS costs each month",
+      "How to line up your first 10 customers before launch"
+    ],
+    "submit": "Send me the playbook",
+    "submitting": "Signing you up…",
+    "consent": "I agree to the <privacy>privacy policy</privacy> and to receiving the playbook and newsletter by email."
+  },
+  "turnstile": "This form is protected from spam by Cloudflare Turnstile.",
+  "thankYou": {
+    "meta": {
+      "title": "Thank you"
+    },
+    "booking": {
+      "title": "Your call is booked",
+      "body": "A confirmation is on its way to your inbox. One of the founders will call you at the time you chose.",
+      "prepTitle": "Get ready for the call",
+      "prep": [
+        "Think about the biggest problem your customers have.",
+        "Have any numbers about your current business to hand.",
+        "Write down three questions you want answered."
+      ]
+    },
+    "contact": {
+      "title": "We got your message",
+      "body": "One of the founders will read it and reply on WhatsApp or by email."
+    },
+    "playbook": {
+      "title": "You're on the list",
+      "body": "We'll email you the Launch Playbook as soon as it's ready. Meanwhile, browse the proven models."
+    },
+    "newsletter": {
+      "title": "Welcome to the newsletter",
+      "body": "The next issue will land in your inbox. You can unsubscribe at any time."
+    },
+    "application": {
+      "title": "We received your application",
+      "body": "We review every application ourselves and will email you about the next step."
+    },
+    "responseTime": "We usually reply {promise}.",
+    "addToCalendar": "Add to calendar",
+    "calendarTitle": "Fit call with Etleq",
+    "whatsapp": "Need something now? Message us on WhatsApp",
+    "whatsappMessage": "Hi, I just submitted a request on the Etleq site and have a question",
+    "next": "What's next?",
+    "models": "Browse models",
+    "home": "Back to home"
+  }
+}

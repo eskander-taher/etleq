@@ -1,1 +1,133 @@
-{}
+{
+  "meta": {
+    "title": "Launch readiness scorecard: is your idea ready?",
+    "description": "12 questions, two minutes. Find out whether your idea is ready to launch as a SaaS, with an instant result and a clear next step."
+  },
+  "intro": {
+    "eyebrow": "Readiness scorecard",
+    "h1": "Is your idea ready to launch?",
+    "lead": "Answer 12 short questions and get your result straight away. It takes about two minutes.",
+    "modelNote": "Scoring for the model: {model}"
+  },
+  "progress": "Question {n} of {total}",
+  "progressContact": "Last step",
+  "progressLabel": "Scorecard progress",
+  "back": "Back",
+  "next": "Next",
+  "skip": "Skip this question",
+  "optional": "Optional",
+  "questions": {
+    "business": {
+      "prompt": "Do you run a business today?",
+      "options": { "none": "Not yet", "lt1m": "Yes, under SAR 1M a year in revenue", "1to5m": "Yes, SAR 1–5M a year", "gt5m": "Yes, over SAR 5M a year" }
+    },
+    "budget": {
+      "prompt": "What budget can you commit in the next 60 days?",
+      "options": { "lt2k": "Under $2,000", "2to5k": "$2,000–5,000", "5to10k": "$5,000–10,000", "gt10k": "Over $10,000" }
+    },
+    "marketer": {
+      "prompt": "Who will market the product after launch?",
+      "options": { "me": "Me or my team", "etleq": "I hope Etleq will" }
+    },
+    "audience": {
+      "prompt": "Do you have existing customers or an audience?",
+      "options": { "none": "None", "lt500": "Under 500", "500to5k": "500–5,000", "gt5k": "Over 5,000" }
+    },
+    "model": {
+      "prompt": "Which model or idea interests you?",
+      "other": "Something else, or not sure yet"
+    },
+    "country": {
+      "prompt": "Where will your product operate?",
+      "options": { "ksa_uae": "Saudi Arabia or the UAE", "gcc": "Another GCC country", "other": "Somewhere else" }
+    },
+    "timeline": {
+      "prompt": "When do you want to launch?",
+      "options": { "month": "Within a month", "1to3": "In 1–3 months", "3to6": "In 3–6 months", "later": "More than 6 months from now" }
+    },
+    "decisionMaker": {
+      "prompt": "Are you the final decision-maker on this project?",
+      "options": { "yes": "Yes", "no": "No, others share the decision" }
+    },
+    "soldOnline": {
+      "prompt": "Have you sold anything online before?",
+      "options": { "yes": "Yes", "no": "No" }
+    },
+    "hours": {
+      "prompt": "How many hours a week can you give the launch?",
+      "options": { "lt3": "Under 3 hours", "3to8": "3–8 hours", "gt8": "More than 8 hours" }
+    },
+    "commercialReg": {
+      "prompt": "Do you have a commercial registration?",
+      "options": { "yes": "Yes", "no": "No" }
+    },
+    "success": {
+      "prompt": "What would success look like six months from now?",
+      "placeholder": "e.g. 50 customers paying a monthly subscription",
+      "hint": "We'll read this before the call. You can skip it."
+    }
+  },
+  "contact": {
+    "title": "Where should we send your result?",
+    "reason": "So we can send you your detailed result",
+    "submit": "Show my result",
+    "submitting": "Calculating your result…"
+  },
+  "result": {
+    "meta": { "title": "Your scorecard result" },
+    "scoreLabel": "Your score",
+    "outOf": "out of 100",
+    "invalid": "This result link has expired or isn't valid.",
+    "retake": "Retake the scorecard",
+    "ready": {
+      "badge": "Ready to launch",
+      "title": "Your idea is ready to launch",
+      "body": "Next step: a free 15-minute fit call with one of the founders. Pick a time that suits you.",
+      "nextTitle": "What happens on the call?",
+      "next": ["We get to know your idea and your customers.", "We tell you honestly whether we're the right fit.", "If we are, we schedule your Blueprint session."]
+    },
+    "almost": {
+      "badge": "Almost ready",
+      "title": "You're close, with a few things to prepare",
+      "body": "Your idea deserves attention, but a few things need sorting before a build. Here's what will help with the next step.",
+      "playbook": "Get the free Launch Playbook",
+      "whatsapp": "Ask us on WhatsApp",
+      "whatsappMessage": "Hi, I finished the scorecard with {score}/100. What am I missing to launch?",
+      "retakeNote": "When things change, retake the scorecard and we'll look at your result again."
+    },
+    "explore": {
+      "badge": "Explore first",
+      "title": "Learn first, build later",
+      "body": "Building right now may not be your best next step. These free resources will help you choose and prepare your idea.",
+      "blog": "Read the blog",
+      "models": "Browse proven models",
+      "newsletter": "Get new models in your inbox"
+    },
+    "reasons": {
+      "budget:lt2k": "The budget is below the minimum for a build.",
+      "budget:2to5k": "The budget is below the minimum for a build.",
+      "decisionMaker:no": "Others need to be part of the decision before we start.",
+      "timeline:later": "Your launch date is more than six months away.",
+      "marketer:etleq": "We build and run the product; marketing stays with you."
+    },
+    "reasonsTitle": "What stops a booking right now"
+  },
+  "booking": {
+    "choose": "Choose a time",
+    "loading": "Loading available times…",
+    "openExternal": "Open the booking page",
+    "noUrl": "Online booking isn't available right now. Message us on WhatsApp and we'll find a time.",
+    "whatsappMessage": "Hi, I'd like to book a fit call",
+    "timezone": "Times are shown in Riyadh time.",
+    "privacy": "The calendar loads from Cal.com only when you click."
+  },
+  "book": {
+    "meta": {
+      "title": "Book a free fit call",
+      "description": "A free 15-minute call with one of Etleq's founders to see whether we're right for your project."
+    },
+    "h1": "Book a free fit call",
+    "lead": "15 minutes with one of the founders. Taking the scorecard first helps us prepare.",
+    "scorecardFirst": "Haven't taken the scorecard yet?"
+  }
+}

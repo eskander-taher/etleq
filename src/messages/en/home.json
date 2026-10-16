@@ -1,1 +1,363 @@
-{}
+{
+  "meta": {
+    "title": "Etleq | Your SaaS live and taking payments in 30 days",
+    "description": "We build your complete software product, Arabic-first, with mada and Apple Pay, ZATCA-ready invoicing, hosting and maintenance, at a fixed price in 30 working days."
+  },
+  "hero": {
+    "eyebrow": "SaaS launch studio",
+    "h1": "A proven idea, live and taking payments in 30 days.",
+    "sub": "We build your complete software product, Arabic-first, with mada and Apple Pay, ZATCA-ready invoicing, hosting and maintenance, at a fixed price from <num>{price}</num>. You run the business. We run the tech.",
+    "cta": "Take the 2-minute scorecard",
+    "secondary": "See how it works in 60 seconds",
+    "microcopy": "12 questions. Instant result. No commitment.",
+    "trustLabel": "Payments your product accepts",
+    "payments": {
+      "mada": "mada",
+      "applePay": "Apple Pay",
+      "cards": "Credit cards"
+    },
+    "entitiesLabel": "Registered in",
+    "mockup": {
+      "label": "Illustration of an Arabic product interface",
+      "appName": "Your product",
+      "nav": [
+        "Bookings",
+        "Customers",
+        "Invoices",
+        "Settings"
+      ],
+      "cardBookings": "Today's bookings",
+      "cardPayments": "mada and Apple Pay payments",
+      "cardInvoice": "ZATCA-ready tax invoice",
+      "status": "Live"
+    },
+    "trajectory": {
+      "label": "Launch timeline",
+      "day1": "Day 1",
+      "day1Text": "Scope signed",
+      "day10": "Day 10",
+      "day10Text": "First working demo",
+      "day30": "Day 30",
+      "day30Text": "Live and taking payments"
+    }
+  },
+  "proof": {
+    "title": "Facts, not claims",
+    "launches": "Products launched for clients",
+    "onTime": "Launched on or before the planned date"
+  },
+  "problem": {
+    "title": "Three common ways to build a SaaS, and where each one stalls",
+    "lead": "Every route has a cost. This is what most business owners run into before they find us.",
+    "agency": {
+      "title": "Development agencies",
+      "figure": "SAR 35,000–65,000",
+      "body": "for a mid-size app in Saudi Arabia, with delivery taking 4–8 weeks.",
+      "sourceName": "Sendan",
+      "sourceUrl": "https://www.sendantech.com/en-SA/mobile-app-development-cost-saudi-arabia"
+    },
+    "freelancer": {
+      "title": "Freelancers",
+      "figure": "Lower price, higher risk",
+      "body": "Many disappear after launch, leaving you alone with bugs, updates and hosting."
+    },
+    "ai": {
+      "title": "AI app builders",
+      "figure": "From $25/month",
+      "body": "Great for a quick prototype, but they stall at mada payments, Arabic, ZATCA invoicing and real hosting.",
+      "sourceName": "eesel",
+      "sourceUrl": "https://eesel.ai/blog/lovable-pricing"
+    },
+    "sourceLabel": "Source:",
+    "accessed": "accessed {date}"
+  },
+  "mechanism": {
+    "title": "Etleq Core: most of your product exists before day one",
+    "lead": "We don't start from zero. Your product sits on a proven base, and we build what makes your business different.",
+    "items": {
+      "arabic": {
+        "title": "Arabic right-to-left UI",
+        "body": "Designed for Arabic first, with English when you need it."
+      },
+      "payments": {
+        "title": "mada, Apple Pay and cards",
+        "body": "Subscriptions and one-off payments, ready to go."
+      },
+      "zatca": {
+        "title": "ZATCA-ready invoicing",
+        "body": "Electronic tax invoices issued with every payment."
+      },
+      "admin": {
+        "title": "Admin panel",
+        "body": "Manage customers, orders and content without a developer."
+      },
+      "otp": {
+        "title": "One-time-code login",
+        "body": "Customers sign in with a code sent to their phone. No passwords."
+      },
+      "hosting": {
+        "title": "Hosting and monitoring",
+        "body": "We host your product and watch its health and alerts."
+      },
+      "backups": {
+        "title": "Daily backups",
+        "body": "An encrypted copy of your data every day, restore-tested before launch."
+      }
+    }
+  },
+  "models": {
+    "title": "Proven models you can launch for the Gulf",
+    "lead": "Each one is a real company with publicly reported revenue. Pick the one closest to your business.",
+    "mrr": "Reported monthly revenue",
+    "mrrSource": "Source: {source}, {date}",
+    "gulf": "Gulf version from {price} in {days} days",
+    "viewAll": "Browse all models",
+    "disclaimer": "Figures belong to the companies named, as they reported them. They are not a forecast of your revenue.",
+    "empty": "Models are coming soon."
+  },
+  "offer": {
+    "title": "What you get with Launch 30",
+    "lead": "One fixed price covers the build, the launch and the support. No open-ended hours, no surprises.",
+    "tiersTitle": "Choose your tier",
+    "from": "From",
+    "vat": "Prices exclude VAT.",
+    "sarNote": "SAR prices use the fixed 3.75 peg.",
+    "bonusesTitle": "Bonuses with every build",
+    "statedValue": "Worth {value}",
+    "totalValue": "Total value",
+    "yourPrice": "You pay from",
+    "careTitle": "Care plans after launch",
+    "perMonth": "per month",
+    "blueprintTitle": "Start here: the SaaS Blueprint",
+    "blueprintCredited": "Credited to your build.",
+    "fallbackNote": "Fallback prices from the offer brief. Update the Offer global in the admin.",
+    "fullOffer": "See the full offer",
+    "fallback": {
+      "blueprintName": "SaaS Blueprint",
+      "blueprintDescription": "A 90-minute scoping session, then a fixed quote within 48 hours.",
+      "tiers": {
+        "core": {
+          "name": "Launch 30 Core",
+          "description": "A single-role product: bookings, memberships or a directory."
+        },
+        "pro": {
+          "name": "Launch 30 Pro",
+          "description": "Multi-role products, marketplaces and B2B portals."
+        },
+        "vertical": {
+          "name": "Launch 30 Vertical",
+          "description": "Operations systems for clinics, restaurants and gyms, with ZATCA invoicing."
+        }
+      },
+      "careNames": [
+        "Care Essential",
+        "Care Plus",
+        "Care Complete"
+      ],
+      "careFeatures": [
+        "Hosting and monitoring",
+        "Daily backups",
+        "Security updates",
+        "Monthly change hours"
+      ]
+    }
+  },
+  "how": {
+    "title": "How it works, in seven clear steps",
+    "lead": "At every stage you know what happens next, and when.",
+    "steps": [
+      {
+        "title": "Scorecard",
+        "body": "12 questions, two minutes, an honest read on whether your idea is ready."
+      },
+      {
+        "title": "Fit call",
+        "body": "A free 15-minute call to check we're right for you."
+      },
+      {
+        "title": "Blueprint",
+        "body": "A 90-minute scoping session, then a fixed quote within 48 hours."
+      },
+      {
+        "title": "30-day build",
+        "body": "We build your product. You see a working demo on day 10."
+      },
+      {
+        "title": "Launch",
+        "body": "Your product is live, taking customers and payments."
+      },
+      {
+        "title": "First 10 customers",
+        "body": "A focused sprint after launch to help you reach your first customers."
+      },
+      {
+        "title": "Care",
+        "body": "Hosting, maintenance and monthly improvements on a Care plan."
+      }
+    ]
+  },
+  "guarantee": {
+    "title": "The launch-date guarantee",
+    "body": "If we're late, we pay: 10% of the build fee back for every late week, and we keep building for free.",
+    "honest": "We don't promise you profit. We promise a working product, a launch date and support after launch.",
+    "terms": "The clock starts when the scope is signed and pauses while inputs we need from you are overdue."
+  },
+  "comparison": {
+    "title": "Etleq compared with your other options",
+    "lead": "A fair comparison: each option is the right choice for someone.",
+    "caption": "Etleq compared with agencies, freelancers and AI app builders",
+    "criteria": "Criteria",
+    "columns": {
+      "etleq": "Etleq",
+      "agency": "Agency",
+      "freelancer": "Freelancer",
+      "ai": "AI app builder"
+    },
+    "rows": {
+      "price": "Price",
+      "time": "Time to launch",
+      "mada": "mada payments",
+      "zatca": "ZATCA invoicing",
+      "ownership": "Code ownership",
+      "support": "Support after launch"
+    },
+    "cells": {
+      "etleqPrice": "Fixed, from {price}",
+      "etleqTime": "30 working days, guaranteed",
+      "included": "Included",
+      "etleqOwnership": "Set out in your contract",
+      "etleqSupport": "Care plans from {price}/month",
+      "agencyPrice": "SAR 35,000–65,000",
+      "agencyTime": "4–8 weeks",
+      "depends": "Depends on who you hire",
+      "extraCost": "Often extra",
+      "freelancerPrice": "Varies widely",
+      "freelancerTime": "Not guaranteed",
+      "freelancerSupport": "May disappear after launch",
+      "aiPrice": "From $25/month",
+      "aiTime": "Fast prototype",
+      "notBuiltIn": "Not built in",
+      "selfServe": "You're on your own"
+    }
+  },
+  "founders": {
+    "title": "Built by two senior engineers, not salespeople",
+    "lead": "You talk to the people who write the code, from the fit call to launch day.",
+    "placeholder": "Placeholder: add the founders' author profiles in the admin (shown outside production only)."
+  },
+  "projects": {
+    "title": "Products we've launched",
+    "lead": "Real case studies, published with our clients' consent.",
+    "planned": "Planned: {days} days",
+    "actual": "Actual: {days} days",
+    "verified": "Verified",
+    "foundingTitle": "Become a founding client",
+    "foundingBody": "We're offering a special price of {price} to {slots} clients, in exchange for filming and publishing the story of their launch.",
+    "foundingCta": "Ask about the founding-client offer"
+  },
+  "faq": {
+    "title": "Questions before you start",
+    "all": "All FAQs"
+  },
+  "finalCta": {
+    "title": "Find out in two minutes whether your idea is ready to launch",
+    "lead": "Pick whichever suits you.",
+    "scorecardTitle": "Scorecard",
+    "scorecardBody": "12 questions, instant result.",
+    "bookTitle": "Fit call",
+    "bookBody": "15 free minutes with one of the founders.",
+    "whatsappTitle": "WhatsApp",
+    "whatsappBody": "Ask us anything. The founders reply themselves.",
+    "whatsappMessage": "Hi, I'd like to know if my idea is ready to launch"
+  },
+  "launch30": {
+    "meta": {
+      "title": "Launch 30: your SaaS live in 30 days at a fixed price",
+      "description": "The Launch 30 offer in full: tiers and prices, Care plans, payment terms, the launch-date guarantee and what isn't included."
+    },
+    "eyebrow": "Launch 30",
+    "h1": "Your product live and taking payments in 30 working days",
+    "lead": "Everything about the offer on one page: what you get, what you pay and when, and what we guarantee.",
+    "slots": "{n} of {total} launch slots left this month",
+    "slotsNote": "We take a limited number of builds each month so we can keep our dates.",
+    "careTable": {
+      "caption": "Care plans compared",
+      "plan": "Plan",
+      "price": "Monthly price",
+      "includes": "Includes"
+    },
+    "paymentTitle": "Payment terms",
+    "paymentFallback": "Three instalments: 50%, then 40%, then 10%.",
+    "paymentSteps": [
+      {
+        "share": "50%",
+        "when": "First instalment"
+      },
+      {
+        "share": "40%",
+        "when": "Second instalment"
+      },
+      {
+        "share": "10%",
+        "when": "Final instalment"
+      }
+    ],
+    "guaranteeTitle": "Guarantee terms in full",
+    "notIncludedTitle": "What isn't included",
+    "notIncludedFallback": [
+      "Marketing and ad management",
+      "Any guarantee of revenue or customer numbers",
+      "Payment gateway and messaging fees charged by those providers",
+      "VAT"
+    ],
+    "processTitle": "How the project runs",
+    "faqTitle": "Questions about the offer",
+    "ctaTitle": "Take the scorecard to see if Launch 30 fits you"
+  },
+  "howItWorks": {
+    "meta": {
+      "title": "How it works: from scorecard to launch in seven steps",
+      "description": "Working with Etleq step by step: scorecard, fit call, Blueprint, 30-day build, launch, first 10 customers and Care."
+    },
+    "h1": "How it works: from idea to a working product",
+    "lead": "Seven clear steps, each with a known duration and outcome.",
+    "details": [
+      {
+        "duration": "2 minutes",
+        "outcome": "An instant result: ready to launch, almost ready, or explore first."
+      },
+      {
+        "duration": "15 minutes",
+        "outcome": "We agree whether we're a good fit. No commitment."
+      },
+      {
+        "duration": "90 minutes",
+        "outcome": "A written scope and a fixed quote within 48 hours. The fee is credited to your build."
+      },
+      {
+        "duration": "30 working days",
+        "outcome": "See a working demo on day 10 and review progress with us every week."
+      },
+      {
+        "duration": "Launch day",
+        "outcome": "Your product runs on your domain with payments and invoicing working."
+      },
+      {
+        "duration": "After launch",
+        "outcome": "We help you get ready to reach your first 10 customers."
+      },
+      {
+        "duration": "Monthly",
+        "outcome": "Hosting, backups, security updates and change hours."
+      }
+    ],
+    "durationLabel": "Duration",
+    "outcomeLabel": "Outcome",
+    "ctaTitle": "The first step takes two minutes"
+  },
+  "slideIn": {
+    "title": "Is your idea ready to launch?",
+    "body": "Find out in two minutes.",
+    "close": "Close"
+  }
+}
