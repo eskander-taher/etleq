@@ -1,14 +1,22 @@
-import { FlatCompat } from '@eslint/eslintrc'
-import { dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import nextVitals from 'eslint-config-next/core-web-vitals'
+import nextTs from 'eslint-config-next/typescript'
 
-const compat = new FlatCompat({ baseDirectory: dirname(fileURLToPath(import.meta.url)) })
-
-const physical = '(^|\s)-?(ml|mr|pl|pr|left|right|border-l|border-r|rounded-l|rounded-r)-|(^|\s)text-(left|right)(\s|$)'
+const physical = '(^|\\s)-?(ml|mr|pl|pr|left|right|border-l|border-r|rounded-l|rounded-r)-|(^|\\s)text-(left|right)(\\s|$)'
 
 export default [
-  { ignores: ['.next/**', 'node_modules/**', 'src/app/(payload)/**', 'src/payload-types.ts', 'playwright-report/**'] },
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  {
+    ignores: [
+      '.next/**',
+      'node_modules/**',
+      'src/app/(payload)/**',
+      'src/payload-types.ts',
+      'playwright-report/**',
+      'test-results/**',
+      'next-env.d.ts',
+    ],
+  },
+  ...nextVitals,
+  ...nextTs,
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',

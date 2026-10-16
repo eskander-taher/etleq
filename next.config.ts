@@ -8,6 +8,7 @@ const isStaging = process.env.SITE_ENV === 'staging'
 
 const nextConfig: NextConfig = {
   trailingSlash: false,
+  experimental: { serverActions: { bodySizeLimit: '6mb' } }, // CV uploads up to 5 MB
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [{ protocol: 'https', hostname: '**' }],
