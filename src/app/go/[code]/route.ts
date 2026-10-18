@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getPayloadClient } from '@/lib/payload'
+import { getCms } from '@/lib/cms'
 import { siteUrl } from '@/lib/utils'
 
 // Short links (/go/{code}) for reels and bios: 302 (brief section 11) so targets can change.
@@ -20,8 +20,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ code: s
 
   let link: ShortLinkDoc | undefined
   try {
-    const payload = await getPayloadClient()
-    const res = await payload.find({ collection: 'short-links', where: { code: { equals: code } }, limit: 1, depth: 0, overrideAccess: true })
+    const cms = await getCms()
+    const res = await cms.find({ collection: 'short-links', where: { code: { equals: code } }, limit: 1, depth: 0, overrideAccess: true })
     link = res.docs[0] as ShortLinkDoc | undefined
   } catch (err) {
     console.error('[go] lookup failed:', (err as Error).message)

@@ -1,9 +1,9 @@
 /**
- * Small helpers for Lexical rich-text JSON (the format Payload stores).
+ * Small helpers for the Lexical-shaped rich-text tree (built from Markdown by src/cms/richtext.ts).
  */
 
 type LexicalNode = { type: string; version: number; text?: string; children?: LexicalNode[]; [key: string]: unknown }
-/** Matches the shape Payload generates for richText fields. */
+/** Root of a rich-text tree. */
 export type LexicalRoot = {
   [k: string]: unknown
   root: {

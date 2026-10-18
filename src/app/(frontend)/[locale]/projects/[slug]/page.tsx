@@ -15,7 +15,7 @@ import { getProject, projectSlugs } from '@/lib/queries/projects'
 import { buildMetadata } from '@/lib/seo'
 import { articleNode, graph } from '@/lib/schema'
 import { formatNumber } from '@/lib/format'
-import type { Model, Testimonial } from '@/payload-types'
+import type { Model, Testimonial } from '@/cms/content-types'
 
 export const revalidate = 3600
 export const dynamicParams = true

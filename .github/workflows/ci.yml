@@ -15,10 +15,10 @@ permissions:
 
 env:
   NODE_VERSION: '24'
-  # A replica set is required (Payload uses transactions). GitHub service containers cannot
+  # MongoDB runs as a single-node replica set (same as local dev). GitHub service containers cannot
   # pass `--replSet`, so MongoDB is started with `docker run` in each job that needs it.
   DATABASE_URL: mongodb://127.0.0.1:27017/etleq?replicaSet=rs0&directConnection=true
-  PAYLOAD_SECRET: ci-only-secret-not-used-anywhere-else-000000
+  AUTH_SECRET: ci-only-secret-not-used-anywhere-else-000000
   NEXT_PUBLIC_SITE_URL: http://localhost:3000
   # 'development' so pages are indexable for Lighthouse SEO and samples are allowed.
   SITE_ENV: development

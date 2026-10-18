@@ -4,11 +4,11 @@ import { localePath, siteUrl } from './utils'
 export type SeoLocale = 'ar' | 'en'
 
 export const DEFAULT_TITLE_TEMPLATE: Record<SeoLocale, string> = {
-  ar: '%s — إطلاق',
+  ar: '%s — اطلق',
   en: '%s — Etleq',
 }
 
-export const SITE_NAME: Record<SeoLocale, string> = { ar: 'إطلاق', en: 'Etleq' }
+export const SITE_NAME: Record<SeoLocale, string> = { ar: 'اطلق', en: 'Etleq' }
 
 /** Absolute URL for a locale-less path ('/models/x') in the given locale. */
 export function absoluteUrl(locale: SeoLocale, path = '/'): string {
@@ -52,7 +52,7 @@ export interface BuildMetadataInput {
   alternates?: { ar?: boolean; en?: boolean }
   noindex?: boolean
   type?: 'website' | 'article' | 'profile'
-  /** Title template from seo-defaults (e.g. '%s — إطلاق'). */
+  /** Title template from seo-defaults (e.g. '%s — اطلق'). */
   titleTemplate?: string | null
   /** Use the title exactly as given (home page). */
   absoluteTitle?: boolean

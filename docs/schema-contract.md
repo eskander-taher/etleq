@@ -9,10 +9,10 @@ Brief section 10 is the source; this file pins exact slugs, field names and modu
   - `slug` (text, unique, index, NOT localized, lowercase Latin `^[a-z0-9]+(?:-[a-z0-9]+)*$`)
   - `translated` group: `{ ar: checkbox, en: checkbox }` (not localized). A locale is public only when ticked.
   - `isSample` checkbox (sidebar, default false)
-  - `meta` group from `@payloadcms/plugin-seo` (title, description, image) (L)
-  - `versions: { drafts: { autosave: { interval: 800 }, schedulePublish: true } }` → `_status` field.
+  - `meta` group (title (L), description (L), image)
+  - `drafts: true` in `src/cms/schema/collections.ts` → `_status` field (`draft` | `published`).
 - Public queries ALWAYS: `locale`, `fallbackLocale: false`, `draft: false`, `where: { _status: {equals:'published'}, 'translated.<locale>': {equals: true} }`. Helper: `publicWhere(locale)` in `src/lib/queries/common.ts`.
-- Generated types: `src/payload-types.ts` (`pnpm generate:types`). Interface names = singular PascalCase of the slug (e.g. `Model`, `Post`, `Faq`, `News`, `ShortLink`); globals use `interfaceName` exactly as named below.
+- Schema: `src/cms/schema/**`. Types: `src/cms/content-types.ts` (hand-maintained; update it with the schema). Interface names = singular PascalCase of the slug (e.g. `Model`, `Post`, `Faq`, `News`, `ShortLink`); globals use `interfaceName` exactly as named below.
 - Money: numbers in USD unless a `currency` field says otherwise. SAR = USD × 3.75 (`src/lib/format.ts`).
 
 ## Collections (slug → key fields)
@@ -56,8 +56,8 @@ Brief section 10 is the source; this file pins exact slugs, field names and modu
 
 | Area | Owner workstream | Files |
 | --- | --- | --- |
-| Foundation | lead | package.json, configs, `src/i18n/*`, `src/proxy.ts`, `src/app/(frontend)/[locale]/layout.tsx`, `src/app/(frontend)/globals.css`, `src/lib/{utils,format,payload,env,whatsapp}.ts`, `src/components/ui/{button,container,section}.tsx`, `scripts/check-logical-css.mjs` |
-| CMS | A | `src/payload.config.ts`, `src/collections/**`, `src/globals/**`, `src/blocks/**`, `src/access/**`, `src/hooks/**`, `src/lib/queries/common.ts`, `src/lib/revalidate.ts`, `src/lib/indexnow.ts`, `scripts/seed.ts`, `scripts/check-samples.ts`, `scripts/dev-mongo.ts`, `tests/unit/access*.test.ts`, `tests/unit/cms*.test.ts` |
+| Foundation | lead | package.json, configs, `src/i18n/*`, `src/proxy.ts`, `src/app/(frontend)/[locale]/layout.tsx`, `src/app/(frontend)/globals.css`, `src/lib/{utils,format,cms,env,whatsapp}.ts`, `src/components/ui/{button,container,section}.tsx`, `scripts/check-logical-css.mjs` |
+| CMS | A | `src/cms/**`, `src/app/admin/**`, `src/components/admin/**`, `src/hooks/**`, `src/lib/queries/common.ts`, `src/lib/revalidate.ts`, `src/lib/indexnow.ts`, `scripts/seed.ts`, `scripts/check-samples.ts`, `scripts/dev-mongo.ts` |
 | Design & shell | B | `src/components/layout/**` (Header, Footer, LanguageSwitcher, AnnouncementBar, StickyMobileBar, Logo, LanguageBanner), `src/components/ui/**` (others), `src/app/(frontend)/[locale]/{design,about,faq,contact,privacy,terms,disclaimer,cookies,accessibility}/**`, `not-found.tsx`, `[...rest]`, `public/` logos+favicons, `src/messages/*/common.json` |
 | Conversion | C | `src/app/(frontend)/[locale]/{page.tsx,launch-30,how-it-works,scorecard,book,playbook,thank-you}/**`, `src/app/go/**`, `src/app/hooks/**`, `src/components/sections/home/**`, `src/components/scorecard/**`, `src/components/forms/**`, `src/lib/{scoring,leads,turnstile,rate-limit,notify}.ts`, `src/lib/validation/**`, `src/actions/**`, `src/messages/*/{home,scorecard,forms}.json`, `tests/unit/scoring.test.ts` |
 | Content | D | `src/app/(frontend)/[locale]/{models,solutions,projects,cost,compare,blog,news,authors,careers}/**`, `src/components/content/**`, `src/components/RichText.tsx`, `src/lib/queries/{models,solutions,projects,posts,news,guides,jobs,authors}.ts`, `src/messages/*/{content,careers}.json` |
@@ -65,7 +65,7 @@ Brief section 10 is the source; this file pins exact slugs, field names and modu
 
 ## Shared APIs (signatures agents rely on)
 
-- `getPayloadClient(): Promise<Payload>` — `src/lib/payload.ts`
+- `getCms()` — `src/lib/cms.ts` (the data API in `src/cms/local.ts`: `find`, `findByID`, `count`, `create`, `update`, `delete`, `findGlobal`, `updateGlobal`, `sendEmail`)
 - `publicWhere(locale, extra?)` — `src/lib/queries/common.ts` (A)
 - `getGlobal(slug, locale)` — `src/lib/queries/common.ts` (A), cached with `unstable_cache`-free plain call (pages are ISR).
 - `formatUSD(n, locale)`, `formatSAR(n, locale)`, `formatPrice(usd, locale)` (AR → `22,125 ر.س`, EN → `$5,900`), `formatDate(iso, locale)` — `src/lib/format.ts`

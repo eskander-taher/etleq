@@ -1,8 +1,8 @@
 import { cache } from 'react'
-import type { Where } from 'payload'
-import { getPayloadClient } from '@/lib/payload'
+import type { Where } from '@/cms/types'
+import { getCms } from '@/lib/cms'
 import { publicWhere } from '@/lib/queries/common'
-import type { Category, Post } from '@/payload-types'
+import type { Category, Post } from '@/cms/content-types'
 
 type Loc = 'ar' | 'en'
 
@@ -18,12 +18,12 @@ export async function listPosts(
     authorId,
   }: { page?: number; limit?: number; q?: string; categoryId?: string | number; authorId?: string | number } = {},
 ) {
-  const payload = await getPayloadClient()
+  const cms = await getCms()
   const and: Where[] = []
   if (q) and.push({ title: { like: q.slice(0, 80) } })
   if (categoryId) and.push({ categories: { in: [categoryId] } })
   if (authorId) and.push({ authors: { in: [authorId] } })
-  return payload.find({
+  return cms.find({
     collection: 'posts',
     locale,
     fallbackLocale: false,
@@ -37,8 +37,8 @@ export async function listPosts(
 }
 
 export const getPost = cache(async (slug: string, locale: Loc): Promise<Post | null> => {
-  const payload = await getPayloadClient()
-  const res = await payload.find({
+  const cms = await getCms()
+  const res = await cms.find({
     collection: 'posts',
     locale,
     fallbackLocale: false,
@@ -53,11 +53,11 @@ export const getPost = cache(async (slug: string, locale: Loc): Promise<Post | n
 
 /** Fallback related posts: the latest posts sharing a category, excluding the current one. */
 export async function relatedPosts(post: Post, locale: Loc, limit = 3): Promise<Post[]> {
-  const payload = await getPayloadClient()
+  const cms = await getCms()
   const categoryIds = (post.categories ?? []).map((c) => (typeof c === 'object' ? c.id : c))
   const and: Where[] = [{ id: { not_equals: post.id } }]
   if (categoryIds.length) and.push({ categories: { in: categoryIds } })
-  const res = await payload.find({
+  const res = await cms.find({
     collection: 'posts',
     locale,
     fallbackLocale: false,
@@ -72,8 +72,8 @@ export async function relatedPosts(post: Post, locale: Loc, limit = 3): Promise<
 
 export async function postSlugs(locale: Loc): Promise<string[]> {
   try {
-    const payload = await getPayloadClient()
-    const res = await payload.find({
+    const cms = await getCms()
+    const res = await cms.find({
       collection: 'posts',
       locale,
       fallbackLocale: false,
@@ -90,10 +90,9 @@ export async function postSlugs(locale: Loc): Promise<string[]> {
   }
 }
 
-
 export async function listCategories(locale: Loc): Promise<Category[]> {
-  const payload = await getPayloadClient()
-  const res = await payload.find({
+  const cms = await getCms()
+  const res = await cms.find({
     collection: 'categories',
     locale,
     fallbackLocale: false,
@@ -108,8 +107,8 @@ export async function listCategories(locale: Loc): Promise<Category[]> {
 }
 
 export const getCategory = cache(async (slug: string, locale: Loc): Promise<Category | null> => {
-  const payload = await getPayloadClient()
-  const res = await payload.find({
+  const cms = await getCms()
+  const res = await cms.find({
     collection: 'categories',
     locale,
     fallbackLocale: false,

@@ -1,4 +1,3 @@
-import { withPayload } from '@payloadcms/next/withPayload'
 import createNextIntlPlugin from 'next-intl/plugin'
 import type { NextConfig } from 'next'
 
@@ -8,7 +7,7 @@ const isStaging = process.env.SITE_ENV === 'staging'
 
 const nextConfig: NextConfig = {
   trailingSlash: false,
-  experimental: { serverActions: { bodySizeLimit: '6mb' } }, // CV uploads up to 5 MB
+  experimental: { serverActions: { bodySizeLimit: '4.5mb' } }, // CV uploads up to 4 MB (Vercel's request limit is 4.5 MB)
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [{ protocol: 'https', hostname: '**' }],
@@ -26,4 +25,4 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default withPayload(withNextIntl(nextConfig), { devBundleServerPackages: false })
+export default withNextIntl(nextConfig)

@@ -12,3 +12,4 @@ test-results
 .mongo-data
 next-env.d.ts
 *.tsbuildinfo
+/brag-output*/

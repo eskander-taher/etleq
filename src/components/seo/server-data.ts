@@ -1,16 +1,16 @@
 /**
  * Server-only data access for machine files (robots, sitemaps, RSS, llms.txt).
- * Talks to Payload directly with the public-query rules from docs/schema-contract.md
+ * Talks to the CMS data layer directly with the public-query rules from docs/schema-contract.md
  * and degrades to empty results when the database is unreachable (e.g. at build time in CI).
  */
-import { getPayloadClient } from '@/lib/payload'
+import { getCms } from '@/lib/cms'
 
 export type Loc = 'ar' | 'en'
 
 const DB_TIMEOUT_MS = 8000
 
-/** Loose Payload surface so these files don't depend on generated collection types. */
-interface LoosePayload {
+/** Loose CMS surface so these files don't depend on generated collection types. */
+interface LooseCms {
   find: (args: Record<string, unknown>) => Promise<{ docs: Record<string, unknown>[] }>
   findGlobal: (args: Record<string, unknown>) => Promise<Record<string, unknown>>
 }
@@ -22,11 +22,11 @@ function withTimeout<T>(p: Promise<T>, ms = DB_TIMEOUT_MS): Promise<T> {
   ])
 }
 
-async function client(): Promise<LoosePayload | null> {
+async function client(): Promise<LooseCms | null> {
   try {
-    return (await withTimeout(getPayloadClient())) as unknown as LoosePayload
+    return (await withTimeout(getCms())) as unknown as LooseCms
   } catch (err) {
-    console.warn('[seo] Payload unavailable:', (err as Error).message)
+    console.warn('[seo] CMS unavailable:', (err as Error).message)
     return null
   }
 }
@@ -40,11 +40,11 @@ export interface SeoDefaultsLike {
 }
 
 export async function getSeoDefaults(locale: Loc = 'ar'): Promise<SeoDefaultsLike | null> {
-  const payload = await client()
-  if (!payload) return null
+  const cms = await client()
+  if (!cms) return null
   try {
     return (await withTimeout(
-      payload.findGlobal({ slug: 'seo-defaults', locale, fallbackLocale: false, depth: 0 }),
+      cms.findGlobal({ slug: 'seo-defaults', locale, fallbackLocale: false, depth: 0 }),
     )) as SeoDefaultsLike
   } catch (err) {
     console.warn('[seo] seo-defaults unavailable:', (err as Error).message)
@@ -67,15 +67,15 @@ export async function findPublished(
     select?: Record<string, true>
   } = {},
 ): Promise<Record<string, unknown>[]> {
-  const payload = await client()
-  if (!payload) return []
+  const cms = await client()
+  if (!cms) return []
   const and: Record<string, unknown>[] = [{ _status: { equals: 'published' } }]
   if (opts.locale) and.push({ [`translated.${opts.locale}`]: { equals: true } })
   else and.push({ or: [{ 'translated.ar': { equals: true } }, { 'translated.en': { equals: true } }] })
   if (opts.where) and.push(opts.where)
   try {
     const res = await withTimeout(
-      payload.find({
+      cms.find({
         collection,
         locale: opts.locale || 'ar',
         fallbackLocale: false,

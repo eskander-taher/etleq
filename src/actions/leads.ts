@@ -23,7 +23,7 @@ import {
   type SubscribeInput,
 } from '@/lib/validation'
 import { getScorecardSettings, getSiteSettings, type SiteSettingsData } from '@/components/sections/offer/data'
-import { getPayloadClient } from '@/lib/payload'
+import { getCms } from '@/lib/cms'
 
 type Locale = 'ar' | 'en'
 
@@ -289,13 +289,13 @@ export async function submitSubscribe(input: SubmitSubscribeInput): Promise<Acti
 
 async function upsertSubscriber(email: string, locale: Locale, consent: { given: boolean; at: string; policyVersion: string }) {
   try {
-    const payload = await getPayloadClient()
-    const existing = await payload.find({ collection: 'subscribers', where: { email: { equals: email } }, limit: 1, depth: 0, overrideAccess: true })
+    const cms = await getCms()
+    const existing = await cms.find({ collection: 'subscribers', where: { email: { equals: email } }, limit: 1, depth: 0, overrideAccess: true })
     const data = { email, locale, consent: { given: consent.given, at: consent.at, policyVersion: consent.policyVersion } }
     if (existing.docs[0]) {
-      await payload.update({ collection: 'subscribers', id: existing.docs[0].id, data: data as never, overrideAccess: true })
+      await cms.update({ collection: 'subscribers', id: existing.docs[0].id, data: data as never, overrideAccess: true })
     } else {
-      await payload.create({ collection: 'subscribers', data: { ...data, status: 'pending' } as never, overrideAccess: true })
+      await cms.create({ collection: 'subscribers', data: { ...data, status: 'pending' } as never, overrideAccess: true })
     }
   } catch (err) {
     // The lead record still captures the sign-up.

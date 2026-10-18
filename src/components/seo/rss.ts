@@ -26,10 +26,10 @@ const xml = (s: string) =>
 export function buildRss(locale: Loc, items: FeedItem[], now = new Date()): string {
   const home = absoluteUrl(locale, '/')
   const self = absoluteUrl(locale, '/rss.xml')
-  const title = locale === 'ar' ? 'إطلاق — المدونة والأخبار' : 'Etleq — Blog and news'
+  const title = locale === 'ar' ? 'اطلق — المدونة والأخبار' : 'Etleq — Blog and news'
   const description =
     locale === 'ar'
-      ? 'مقالات وأخبار إطلاق عن بناء وإطلاق منصات SaaS في الخليج.'
+      ? 'مقالات وأخبار اطلق عن بناء وإطلاق منصات SaaS في الخليج.'
       : 'Etleq articles and news on building and launching SaaS in the Gulf.'
   const entries = items
     .map((it) => {

@@ -1,0 +1,3784 @@
+/* tslint:disable */
+/* eslint-disable */
+/**
+ * Content types for the CMS documents as the public site reads them (one
+ * locale resolved, relations populated or ids). Originally generated from the
+ * Payload schema; now maintained by hand next to `src/cms/schema`.
+ * Rich text fields arrive as a Lexical-shaped tree built from Markdown.
+ */
+
+/**
+ * Supported timezones in IANA format.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "supportedTimezones".
+ */
+export type SupportedTimezones =
+  | 'Pacific/Midway'
+  | 'Pacific/Niue'
+  | 'Pacific/Honolulu'
+  | 'Pacific/Rarotonga'
+  | 'America/Anchorage'
+  | 'Pacific/Gambier'
+  | 'America/Los_Angeles'
+  | 'America/Tijuana'
+  | 'America/Denver'
+  | 'America/Phoenix'
+  | 'America/Chicago'
+  | 'America/Guatemala'
+  | 'America/New_York'
+  | 'America/Bogota'
+  | 'America/Caracas'
+  | 'America/Santiago'
+  | 'America/Buenos_Aires'
+  | 'America/Sao_Paulo'
+  | 'Atlantic/South_Georgia'
+  | 'Atlantic/Azores'
+  | 'Atlantic/Cape_Verde'
+  | 'Europe/London'
+  | 'Europe/Berlin'
+  | 'Africa/Lagos'
+  | 'Europe/Athens'
+  | 'Africa/Cairo'
+  | 'Europe/Moscow'
+  | 'Asia/Riyadh'
+  | 'Asia/Dubai'
+  | 'Asia/Baku'
+  | 'Asia/Karachi'
+  | 'Asia/Tashkent'
+  | 'Asia/Calcutta'
+  | 'Asia/Dhaka'
+  | 'Asia/Almaty'
+  | 'Asia/Jakarta'
+  | 'Asia/Bangkok'
+  | 'Asia/Shanghai'
+  | 'Asia/Singapore'
+  | 'Asia/Tokyo'
+  | 'Asia/Seoul'
+  | 'Australia/Brisbane'
+  | 'Australia/Sydney'
+  | 'Pacific/Guam'
+  | 'Pacific/Noumea'
+  | 'Pacific/Auckland'
+  | 'Pacific/Fiji'
+
+export interface Config {
+  auth: {
+    users: UserAuthOperations
+  }
+  blocks: {}
+  collections: {
+    pages: Page
+    models: Model
+    solutions: Solution
+    projects: Project
+    posts: Post
+    news: News
+    guides: Guide
+    faqs: Faq
+    authors: Author
+    categories: Category
+    tags: Tag
+    testimonials: Testimonial
+    media: Media
+    'short-links': ShortLink
+    jobs: Job
+    applications: Application
+    leads: Lead
+    subscribers: Subscriber
+    'private-files': PrivateFile
+    users: User
+    redirects: Redirect
+    'payload-kv': PayloadKv
+    'payload-jobs': PayloadJob
+    'payload-locked-documents': PayloadLockedDocument
+    'payload-preferences': PayloadPreference
+    'payload-migrations': PayloadMigration
+  }
+  collectionsJoins: {}
+  collectionsSelect: {
+    pages: PagesSelect<false> | PagesSelect<true>
+    models: ModelsSelect<false> | ModelsSelect<true>
+    solutions: SolutionsSelect<false> | SolutionsSelect<true>
+    projects: ProjectsSelect<false> | ProjectsSelect<true>
+    posts: PostsSelect<false> | PostsSelect<true>
+    news: NewsSelect<false> | NewsSelect<true>
+    guides: GuidesSelect<false> | GuidesSelect<true>
+    faqs: FaqsSelect<false> | FaqsSelect<true>
+    authors: AuthorsSelect<false> | AuthorsSelect<true>
+    categories: CategoriesSelect<false> | CategoriesSelect<true>
+    tags: TagsSelect<false> | TagsSelect<true>
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>
+    media: MediaSelect<false> | MediaSelect<true>
+    'short-links': ShortLinksSelect<false> | ShortLinksSelect<true>
+    jobs: JobsSelect<false> | JobsSelect<true>
+    applications: ApplicationsSelect<false> | ApplicationsSelect<true>
+    leads: LeadsSelect<false> | LeadsSelect<true>
+    subscribers: SubscribersSelect<false> | SubscribersSelect<true>
+    'private-files': PrivateFilesSelect<false> | PrivateFilesSelect<true>
+    users: UsersSelect<false> | UsersSelect<true>
+    redirects: RedirectsSelect<false> | RedirectsSelect<true>
+    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>
+    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>
+    'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>
+    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>
+    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>
+  }
+  db: {
+    defaultIDType: string
+  }
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('ar' | 'en') | ('ar' | 'en')[]
+  globals: {
+    header: Header
+    footer: Footer
+    'site-settings': SiteSettings
+    offer: Offer
+    'scorecard-settings': ScorecardSettings
+    'seo-defaults': SeoDefaults
+    'announcement-bar': AnnouncementBar
+    'payload-jobs-stats': PayloadJobsStat
+  }
+  globalsSelect: {
+    header: HeaderSelect<false> | HeaderSelect<true>
+    footer: FooterSelect<false> | FooterSelect<true>
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>
+    offer: OfferSelect<false> | OfferSelect<true>
+    'scorecard-settings': ScorecardSettingsSelect<false> | ScorecardSettingsSelect<true>
+    'seo-defaults': SeoDefaultsSelect<false> | SeoDefaultsSelect<true>
+    'announcement-bar': AnnouncementBarSelect<false> | AnnouncementBarSelect<true>
+    'payload-jobs-stats': PayloadJobsStatsSelect<false> | PayloadJobsStatsSelect<true>
+  }
+  locale: 'ar' | 'en'
+  widgets: {
+    collections: CollectionsWidget
+  }
+  user: User
+  jobs: {
+    tasks: {
+      anonymiseExpired: TaskAnonymiseExpired
+      schedulePublish: TaskSchedulePublish
+      inline: {
+        input: unknown
+        output: unknown
+      }
+    }
+    workflows: unknown
+  }
+}
+export interface UserAuthOperations {
+  forgotPassword: {
+    email: string
+    password: string
+  }
+  login: {
+    email: string
+    password: string
+  }
+  registerFirstUser: {
+    email: string
+    password: string
+  }
+  unlock: {
+    email: string
+    password: string
+  }
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: string
+  title?: string | null
+  /**
+   * Generated from the English title. Lowercase Latin only. Changing it after publishing creates a 301 redirect.
+   */
+  slug?: string | null
+  layout?:
+    | (
+        | HeroBlock
+        | ProofStripBlock
+        | ProblemBlock
+        | MechanismBlock
+        | ModelsTeaserBlock
+        | OfferStackBlock
+        | HowItWorksBlock
+        | GuaranteeBlock
+        | FoundersBlock
+        | ProjectsProofBlock
+        | FaqListBlock
+        | FinalCtaBlock
+        | RichContentBlock
+        | CalloutBlock
+        | StatWithSourceBlock
+        | ComparisonTableBlock
+        | FaqBlock
+        | CtaBlock
+        | VideoBlock
+      )[]
+    | null
+  /**
+   * Tick a language to publish it. Its required fields become mandatory; unticked languages return 404.
+   */
+  translated?: {
+    ar?: boolean | null
+    en?: boolean | null
+  }
+  /**
+   * Sample content for development only. The production build fails if a published document is a sample.
+   */
+  isSample?: boolean | null
+  meta?: {
+    title?: string | null
+    description?: string | null
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media
+  }
+  updatedAt: string
+  createdAt: string
+  _status?: ('draft' | 'published') | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock".
+ */
+export interface HeroBlock {
+  eyebrow?: string | null
+  heading: string
+  subheading?: string | null
+  primaryLabel?: string | null
+  secondaryLabel?: string | null
+  videoUrl?: string | null
+  microcopy?: string | null
+  trustItems?:
+    | {
+        text: string
+        id?: string | null
+      }[]
+    | null
+  image?: (string | null) | Media
+  id?: string | null
+  blockName?: string | null
+  blockType: 'hero'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: string
+  /**
+   * Describe the image for screen readers, in this language.
+   */
+  alt: string
+  caption?: string | null
+  credit?: string | null
+  updatedAt: string
+  createdAt: string
+  url?: string | null
+  thumbnailURL?: string | null
+  filename?: string | null
+  mimeType?: string | null
+  filesize?: number | null
+  width?: number | null
+  height?: number | null
+  focalX?: number | null
+  focalY?: number | null
+  sizes?: {
+    thumbnail?: {
+      url?: string | null
+      width?: number | null
+      height?: number | null
+      mimeType?: string | null
+      filesize?: number | null
+      filename?: string | null
+    }
+    card?: {
+      url?: string | null
+      width?: number | null
+      height?: number | null
+      mimeType?: string | null
+      filesize?: number | null
+      filename?: string | null
+    }
+    hero?: {
+      url?: string | null
+      width?: number | null
+      height?: number | null
+      mimeType?: string | null
+      filesize?: number | null
+      filename?: string | null
+    }
+    og?: {
+      url?: string | null
+      width?: number | null
+      height?: number | null
+      mimeType?: string | null
+      filesize?: number | null
+      filename?: string | null
+    }
+  }
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProofStripBlock".
+ */
+export interface ProofStripBlock {
+  heading?: string | null
+  /**
+   * Only true facts. Each item should link its evidence.
+   */
+  items?:
+    | {
+        value?: string | null
+        label: string
+        sourceName?: string | null
+        sourceUrl?: string | null
+        checkedAt?: string | null
+        id?: string | null
+      }[]
+    | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'proofStrip'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProblemBlock".
+ */
+export interface ProblemBlock {
+  heading?: string | null
+  intro?: string | null
+  cards?:
+    | {
+        title: string
+        body: string
+        sourceName?: string | null
+        sourceUrl?: string | null
+        checkedAt?: string | null
+        id?: string | null
+      }[]
+    | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'problem'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MechanismBlock".
+ */
+export interface MechanismBlock {
+  heading?: string | null
+  intro?: string | null
+  items?:
+    | {
+        title: string
+        description?: string | null
+        /**
+         * lucide-react icon name
+         */
+        icon?: string | null
+        id?: string | null
+      }[]
+    | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'mechanism'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ModelsTeaserBlock".
+ */
+export interface ModelsTeaserBlock {
+  heading?: string | null
+  intro?: string | null
+  models?: (string | Model)[] | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'modelsTeaser'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "models".
+ */
+export interface Model {
+  id: string
+  title?: string | null
+  /**
+   * Generated from the English title. Lowercase Latin only. Changing it after publishing creates a 301 redirect.
+   */
+  slug?: string | null
+  /**
+   * 40–60 word direct answer shown at the top of the page (for search and AI assistants).
+   */
+  answerBox?: string | null
+  category?: ('booking' | 'membership' | 'marketplace' | 'directory' | 'b2b' | 'vertical' | 'creator' | 'other') | null
+  whatItDoes?: string | null
+  whoPays?: string | null
+  pricingModel?: string | null
+  /**
+   * Reported monthly recurring revenue of the success story. Shown with its source, date and a disclaimer.
+   */
+  mrr?: {
+    amount?: number | null
+    currency?: string | null
+    sourceName?: string | null
+    sourceUrl?: string | null
+    reportedAt?: string | null
+  }
+  teamSize?: number | null
+  yearFounded?: number | null
+  /**
+   * At least 3 sources with URL and checked date are required to publish.
+   */
+  factSources?:
+    | {
+        label?: string | null
+        value?: string | null
+        url?: string | null
+        checkedAt?: string | null
+        id?: string | null
+      }[]
+    | null
+  whyItWorks?: {
+    root: {
+      type: string
+      children: {
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  } | null
+  runningCosts?:
+    | {
+        item?: string | null
+        monthlyCost?: number | null
+        currency?: string | null
+        sourceUrl?: string | null
+        checkedAt?: string | null
+        id?: string | null
+      }[]
+    | null
+  gulfVersion?: {
+    root: {
+      type: string
+      children: {
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  } | null
+  mvpFeatures?:
+    | {
+        feature?: string | null
+        id?: string | null
+      }[]
+    | null
+  tier?: ('core' | 'pro' | 'vertical') | null
+  /**
+   * USD, excluding VAT.
+   */
+  priceFrom?: number | null
+  buildDays?: number | null
+  fitCriteria?:
+    | {
+        criterion?: string | null
+        id?: string | null
+      }[]
+    | null
+  reel?: {
+    url?: string | null
+    platform?: ('youtube' | 'instagram') | null
+    posterImage?: (string | null) | Media
+  }
+  transcript?: string | null
+  faqs?: (string | Faq)[] | null
+  relatedModels?: (string | Model)[] | null
+  relatedSolution?: (string | null) | Solution
+  relatedPosts?: (string | Post)[] | null
+  reviewer?: (string | null) | Author
+  /**
+   * Required to publish.
+   */
+  lastReviewedAt?: string | null
+  authors?: (string | Author)[] | null
+  heroImage?: (string | null) | Media
+  /**
+   * Tick a language to publish it. Its required fields become mandatory; unticked languages return 404.
+   */
+  translated?: {
+    ar?: boolean | null
+    en?: boolean | null
+  }
+  /**
+   * Sample content for development only. The production build fails if a published document is a sample.
+   */
+  isSample?: boolean | null
+  meta?: {
+    title?: string | null
+    description?: string | null
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media
+  }
+  updatedAt: string
+  createdAt: string
+  _status?: ('draft' | 'published') | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs".
+ */
+export interface Faq {
+  id: string
+  question?: string | null
+  answer?: string | null
+  category?:
+    | (
+        | 'price'
+        | 'ownership'
+        | 'timeline'
+        | 'payments'
+        | 'hosting'
+        | 'languages'
+        | 'equity'
+        | 'refunds'
+        | 'process'
+        | 'general'
+      )
+    | null
+  order?: number | null
+  /**
+   * Tick a language to publish it. Its required fields become mandatory; unticked languages return 404.
+   */
+  translated?: {
+    ar?: boolean | null
+    en?: boolean | null
+  }
+  /**
+   * Sample content for development only. The production build fails if a published document is a sample.
+   */
+  isSample?: boolean | null
+  updatedAt: string
+  createdAt: string
+  _status?: ('draft' | 'published') | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "solutions".
+ */
+export interface Solution {
+  id: string
+  title?: string | null
+  /**
+   * Generated from the English title. Lowercase Latin only. Changing it after publishing creates a 301 redirect.
+   */
+  slug?: string | null
+  vertical?: ('clinics' | 'gyms' | 'salons' | 'restaurants' | 'training-centres') | null
+  summary?: string | null
+  buyerProblems?:
+    | {
+        problem?: string | null
+        id?: string | null
+      }[]
+    | null
+  features?:
+    | {
+        title?: string | null
+        description?: string | null
+        /**
+         * lucide-react icon name
+         */
+        icon?: string | null
+        id?: string | null
+      }[]
+    | null
+  integrations?:
+    | {
+        name?: string | null
+        description?: string | null
+        id?: string | null
+      }[]
+    | null
+  video?: {
+    url?: string | null
+    posterImage?: (string | null) | Media
+  }
+  /**
+   * USD, excluding VAT.
+   */
+  priceFrom?: number | null
+  steps?:
+    | {
+        title?: string | null
+        description?: string | null
+        id?: string | null
+      }[]
+    | null
+  caseStudies?: (string | Project)[] | null
+  faqs?: (string | Faq)[] | null
+  /**
+   * Tick a language to publish it. Its required fields become mandatory; unticked languages return 404.
+   */
+  translated?: {
+    ar?: boolean | null
+    en?: boolean | null
+  }
+  /**
+   * Sample content for development only. The production build fails if a published document is a sample.
+   */
+  isSample?: boolean | null
+  meta?: {
+    title?: string | null
+    description?: string | null
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media
+  }
+  updatedAt: string
+  createdAt: string
+  _status?: ('draft' | 'published') | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: string
+  title?: string | null
+  /**
+   * Generated from the English title. Lowercase Latin only. Changing it after publishing creates a 301 redirect.
+   */
+  slug?: string | null
+  clientName?: string | null
+  clientLogo?: (string | null) | Media
+  /**
+   * Required (with the consent file) to publish.
+   */
+  consentGiven?: boolean | null
+  consentFile?: (string | null) | PrivateFile
+  context?: string | null
+  challenge?: {
+    root: {
+      type: string
+      children: {
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  } | null
+  solution?: {
+    root: {
+      type: string
+      children: {
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  } | null
+  scope?:
+    | {
+        item?: string | null
+        id?: string | null
+      }[]
+    | null
+  stack?:
+    | {
+        name?: string | null
+        id?: string | null
+      }[]
+    | null
+  plannedDays?: number | null
+  actualDays?: number | null
+  /**
+   * Only verified results are shown on the site.
+   */
+  results?:
+    | {
+        label?: string | null
+        value?: string | null
+        verified?: boolean | null
+        /**
+         * Link or note proving the result (internal).
+         */
+        evidence?: string | null
+        id?: string | null
+      }[]
+    | null
+  gallery?:
+    | {
+        image?: (string | null) | Media
+        id?: string | null
+      }[]
+    | null
+  testimonial?: (string | null) | Testimonial
+  relatedModel?: (string | null) | Model
+  publishedAt?: string | null
+  /**
+   * Tick a language to publish it. Its required fields become mandatory; unticked languages return 404.
+   */
+  translated?: {
+    ar?: boolean | null
+    en?: boolean | null
+  }
+  /**
+   * Sample content for development only. The production build fails if a published document is a sample.
+   */
+  isSample?: boolean | null
+  meta?: {
+    title?: string | null
+    description?: string | null
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media
+  }
+  updatedAt: string
+  createdAt: string
+  _status?: ('draft' | 'published') | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "private-files".
+ */
+export interface PrivateFile {
+  id: string
+  /**
+   * Decides who can open the file: recruiters see CVs, editors see consent records.
+   */
+  purpose: 'cv' | 'consent'
+  note?: string | null
+  updatedAt: string
+  createdAt: string
+  url?: string | null
+  thumbnailURL?: string | null
+  filename?: string | null
+  mimeType?: string | null
+  filesize?: number | null
+  width?: number | null
+  height?: number | null
+  focalX?: number | null
+  focalY?: number | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: string
+  person: string
+  role?: string | null
+  company?: string | null
+  photo?: (string | null) | Media
+  quote?: string | null
+  videoUrl?: string | null
+  consentFile?: (string | null) | PrivateFile
+  /**
+   * Only verified testimonials (with a consent file) are shown on the site.
+   */
+  verified?: boolean | null
+  relatedProject?: (string | null) | Project
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: string
+  title?: string | null
+  /**
+   * Generated from the English title. Lowercase Latin only. Changing it after publishing creates a 301 redirect.
+   */
+  slug?: string | null
+  excerpt?: string | null
+  keyTakeaways?:
+    | {
+        text?: string | null
+        id?: string | null
+      }[]
+    | null
+  content?: {
+    root: {
+      type: string
+      children: {
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  } | null
+  heroImage?: (string | null) | Media
+  authors?: (string | Author)[] | null
+  categories?: (string | Category)[] | null
+  tags?: (string | Tag)[] | null
+  publishedAt?: string | null
+  lastReviewedAt?: string | null
+  /**
+   * Every statistic needs a source with URL and date.
+   */
+  sources?:
+    | {
+        label: string
+        url: string
+        accessedAt?: string | null
+        id?: string | null
+      }[]
+    | null
+  faqs?: (string | Faq)[] | null
+  relatedPosts?: (string | Post)[] | null
+  /**
+   * Tick a language to publish it. Its required fields become mandatory; unticked languages return 404.
+   */
+  translated?: {
+    ar?: boolean | null
+    en?: boolean | null
+  }
+  /**
+   * Sample content for development only. The production build fails if a published document is a sample.
+   */
+  isSample?: boolean | null
+  meta?: {
+    title?: string | null
+    description?: string | null
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media
+  }
+  updatedAt: string
+  createdAt: string
+  _status?: ('draft' | 'published') | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "authors".
+ */
+export interface Author {
+  id: string
+  name?: string | null
+  /**
+   * Generated from the English title. Lowercase Latin only. Changing it after publishing creates a 301 redirect.
+   */
+  slug?: string | null
+  role?: string | null
+  bio?: string | null
+  photo?: (string | null) | Media
+  credentials?:
+    | {
+        text?: string | null
+        id?: string | null
+      }[]
+    | null
+  /**
+   * Profile links (LinkedIn, X, GitHub…).
+   */
+  sameAs?:
+    | {
+        url?: string | null
+        id?: string | null
+      }[]
+    | null
+  user?: (string | null) | User
+  /**
+   * Shown in the founders sections on Home and About. Other authors are team members or writers.
+   */
+  isFounder?: boolean | null
+  /**
+   * Display order (lowest first).
+   */
+  order?: number | null
+  /**
+   * Tick a language to publish it. Its required fields become mandatory; unticked languages return 404.
+   */
+  translated?: {
+    ar?: boolean | null
+    en?: boolean | null
+  }
+  /**
+   * Sample content for development only. The production build fails if a published document is a sample.
+   */
+  isSample?: boolean | null
+  updatedAt: string
+  createdAt: string
+  _status?: ('draft' | 'published') | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: string
+  name: string
+  role: 'admin' | 'editor' | 'recruiter' | 'sales'
+  updatedAt: string
+  createdAt: string
+  email: string
+  resetPasswordToken?: string | null
+  resetPasswordExpiration?: string | null
+  salt?: string | null
+  hash?: string | null
+  resetPasswordRequestedAt?: string | null
+  loginAttempts?: number | null
+  lockUntil?: string | null
+  sessions?:
+    | {
+        id: string
+        createdAt?: string | null
+        expiresAt: string
+      }[]
+    | null
+  password?: string | null
+  collection: 'users'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: string
+  name?: string | null
+  /**
+   * Generated from the English title. Lowercase Latin only. Changing it after publishing creates a 301 redirect.
+   */
+  slug?: string | null
+  description?: string | null
+  /**
+   * Tick a language to publish it. Its required fields become mandatory; unticked languages return 404.
+   */
+  translated?: {
+    ar?: boolean | null
+    en?: boolean | null
+  }
+  /**
+   * Sample content for development only. The production build fails if a published document is a sample.
+   */
+  isSample?: boolean | null
+  updatedAt: string
+  createdAt: string
+  _status?: ('draft' | 'published') | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: string
+  name?: string | null
+  /**
+   * Generated from the English title. Lowercase Latin only. Changing it after publishing creates a 301 redirect.
+   */
+  slug?: string | null
+  description?: string | null
+  /**
+   * Tick a language to publish it. Its required fields become mandatory; unticked languages return 404.
+   */
+  translated?: {
+    ar?: boolean | null
+    en?: boolean | null
+  }
+  /**
+   * Sample content for development only. The production build fails if a published document is a sample.
+   */
+  isSample?: boolean | null
+  updatedAt: string
+  createdAt: string
+  _status?: ('draft' | 'published') | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OfferStackBlock".
+ */
+export interface OfferStackBlock {
+  heading?: string | null
+  intro?: string | null
+  showCarePlans?: boolean | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'offerStack'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HowItWorksBlock".
+ */
+export interface HowItWorksBlock {
+  heading?: string | null
+  intro?: string | null
+  steps?:
+    | {
+        title: string
+        description?: string | null
+        /**
+         * e.g. "Day 10"
+         */
+        when?: string | null
+        id?: string | null
+      }[]
+    | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'howItWorks'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GuaranteeBlock".
+ */
+export interface GuaranteeBlock {
+  heading?: string | null
+  /**
+   * Text comes from the Offer global; add an optional note.
+   */
+  note?: string | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'guarantee'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FoundersBlock".
+ */
+export interface FoundersBlock {
+  heading?: string | null
+  intro?: string | null
+  authors?: (string | Author)[] | null
+  videoUrl?: string | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'founders'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProjectsProofBlock".
+ */
+export interface ProjectsProofBlock {
+  heading?: string | null
+  intro?: string | null
+  projects?: (string | Project)[] | null
+  testimonials?: (string | Testimonial)[] | null
+  /**
+   * Shown while there are no published projects.
+   */
+  foundingOfferText?: string | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'projectsProof'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqListBlock".
+ */
+export interface FaqListBlock {
+  heading?: string | null
+  faqs?: (string | Faq)[] | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'faqList'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FinalCtaBlock".
+ */
+export interface FinalCtaBlock {
+  heading?: string | null
+  intro?: string | null
+  showBooking?: boolean | null
+  showWhatsapp?: boolean | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'finalCta'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichContentBlock".
+ */
+export interface RichContentBlock {
+  content?: {
+    root: {
+      type: string
+      children: {
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  } | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'richContent'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CalloutBlock".
+ */
+export interface CalloutBlock {
+  tone?: ('info' | 'tip' | 'warning' | 'disclaimer') | null
+  title?: string | null
+  body: string
+  id?: string | null
+  blockName?: string | null
+  blockType: 'callout'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatWithSourceBlock".
+ */
+export interface StatWithSourceBlock {
+  /**
+   * The figure as shown, e.g. "6.6%" or "$34,000/month".
+   */
+  value: string
+  label: string
+  sourceName: string
+  sourceUrl: string
+  /**
+   * Date the source was checked.
+   */
+  checkedAt: string
+  id?: string | null
+  blockName?: string | null
+  blockType: 'statWithSource'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ComparisonTableBlock".
+ */
+export interface ComparisonTableBlock {
+  caption?: string | null
+  columns?:
+    | {
+        label: string
+        highlight?: boolean | null
+        id?: string | null
+      }[]
+    | null
+  rows?:
+    | {
+        label: string
+        cells?:
+          | {
+              value: string
+              sourceUrl?: string | null
+              id?: string | null
+            }[]
+          | null
+        id?: string | null
+      }[]
+    | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'comparisonTable'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqBlock".
+ */
+export interface FaqBlock {
+  title?: string | null
+  /**
+   * Inline questions. Use "faqs" to reuse entries from the FAQ collection.
+   */
+  items?:
+    | {
+        question: string
+        answer: string
+        id?: string | null
+      }[]
+    | null
+  faqs?: (string | Faq)[] | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'faq'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CtaBlock".
+ */
+export interface CtaBlock {
+  heading: string
+  body?: string | null
+  action?: ('scorecard' | 'book' | 'whatsapp' | 'playbook' | 'custom') | null
+  /**
+   * Leave empty to use the site-wide label for this action.
+   */
+  label?: string | null
+  href?: string | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'cta'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VideoBlock".
+ */
+export interface VideoBlock {
+  url: string
+  platform?: ('youtube' | 'instagram' | 'tiktok' | 'file') | null
+  title: string
+  posterImage?: (string | null) | Media
+  transcript?: string | null
+  durationSeconds?: number | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'video'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news".
+ */
+export interface News {
+  id: string
+  title?: string | null
+  /**
+   * Generated from the English title. Lowercase Latin only. Changing it after publishing creates a 301 redirect.
+   */
+  slug?: string | null
+  excerpt?: string | null
+  content?: {
+    root: {
+      type: string
+      children: {
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  } | null
+  image?: (string | null) | Media
+  publishedAt?: string | null
+  sourceLinks?:
+    | {
+        label?: string | null
+        url?: string | null
+        id?: string | null
+      }[]
+    | null
+  /**
+   * Tick a language to publish it. Its required fields become mandatory; unticked languages return 404.
+   */
+  translated?: {
+    ar?: boolean | null
+    en?: boolean | null
+  }
+  /**
+   * Sample content for development only. The production build fails if a published document is a sample.
+   */
+  isSample?: boolean | null
+  meta?: {
+    title?: string | null
+    description?: string | null
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media
+  }
+  updatedAt: string
+  createdAt: string
+  _status?: ('draft' | 'published') | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guides".
+ */
+export interface Guide {
+  id: string
+  type: 'cost' | 'comparison'
+  title?: string | null
+  /**
+   * Generated from the English title. Lowercase Latin only. Changing it after publishing creates a 301 redirect.
+   */
+  slug?: string | null
+  excerpt?: string | null
+  /**
+   * 40–60 word direct answer (required to publish).
+   */
+  answerBox?: string | null
+  keyTakeaways?:
+    | {
+        text?: string | null
+        id?: string | null
+      }[]
+    | null
+  content?: {
+    root: {
+      type: string
+      children: {
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  } | null
+  heroImage?: (string | null) | Media
+  authors?: (string | Author)[] | null
+  categories?: (string | Category)[] | null
+  tags?: (string | Tag)[] | null
+  publishedAt?: string | null
+  lastReviewedAt?: string | null
+  /**
+   * Every statistic needs a source with URL and date.
+   */
+  sources?:
+    | {
+        label: string
+        url: string
+        accessedAt?: string | null
+        id?: string | null
+      }[]
+    | null
+  faqs?: (string | Faq)[] | null
+  relatedPosts?: (string | Post)[] | null
+  /**
+   * Tick a language to publish it. Its required fields become mandatory; unticked languages return 404.
+   */
+  translated?: {
+    ar?: boolean | null
+    en?: boolean | null
+  }
+  /**
+   * Sample content for development only. The production build fails if a published document is a sample.
+   */
+  isSample?: boolean | null
+  comparisonTable?: {
+    columns?:
+      | {
+          label?: string | null
+          id?: string | null
+        }[]
+      | null
+    rows?:
+      | {
+          label?: string | null
+          cells?:
+            | {
+                value?: string | null
+                sourceUrl?: string | null
+                id?: string | null
+              }[]
+            | null
+          id?: string | null
+        }[]
+      | null
+  }
+  reviewer?: (string | null) | Author
+  meta?: {
+    title?: string | null
+    description?: string | null
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media
+  }
+  updatedAt: string
+  createdAt: string
+  _status?: ('draft' | 'published') | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "short-links".
+ */
+export interface ShortLink {
+  id: string
+  code: string
+  target: string
+  utm?: {
+    source?: string | null
+    medium?: string | null
+    campaign?: string | null
+    content?: string | null
+  }
+  isSample?: boolean | null
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "jobs".
+ */
+export interface Job {
+  id: string
+  title?: string | null
+  /**
+   * Generated from the English title. Lowercase Latin only. Changing it after publishing creates a 301 redirect.
+   */
+  slug?: string | null
+  team?: ('engineering' | 'design' | 'growth' | 'operations') | null
+  employmentType?: ('FULL_TIME' | 'PART_TIME' | 'CONTRACTOR' | 'TEMPORARY' | 'INTERN') | null
+  city?: string | null
+  country?: string | null
+  workplace?: ('onsite' | 'hybrid' | 'remote') | null
+  /**
+   * For remote roles: countries applicants must be in (ISO2).
+   */
+  applicantLocationRequirements?:
+    | {
+        country?: string | null
+        id?: string | null
+      }[]
+    | null
+  description?: {
+    root: {
+      type: string
+      children: {
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  } | null
+  responsibilities?:
+    | {
+        item?: string | null
+        id?: string | null
+      }[]
+    | null
+  requirements?:
+    | {
+        item?: string | null
+        id?: string | null
+      }[]
+    | null
+  salary?: {
+    min?: number | null
+    max?: number | null
+    currency?: string | null
+    unit?: ('HOUR' | 'MONTH' | 'YEAR') | null
+    show?: boolean | null
+  }
+  datePosted?: string | null
+  validThrough?: string | null
+  status?: ('open' | 'closed') | null
+  roleQuestions?:
+    | {
+        question?: string | null
+        id?: string | null
+      }[]
+    | null
+  /**
+   * Tick a language to publish it. Its required fields become mandatory; unticked languages return 404.
+   */
+  translated?: {
+    ar?: boolean | null
+    en?: boolean | null
+  }
+  /**
+   * Sample content for development only. The production build fails if a published document is a sample.
+   */
+  isSample?: boolean | null
+  meta?: {
+    title?: string | null
+    description?: string | null
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media
+  }
+  updatedAt: string
+  createdAt: string
+  _status?: ('draft' | 'published') | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "applications".
+ */
+export interface Application {
+  id: string
+  job: string | Job
+  name: string
+  email?: string | null
+  phone?: string | null
+  /**
+   * PDF only, max 5 MB. Opened through a short-lived signed URL.
+   */
+  cv?: (string | null) | PrivateFile
+  linkedin?: string | null
+  portfolio?: string | null
+  answers?:
+    | {
+        [k: string]: unknown
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null
+  consent?: {
+    given?: boolean | null
+    at?: string | null
+    policyVersion?: string | null
+  }
+  status?: ('new' | 'screening' | 'interview' | 'offer' | 'hired' | 'rejected') | null
+  rating?: number | null
+  notes?: string | null
+  /**
+   * Set automatically; the record is anonymised after this date.
+   */
+  retainUntil?: string | null
+  anonymisedAt?: string | null
+  locale?: ('ar' | 'en') | null
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leads".
+ */
+export interface Lead {
+  id: string
+  name?: string | null
+  /**
+   * WhatsApp number in E.164 format.
+   */
+  phone?: string | null
+  email?: string | null
+  country?: string | null
+  company?: string | null
+  source?: ('scorecard' | 'contact' | 'booking' | 'newsletter' | 'playbook' | 'whatsapp') | null
+  answers?:
+    | {
+        [k: string]: unknown
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null
+  score?: number | null
+  tier?: ('ready' | 'almost' | 'explore') | null
+  /**
+   * Array of disqualifier reasons (string[]).
+   */
+  disqualifiers?:
+    | {
+        [k: string]: unknown
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null
+  modelSlug?: string | null
+  landingPage?: string | null
+  utm?: {
+    source?: string | null
+    medium?: string | null
+    campaign?: string | null
+    content?: string | null
+    term?: string | null
+  }
+  clickIds?:
+    | {
+        [k: string]: unknown
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null
+  firstTouch?:
+    | {
+        [k: string]: unknown
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null
+  lastTouch?:
+    | {
+        [k: string]: unknown
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null
+  referrer?: string | null
+  refCode?: string | null
+  status?: ('new' | 'contacted' | 'booked' | 'blueprint' | 'won' | 'lost') | null
+  owner?: (string | null) | User
+  notes?: string | null
+  message?: string | null
+  consent?: {
+    given?: boolean | null
+    at?: string | null
+    policyVersion?: string | null
+    /**
+     * Separate, unticked-by-default marketing opt-in.
+     */
+    marketing?: boolean | null
+  }
+  locale?: ('ar' | 'en') | null
+  /**
+   * Set automatically; the record is anonymised after this date.
+   */
+  retainUntil?: string | null
+  anonymisedAt?: string | null
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscribers".
+ */
+export interface Subscriber {
+  id: string
+  email: string
+  locale?: ('ar' | 'en') | null
+  consent?: {
+    given?: boolean | null
+    at?: string | null
+    policyVersion?: string | null
+  }
+  status?: ('pending' | 'confirmed' | 'unsubscribed') | null
+  confirmToken?: string | null
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects".
+ */
+export interface Redirect {
+  id: string
+  from: string
+  to?: {
+    type?: ('reference' | 'custom') | null
+    reference?:
+      | ({
+          relationTo: 'pages'
+          value: string | Page
+        } | null)
+      | ({
+          relationTo: 'models'
+          value: string | Model
+        } | null)
+      | ({
+          relationTo: 'solutions'
+          value: string | Solution
+        } | null)
+      | ({
+          relationTo: 'projects'
+          value: string | Project
+        } | null)
+      | ({
+          relationTo: 'posts'
+          value: string | Post
+        } | null)
+      | ({
+          relationTo: 'news'
+          value: string | News
+        } | null)
+      | ({
+          relationTo: 'guides'
+          value: string | Guide
+        } | null)
+      | ({
+          relationTo: 'jobs'
+          value: string | Job
+        } | null)
+    url?: string | null
+  }
+  type: '301' | '302'
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-kv".
+ */
+export interface PayloadKv {
+  id: string
+  key: string
+  data:
+    | {
+        [k: string]: unknown
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs".
+ */
+export interface PayloadJob {
+  id: string
+  /**
+   * Input data provided to the job
+   */
+  input?:
+    | {
+        [k: string]: unknown
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null
+  taskStatus?:
+    | {
+        [k: string]: unknown
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null
+  completedAt?: string | null
+  totalTried?: number | null
+  /**
+   * If hasError is true this job will not be retried
+   */
+  hasError?: boolean | null
+  /**
+   * If hasError is true, this is the error that caused it
+   */
+  error?:
+    | {
+        [k: string]: unknown
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null
+  /**
+   * Task execution log
+   */
+  log?:
+    | {
+        executedAt: string
+        completedAt: string
+        taskSlug: 'inline' | 'anonymiseExpired' | 'schedulePublish'
+        taskID: string
+        input?:
+          | {
+              [k: string]: unknown
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null
+        output?:
+          | {
+              [k: string]: unknown
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null
+        state: 'failed' | 'succeeded'
+        error?:
+          | {
+              [k: string]: unknown
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null
+        id?: string | null
+      }[]
+    | null
+  taskSlug?: ('inline' | 'anonymiseExpired' | 'schedulePublish') | null
+  queue?: string | null
+  waitUntil?: string | null
+  processing?: boolean | null
+  meta?:
+    | {
+        [k: string]: unknown
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-locked-documents".
+ */
+export interface PayloadLockedDocument {
+  id: string
+  document?:
+    | ({
+        relationTo: 'pages'
+        value: string | Page
+      } | null)
+    | ({
+        relationTo: 'models'
+        value: string | Model
+      } | null)
+    | ({
+        relationTo: 'solutions'
+        value: string | Solution
+      } | null)
+    | ({
+        relationTo: 'projects'
+        value: string | Project
+      } | null)
+    | ({
+        relationTo: 'posts'
+        value: string | Post
+      } | null)
+    | ({
+        relationTo: 'news'
+        value: string | News
+      } | null)
+    | ({
+        relationTo: 'guides'
+        value: string | Guide
+      } | null)
+    | ({
+        relationTo: 'faqs'
+        value: string | Faq
+      } | null)
+    | ({
+        relationTo: 'authors'
+        value: string | Author
+      } | null)
+    | ({
+        relationTo: 'categories'
+        value: string | Category
+      } | null)
+    | ({
+        relationTo: 'tags'
+        value: string | Tag
+      } | null)
+    | ({
+        relationTo: 'testimonials'
+        value: string | Testimonial
+      } | null)
+    | ({
+        relationTo: 'media'
+        value: string | Media
+      } | null)
+    | ({
+        relationTo: 'short-links'
+        value: string | ShortLink
+      } | null)
+    | ({
+        relationTo: 'jobs'
+        value: string | Job
+      } | null)
+    | ({
+        relationTo: 'applications'
+        value: string | Application
+      } | null)
+    | ({
+        relationTo: 'leads'
+        value: string | Lead
+      } | null)
+    | ({
+        relationTo: 'subscribers'
+        value: string | Subscriber
+      } | null)
+    | ({
+        relationTo: 'private-files'
+        value: string | PrivateFile
+      } | null)
+    | ({
+        relationTo: 'users'
+        value: string | User
+      } | null)
+    | ({
+        relationTo: 'redirects'
+        value: string | Redirect
+      } | null)
+  globalSlug?: string | null
+  user: {
+    relationTo: 'users'
+    value: string | User
+  }
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-preferences".
+ */
+export interface PayloadPreference {
+  id: string
+  user: {
+    relationTo: 'users'
+    value: string | User
+  }
+  key?: string | null
+  value?:
+    | {
+        [k: string]: unknown
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-migrations".
+ */
+export interface PayloadMigration {
+  id: string
+  name?: string | null
+  batch?: number | null
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T
+  slug?: T
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>
+        proofStrip?: T | ProofStripBlockSelect<T>
+        problem?: T | ProblemBlockSelect<T>
+        mechanism?: T | MechanismBlockSelect<T>
+        modelsTeaser?: T | ModelsTeaserBlockSelect<T>
+        offerStack?: T | OfferStackBlockSelect<T>
+        howItWorks?: T | HowItWorksBlockSelect<T>
+        guarantee?: T | GuaranteeBlockSelect<T>
+        founders?: T | FoundersBlockSelect<T>
+        projectsProof?: T | ProjectsProofBlockSelect<T>
+        faqList?: T | FaqListBlockSelect<T>
+        finalCta?: T | FinalCtaBlockSelect<T>
+        richContent?: T | RichContentBlockSelect<T>
+        callout?: T | CalloutBlockSelect<T>
+        statWithSource?: T | StatWithSourceBlockSelect<T>
+        comparisonTable?: T | ComparisonTableBlockSelect<T>
+        faq?: T | FaqBlockSelect<T>
+        cta?: T | CtaBlockSelect<T>
+        video?: T | VideoBlockSelect<T>
+      }
+  translated?:
+    | T
+    | {
+        ar?: T
+        en?: T
+      }
+  isSample?: T
+  meta?:
+    | T
+    | {
+        title?: T
+        description?: T
+        image?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  _status?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock_select".
+ */
+export interface HeroBlockSelect<T extends boolean = true> {
+  eyebrow?: T
+  heading?: T
+  subheading?: T
+  primaryLabel?: T
+  secondaryLabel?: T
+  videoUrl?: T
+  microcopy?: T
+  trustItems?:
+    | T
+    | {
+        text?: T
+        id?: T
+      }
+  image?: T
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProofStripBlock_select".
+ */
+export interface ProofStripBlockSelect<T extends boolean = true> {
+  heading?: T
+  items?:
+    | T
+    | {
+        value?: T
+        label?: T
+        sourceName?: T
+        sourceUrl?: T
+        checkedAt?: T
+        id?: T
+      }
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProblemBlock_select".
+ */
+export interface ProblemBlockSelect<T extends boolean = true> {
+  heading?: T
+  intro?: T
+  cards?:
+    | T
+    | {
+        title?: T
+        body?: T
+        sourceName?: T
+        sourceUrl?: T
+        checkedAt?: T
+        id?: T
+      }
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MechanismBlock_select".
+ */
+export interface MechanismBlockSelect<T extends boolean = true> {
+  heading?: T
+  intro?: T
+  items?:
+    | T
+    | {
+        title?: T
+        description?: T
+        icon?: T
+        id?: T
+      }
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ModelsTeaserBlock_select".
+ */
+export interface ModelsTeaserBlockSelect<T extends boolean = true> {
+  heading?: T
+  intro?: T
+  models?: T
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OfferStackBlock_select".
+ */
+export interface OfferStackBlockSelect<T extends boolean = true> {
+  heading?: T
+  intro?: T
+  showCarePlans?: T
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HowItWorksBlock_select".
+ */
+export interface HowItWorksBlockSelect<T extends boolean = true> {
+  heading?: T
+  intro?: T
+  steps?:
+    | T
+    | {
+        title?: T
+        description?: T
+        when?: T
+        id?: T
+      }
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GuaranteeBlock_select".
+ */
+export interface GuaranteeBlockSelect<T extends boolean = true> {
+  heading?: T
+  note?: T
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FoundersBlock_select".
+ */
+export interface FoundersBlockSelect<T extends boolean = true> {
+  heading?: T
+  intro?: T
+  authors?: T
+  videoUrl?: T
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProjectsProofBlock_select".
+ */
+export interface ProjectsProofBlockSelect<T extends boolean = true> {
+  heading?: T
+  intro?: T
+  projects?: T
+  testimonials?: T
+  foundingOfferText?: T
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqListBlock_select".
+ */
+export interface FaqListBlockSelect<T extends boolean = true> {
+  heading?: T
+  faqs?: T
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FinalCtaBlock_select".
+ */
+export interface FinalCtaBlockSelect<T extends boolean = true> {
+  heading?: T
+  intro?: T
+  showBooking?: T
+  showWhatsapp?: T
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichContentBlock_select".
+ */
+export interface RichContentBlockSelect<T extends boolean = true> {
+  content?: T
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CalloutBlock_select".
+ */
+export interface CalloutBlockSelect<T extends boolean = true> {
+  tone?: T
+  title?: T
+  body?: T
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatWithSourceBlock_select".
+ */
+export interface StatWithSourceBlockSelect<T extends boolean = true> {
+  value?: T
+  label?: T
+  sourceName?: T
+  sourceUrl?: T
+  checkedAt?: T
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ComparisonTableBlock_select".
+ */
+export interface ComparisonTableBlockSelect<T extends boolean = true> {
+  caption?: T
+  columns?:
+    | T
+    | {
+        label?: T
+        highlight?: T
+        id?: T
+      }
+  rows?:
+    | T
+    | {
+        label?: T
+        cells?:
+          | T
+          | {
+              value?: T
+              sourceUrl?: T
+              id?: T
+            }
+        id?: T
+      }
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqBlock_select".
+ */
+export interface FaqBlockSelect<T extends boolean = true> {
+  title?: T
+  items?:
+    | T
+    | {
+        question?: T
+        answer?: T
+        id?: T
+      }
+  faqs?: T
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CtaBlock_select".
+ */
+export interface CtaBlockSelect<T extends boolean = true> {
+  heading?: T
+  body?: T
+  action?: T
+  label?: T
+  href?: T
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VideoBlock_select".
+ */
+export interface VideoBlockSelect<T extends boolean = true> {
+  url?: T
+  platform?: T
+  title?: T
+  posterImage?: T
+  transcript?: T
+  durationSeconds?: T
+  id?: T
+  blockName?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "models_select".
+ */
+export interface ModelsSelect<T extends boolean = true> {
+  title?: T
+  slug?: T
+  answerBox?: T
+  category?: T
+  whatItDoes?: T
+  whoPays?: T
+  pricingModel?: T
+  mrr?:
+    | T
+    | {
+        amount?: T
+        currency?: T
+        sourceName?: T
+        sourceUrl?: T
+        reportedAt?: T
+      }
+  teamSize?: T
+  yearFounded?: T
+  factSources?:
+    | T
+    | {
+        label?: T
+        value?: T
+        url?: T
+        checkedAt?: T
+        id?: T
+      }
+  whyItWorks?: T
+  runningCosts?:
+    | T
+    | {
+        item?: T
+        monthlyCost?: T
+        currency?: T
+        sourceUrl?: T
+        checkedAt?: T
+        id?: T
+      }
+  gulfVersion?: T
+  mvpFeatures?:
+    | T
+    | {
+        feature?: T
+        id?: T
+      }
+  tier?: T
+  priceFrom?: T
+  buildDays?: T
+  fitCriteria?:
+    | T
+    | {
+        criterion?: T
+        id?: T
+      }
+  reel?:
+    | T
+    | {
+        url?: T
+        platform?: T
+        posterImage?: T
+      }
+  transcript?: T
+  faqs?: T
+  relatedModels?: T
+  relatedSolution?: T
+  relatedPosts?: T
+  reviewer?: T
+  lastReviewedAt?: T
+  authors?: T
+  heroImage?: T
+  translated?:
+    | T
+    | {
+        ar?: T
+        en?: T
+      }
+  isSample?: T
+  meta?:
+    | T
+    | {
+        title?: T
+        description?: T
+        image?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  _status?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "solutions_select".
+ */
+export interface SolutionsSelect<T extends boolean = true> {
+  title?: T
+  slug?: T
+  vertical?: T
+  summary?: T
+  buyerProblems?:
+    | T
+    | {
+        problem?: T
+        id?: T
+      }
+  features?:
+    | T
+    | {
+        title?: T
+        description?: T
+        icon?: T
+        id?: T
+      }
+  integrations?:
+    | T
+    | {
+        name?: T
+        description?: T
+        id?: T
+      }
+  video?:
+    | T
+    | {
+        url?: T
+        posterImage?: T
+      }
+  priceFrom?: T
+  steps?:
+    | T
+    | {
+        title?: T
+        description?: T
+        id?: T
+      }
+  caseStudies?: T
+  faqs?: T
+  translated?:
+    | T
+    | {
+        ar?: T
+        en?: T
+      }
+  isSample?: T
+  meta?:
+    | T
+    | {
+        title?: T
+        description?: T
+        image?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  _status?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  title?: T
+  slug?: T
+  clientName?: T
+  clientLogo?: T
+  consentGiven?: T
+  consentFile?: T
+  context?: T
+  challenge?: T
+  solution?: T
+  scope?:
+    | T
+    | {
+        item?: T
+        id?: T
+      }
+  stack?:
+    | T
+    | {
+        name?: T
+        id?: T
+      }
+  plannedDays?: T
+  actualDays?: T
+  results?:
+    | T
+    | {
+        label?: T
+        value?: T
+        verified?: T
+        evidence?: T
+        id?: T
+      }
+  gallery?:
+    | T
+    | {
+        image?: T
+        id?: T
+      }
+  testimonial?: T
+  relatedModel?: T
+  publishedAt?: T
+  translated?:
+    | T
+    | {
+        ar?: T
+        en?: T
+      }
+  isSample?: T
+  meta?:
+    | T
+    | {
+        title?: T
+        description?: T
+        image?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  _status?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T
+  slug?: T
+  excerpt?: T
+  keyTakeaways?:
+    | T
+    | {
+        text?: T
+        id?: T
+      }
+  content?: T
+  heroImage?: T
+  authors?: T
+  categories?: T
+  tags?: T
+  publishedAt?: T
+  lastReviewedAt?: T
+  sources?:
+    | T
+    | {
+        label?: T
+        url?: T
+        accessedAt?: T
+        id?: T
+      }
+  faqs?: T
+  relatedPosts?: T
+  translated?:
+    | T
+    | {
+        ar?: T
+        en?: T
+      }
+  isSample?: T
+  meta?:
+    | T
+    | {
+        title?: T
+        description?: T
+        image?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  _status?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news_select".
+ */
+export interface NewsSelect<T extends boolean = true> {
+  title?: T
+  slug?: T
+  excerpt?: T
+  content?: T
+  image?: T
+  publishedAt?: T
+  sourceLinks?:
+    | T
+    | {
+        label?: T
+        url?: T
+        id?: T
+      }
+  translated?:
+    | T
+    | {
+        ar?: T
+        en?: T
+      }
+  isSample?: T
+  meta?:
+    | T
+    | {
+        title?: T
+        description?: T
+        image?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  _status?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guides_select".
+ */
+export interface GuidesSelect<T extends boolean = true> {
+  type?: T
+  title?: T
+  slug?: T
+  excerpt?: T
+  answerBox?: T
+  keyTakeaways?:
+    | T
+    | {
+        text?: T
+        id?: T
+      }
+  content?: T
+  heroImage?: T
+  authors?: T
+  categories?: T
+  tags?: T
+  publishedAt?: T
+  lastReviewedAt?: T
+  sources?:
+    | T
+    | {
+        label?: T
+        url?: T
+        accessedAt?: T
+        id?: T
+      }
+  faqs?: T
+  relatedPosts?: T
+  translated?:
+    | T
+    | {
+        ar?: T
+        en?: T
+      }
+  isSample?: T
+  comparisonTable?:
+    | T
+    | {
+        columns?:
+          | T
+          | {
+              label?: T
+              id?: T
+            }
+        rows?:
+          | T
+          | {
+              label?: T
+              cells?:
+                | T
+                | {
+                    value?: T
+                    sourceUrl?: T
+                    id?: T
+                  }
+              id?: T
+            }
+      }
+  reviewer?: T
+  meta?:
+    | T
+    | {
+        title?: T
+        description?: T
+        image?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  _status?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs_select".
+ */
+export interface FaqsSelect<T extends boolean = true> {
+  question?: T
+  answer?: T
+  category?: T
+  order?: T
+  translated?:
+    | T
+    | {
+        ar?: T
+        en?: T
+      }
+  isSample?: T
+  updatedAt?: T
+  createdAt?: T
+  _status?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "authors_select".
+ */
+export interface AuthorsSelect<T extends boolean = true> {
+  name?: T
+  slug?: T
+  role?: T
+  bio?: T
+  photo?: T
+  credentials?:
+    | T
+    | {
+        text?: T
+        id?: T
+      }
+  sameAs?:
+    | T
+    | {
+        url?: T
+        id?: T
+      }
+  user?: T
+  isFounder?: T
+  order?: T
+  translated?:
+    | T
+    | {
+        ar?: T
+        en?: T
+      }
+  isSample?: T
+  updatedAt?: T
+  createdAt?: T
+  _status?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  name?: T
+  slug?: T
+  description?: T
+  translated?:
+    | T
+    | {
+        ar?: T
+        en?: T
+      }
+  isSample?: T
+  updatedAt?: T
+  createdAt?: T
+  _status?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  name?: T
+  slug?: T
+  description?: T
+  translated?:
+    | T
+    | {
+        ar?: T
+        en?: T
+      }
+  isSample?: T
+  updatedAt?: T
+  createdAt?: T
+  _status?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  person?: T
+  role?: T
+  company?: T
+  photo?: T
+  quote?: T
+  videoUrl?: T
+  consentFile?: T
+  verified?: T
+  relatedProject?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T
+  caption?: T
+  credit?: T
+  updatedAt?: T
+  createdAt?: T
+  url?: T
+  thumbnailURL?: T
+  filename?: T
+  mimeType?: T
+  filesize?: T
+  width?: T
+  height?: T
+  focalX?: T
+  focalY?: T
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T
+              width?: T
+              height?: T
+              mimeType?: T
+              filesize?: T
+              filename?: T
+            }
+        card?:
+          | T
+          | {
+              url?: T
+              width?: T
+              height?: T
+              mimeType?: T
+              filesize?: T
+              filename?: T
+            }
+        hero?:
+          | T
+          | {
+              url?: T
+              width?: T
+              height?: T
+              mimeType?: T
+              filesize?: T
+              filename?: T
+            }
+        og?:
+          | T
+          | {
+              url?: T
+              width?: T
+              height?: T
+              mimeType?: T
+              filesize?: T
+              filename?: T
+            }
+      }
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "short-links_select".
+ */
+export interface ShortLinksSelect<T extends boolean = true> {
+  code?: T
+  target?: T
+  utm?:
+    | T
+    | {
+        source?: T
+        medium?: T
+        campaign?: T
+        content?: T
+      }
+  isSample?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "jobs_select".
+ */
+export interface JobsSelect<T extends boolean = true> {
+  title?: T
+  slug?: T
+  team?: T
+  employmentType?: T
+  city?: T
+  country?: T
+  workplace?: T
+  applicantLocationRequirements?:
+    | T
+    | {
+        country?: T
+        id?: T
+      }
+  description?: T
+  responsibilities?:
+    | T
+    | {
+        item?: T
+        id?: T
+      }
+  requirements?:
+    | T
+    | {
+        item?: T
+        id?: T
+      }
+  salary?:
+    | T
+    | {
+        min?: T
+        max?: T
+        currency?: T
+        unit?: T
+        show?: T
+      }
+  datePosted?: T
+  validThrough?: T
+  status?: T
+  roleQuestions?:
+    | T
+    | {
+        question?: T
+        id?: T
+      }
+  translated?:
+    | T
+    | {
+        ar?: T
+        en?: T
+      }
+  isSample?: T
+  meta?:
+    | T
+    | {
+        title?: T
+        description?: T
+        image?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  _status?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "applications_select".
+ */
+export interface ApplicationsSelect<T extends boolean = true> {
+  job?: T
+  name?: T
+  email?: T
+  phone?: T
+  cv?: T
+  linkedin?: T
+  portfolio?: T
+  answers?: T
+  consent?:
+    | T
+    | {
+        given?: T
+        at?: T
+        policyVersion?: T
+      }
+  status?: T
+  rating?: T
+  notes?: T
+  retainUntil?: T
+  anonymisedAt?: T
+  locale?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leads_select".
+ */
+export interface LeadsSelect<T extends boolean = true> {
+  name?: T
+  phone?: T
+  email?: T
+  country?: T
+  company?: T
+  source?: T
+  answers?: T
+  score?: T
+  tier?: T
+  disqualifiers?: T
+  modelSlug?: T
+  landingPage?: T
+  utm?:
+    | T
+    | {
+        source?: T
+        medium?: T
+        campaign?: T
+        content?: T
+        term?: T
+      }
+  clickIds?: T
+  firstTouch?: T
+  lastTouch?: T
+  referrer?: T
+  refCode?: T
+  status?: T
+  owner?: T
+  notes?: T
+  message?: T
+  consent?:
+    | T
+    | {
+        given?: T
+        at?: T
+        policyVersion?: T
+        marketing?: T
+      }
+  locale?: T
+  retainUntil?: T
+  anonymisedAt?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscribers_select".
+ */
+export interface SubscribersSelect<T extends boolean = true> {
+  email?: T
+  locale?: T
+  consent?:
+    | T
+    | {
+        given?: T
+        at?: T
+        policyVersion?: T
+      }
+  status?: T
+  confirmToken?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "private-files_select".
+ */
+export interface PrivateFilesSelect<T extends boolean = true> {
+  purpose?: T
+  note?: T
+  updatedAt?: T
+  createdAt?: T
+  url?: T
+  thumbnailURL?: T
+  filename?: T
+  mimeType?: T
+  filesize?: T
+  width?: T
+  height?: T
+  focalX?: T
+  focalY?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  name?: T
+  role?: T
+  updatedAt?: T
+  createdAt?: T
+  email?: T
+  resetPasswordToken?: T
+  resetPasswordExpiration?: T
+  salt?: T
+  hash?: T
+  resetPasswordRequestedAt?: T
+  loginAttempts?: T
+  lockUntil?: T
+  sessions?:
+    | T
+    | {
+        id?: T
+        createdAt?: T
+        expiresAt?: T
+      }
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects_select".
+ */
+export interface RedirectsSelect<T extends boolean = true> {
+  from?: T
+  to?:
+    | T
+    | {
+        type?: T
+        reference?: T
+        url?: T
+      }
+  type?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-kv_select".
+ */
+export interface PayloadKvSelect<T extends boolean = true> {
+  key?: T
+  data?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs_select".
+ */
+export interface PayloadJobsSelect<T extends boolean = true> {
+  input?: T
+  taskStatus?: T
+  completedAt?: T
+  totalTried?: T
+  hasError?: T
+  error?: T
+  log?:
+    | T
+    | {
+        executedAt?: T
+        completedAt?: T
+        taskSlug?: T
+        taskID?: T
+        input?: T
+        output?: T
+        state?: T
+        error?: T
+        id?: T
+      }
+  taskSlug?: T
+  queue?: T
+  waitUntil?: T
+  processing?: T
+  meta?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-locked-documents_select".
+ */
+export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
+  document?: T
+  globalSlug?: T
+  user?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-preferences_select".
+ */
+export interface PayloadPreferencesSelect<T extends boolean = true> {
+  user?: T
+  key?: T
+  value?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-migrations_select".
+ */
+export interface PayloadMigrationsSelect<T extends boolean = true> {
+  name?: T
+  batch?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header".
+ */
+export interface Header {
+  id: string
+  nav?:
+    | {
+        label: string
+        href: string
+        id?: string | null
+      }[]
+    | null
+  ctaLabel?: string | null
+  updatedAt?: string | null
+  createdAt?: string | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: string
+  columns?:
+    | {
+        title?: string | null
+        links?:
+          | {
+              label: string
+              href: string
+              id?: string | null
+            }[]
+          | null
+        id?: string | null
+      }[]
+    | null
+  social?:
+    | {
+        platform: string
+        url: string
+        id?: string | null
+      }[]
+    | null
+  legalLinks?:
+    | {
+        label: string
+        href: string
+        id?: string | null
+      }[]
+    | null
+  updatedAt?: string | null
+  createdAt?: string | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSettings {
+  id: string
+  /**
+   * Launch slots this month (real capacity only).
+   */
+  slotsTotal?: number | null
+  slotsLeft?: number | null
+  foundingPriceActive?: boolean | null
+  /**
+   * USD
+   */
+  foundingPrice?: number | null
+  foundingSlots?: number | null
+  whatsappNumber?: string | null
+  responseTimePromise?: string | null
+  bookingUrls?: {
+    ar?: string | null
+    en?: string | null
+  }
+  contactEmail?: string | null
+  legalEntities?:
+    | {
+        legalName?: string | null
+        country?: string | null
+        crNumber?: string | null
+        vatNumber?: string | null
+        address?: string | null
+        id?: string | null
+      }[]
+    | null
+  /**
+   * Defaults for the founders and lawyer to confirm.
+   */
+  retention?: {
+    leadsMonths?: number | null
+    applicationsMonths?: number | null
+  }
+  policyVersion?: string | null
+  updatedAt?: string | null
+  createdAt?: string | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "offer".
+ */
+export interface Offer {
+  id: string
+  blueprint?: {
+    name?: string | null
+    price?: number | null
+    description?: string | null
+  }
+  tiers?:
+    | {
+        key: 'core' | 'pro' | 'vertical'
+        name?: string | null
+        priceFrom?: number | null
+        description?: string | null
+        features?:
+          | {
+              text?: string | null
+              id?: string | null
+            }[]
+          | null
+        id?: string | null
+      }[]
+    | null
+  bonuses?:
+    | {
+        name?: string | null
+        statedValue?: number | null
+        description?: string | null
+        id?: string | null
+      }[]
+    | null
+  carePlans?:
+    | {
+        name?: string | null
+        monthlyPrice?: number | null
+        features?:
+          | {
+              text?: string | null
+              id?: string | null
+            }[]
+          | null
+        id?: string | null
+      }[]
+    | null
+  guarantee?: string | null
+  guaranteeHonestLine?: string | null
+  paymentTerms?: string | null
+  notIncluded?:
+    | {
+        text?: string | null
+        id?: string | null
+      }[]
+    | null
+  /**
+   * Tick once the founders have confirmed prices and terms.
+   */
+  confirmed?: boolean | null
+  updatedAt?: string | null
+  createdAt?: string | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scorecard-settings".
+ */
+export interface ScorecardSettings {
+  id: string
+  questions?:
+    | {
+        key: string
+        type?: ('single' | 'text' | 'model') | null
+        prompt?: string | null
+        options?:
+          | {
+              value: string
+              label?: string | null
+              points?: number | null
+              id?: string | null
+            }[]
+          | null
+        id?: string | null
+      }[]
+    | null
+  thresholds?: {
+    ready?: number | null
+    almost?: number | null
+  }
+  disqualifiers?:
+    | {
+        questionKey: string
+        optionValue: string
+        reason?: string | null
+        id?: string | null
+      }[]
+    | null
+  updatedAt?: string | null
+  createdAt?: string | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo-defaults".
+ */
+export interface SeoDefaults {
+  id: string
+  /**
+   * Use %s for the page title, e.g. "%s — إطلاق".
+   */
+  titleTemplate?: string | null
+  defaultDescription?: string | null
+  oneLiner?: string | null
+  ogImage?: {
+    ar?: (string | null) | Media
+    en?: (string | null) | Media
+  }
+  sameAs?:
+    | {
+        url?: string | null
+        id?: string | null
+      }[]
+    | null
+  aiCrawlers?: {
+    allowTraining?: boolean | null
+    allowSearch?: boolean | null
+    allowUser?: boolean | null
+  }
+  updatedAt?: string | null
+  createdAt?: string | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "announcement-bar".
+ */
+export interface AnnouncementBar {
+  id: string
+  enabled?: boolean | null
+  /**
+   * May contain {n} (slots left) and {total} (slots total).
+   */
+  text?: string | null
+  link?: string | null
+  updatedAt?: string | null
+  createdAt?: string | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs-stats".
+ */
+export interface PayloadJobsStat {
+  id: string
+  stats?:
+    | {
+        [k: string]: unknown
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null
+  updatedAt?: string | null
+  createdAt?: string | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header_select".
+ */
+export interface HeaderSelect<T extends boolean = true> {
+  nav?:
+    | T
+    | {
+        label?: T
+        href?: T
+        id?: T
+      }
+  ctaLabel?: T
+  updatedAt?: T
+  createdAt?: T
+  globalType?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  columns?:
+    | T
+    | {
+        title?: T
+        links?:
+          | T
+          | {
+              label?: T
+              href?: T
+              id?: T
+            }
+        id?: T
+      }
+  social?:
+    | T
+    | {
+        platform?: T
+        url?: T
+        id?: T
+      }
+  legalLinks?:
+    | T
+    | {
+        label?: T
+        href?: T
+        id?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  globalType?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  slotsTotal?: T
+  slotsLeft?: T
+  foundingPriceActive?: T
+  foundingPrice?: T
+  foundingSlots?: T
+  whatsappNumber?: T
+  responseTimePromise?: T
+  bookingUrls?:
+    | T
+    | {
+        ar?: T
+        en?: T
+      }
+  contactEmail?: T
+  legalEntities?:
+    | T
+    | {
+        legalName?: T
+        country?: T
+        crNumber?: T
+        vatNumber?: T
+        address?: T
+        id?: T
+      }
+  retention?:
+    | T
+    | {
+        leadsMonths?: T
+        applicationsMonths?: T
+      }
+  policyVersion?: T
+  updatedAt?: T
+  createdAt?: T
+  globalType?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "offer_select".
+ */
+export interface OfferSelect<T extends boolean = true> {
+  blueprint?:
+    | T
+    | {
+        name?: T
+        price?: T
+        description?: T
+      }
+  tiers?:
+    | T
+    | {
+        key?: T
+        name?: T
+        priceFrom?: T
+        description?: T
+        features?:
+          | T
+          | {
+              text?: T
+              id?: T
+            }
+        id?: T
+      }
+  bonuses?:
+    | T
+    | {
+        name?: T
+        statedValue?: T
+        description?: T
+        id?: T
+      }
+  carePlans?:
+    | T
+    | {
+        name?: T
+        monthlyPrice?: T
+        features?:
+          | T
+          | {
+              text?: T
+              id?: T
+            }
+        id?: T
+      }
+  guarantee?: T
+  guaranteeHonestLine?: T
+  paymentTerms?: T
+  notIncluded?:
+    | T
+    | {
+        text?: T
+        id?: T
+      }
+  confirmed?: T
+  updatedAt?: T
+  createdAt?: T
+  globalType?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scorecard-settings_select".
+ */
+export interface ScorecardSettingsSelect<T extends boolean = true> {
+  questions?:
+    | T
+    | {
+        key?: T
+        type?: T
+        prompt?: T
+        options?:
+          | T
+          | {
+              value?: T
+              label?: T
+              points?: T
+              id?: T
+            }
+        id?: T
+      }
+  thresholds?:
+    | T
+    | {
+        ready?: T
+        almost?: T
+      }
+  disqualifiers?:
+    | T
+    | {
+        questionKey?: T
+        optionValue?: T
+        reason?: T
+        id?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  globalType?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo-defaults_select".
+ */
+export interface SeoDefaultsSelect<T extends boolean = true> {
+  titleTemplate?: T
+  defaultDescription?: T
+  oneLiner?: T
+  ogImage?:
+    | T
+    | {
+        ar?: T
+        en?: T
+      }
+  sameAs?:
+    | T
+    | {
+        url?: T
+        id?: T
+      }
+  aiCrawlers?:
+    | T
+    | {
+        allowTraining?: T
+        allowSearch?: T
+        allowUser?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  globalType?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "announcement-bar_select".
+ */
+export interface AnnouncementBarSelect<T extends boolean = true> {
+  enabled?: T
+  text?: T
+  link?: T
+  updatedAt?: T
+  createdAt?: T
+  globalType?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs-stats_select".
+ */
+export interface PayloadJobsStatsSelect<T extends boolean = true> {
+  stats?: T
+  updatedAt?: T
+  createdAt?: T
+  globalType?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_widget".
+ */
+export interface CollectionsWidget {
+  data?: {
+    [k: string]: unknown
+  }
+  width: 'full'
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskAnonymiseExpired".
+ */
+export interface TaskAnonymiseExpired {
+  input?: unknown
+  output: {
+    leads: number
+    applications: number
+  }
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskSchedulePublish".
+ */
+export interface TaskSchedulePublish {
+  input: {
+    type?: ('publish' | 'unpublish') | null
+    locale?: string | null
+    doc?:
+      | ({
+          relationTo: 'pages'
+          value: string | Page
+        } | null)
+      | ({
+          relationTo: 'models'
+          value: string | Model
+        } | null)
+      | ({
+          relationTo: 'solutions'
+          value: string | Solution
+        } | null)
+      | ({
+          relationTo: 'projects'
+          value: string | Project
+        } | null)
+      | ({
+          relationTo: 'posts'
+          value: string | Post
+        } | null)
+      | ({
+          relationTo: 'news'
+          value: string | News
+        } | null)
+      | ({
+          relationTo: 'guides'
+          value: string | Guide
+        } | null)
+      | ({
+          relationTo: 'faqs'
+          value: string | Faq
+        } | null)
+      | ({
+          relationTo: 'authors'
+          value: string | Author
+        } | null)
+      | ({
+          relationTo: 'jobs'
+          value: string | Job
+        } | null)
+    global?: string | null
+    user?: {
+      relationTo: 'users'
+      value: string | User
+    } | null
+  }
+  output?: unknown
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "auth".
+ */
+export interface Auth {
+  [k: string]: unknown
+}

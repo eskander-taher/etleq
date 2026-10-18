@@ -1,8 +1,8 @@
 import { cache } from 'react'
-import type { Where } from 'payload'
-import { getPayloadClient } from '@/lib/payload'
+import type { Where } from '@/cms/types'
+import { getCms } from '@/lib/cms'
 import { publicWhere } from '@/lib/queries/common'
-import type { Job } from '@/payload-types'
+import type { Job } from '@/cms/content-types'
 
 type Loc = 'ar' | 'en'
 
@@ -11,7 +11,8 @@ export const JOB_WORKPLACES = ['onsite', 'hybrid', 'remote'] as const
 export type JobTeam = (typeof JOB_TEAMS)[number]
 export type JobWorkplace = (typeof JOB_WORKPLACES)[number]
 export const isJobTeam = (v?: string): v is JobTeam => !!v && (JOB_TEAMS as readonly string[]).includes(v)
-export const isJobWorkplace = (v?: string): v is JobWorkplace => !!v && (JOB_WORKPLACES as readonly string[]).includes(v)
+export const isJobWorkplace = (v?: string): v is JobWorkplace =>
+  !!v && (JOB_WORKPLACES as readonly string[]).includes(v)
 
 /** Open = status open and validThrough empty or not yet passed. */
 const openWhere = (): Where => ({
@@ -27,12 +28,15 @@ const openWhere = (): Where => ({
   ],
 })
 
-export async function listOpenJobs(locale: Loc, { team, workplace }: { team?: JobTeam; workplace?: JobWorkplace } = {}) {
-  const payload = await getPayloadClient()
+export async function listOpenJobs(
+  locale: Loc,
+  { team, workplace }: { team?: JobTeam; workplace?: JobWorkplace } = {},
+) {
+  const cms = await getCms()
   const and: Where[] = [openWhere()]
   if (team) and.push({ team: { equals: team } })
   if (workplace) and.push({ workplace: { equals: workplace } })
-  return payload.find({
+  return cms.find({
     collection: 'jobs',
     locale,
     fallbackLocale: false,
@@ -47,8 +51,8 @@ export async function listOpenJobs(locale: Loc, { team, workplace }: { team?: Jo
 
 /** Any published, translated job (open or closed). The page decides what to render for closed roles. */
 export const getJob = cache(async (slug: string, locale: Loc): Promise<Job | null> => {
-  const payload = await getPayloadClient()
-  const res = await payload.find({
+  const cms = await getCms()
+  const res = await cms.find({
     collection: 'jobs',
     locale,
     fallbackLocale: false,

@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { formatDate, formatMoney, formatNumber, formatPrice } from '@/lib/format'
-import type { Model, Offer } from '@/payload-types'
+import type { Model, Offer } from '@/cms/content-types'
 import { AutoBdi } from './Bdi'
 import { ForwardArrow, mrrShowable } from './parts'
 import type { Loc } from './lib'

@@ -4,7 +4,7 @@ import { join } from 'node:path'
 
 const ROOT = 'src'
 const EXT = /\.(tsx?|jsx?|css|mdx?)$/
-const SKIP = [/[\\/]\(payload\)[\\/]/, /payload-types\.ts$/, /importMap\.js$/]
+const SKIP = [/content-types\.ts$/]
 const BAD =
   /(?<![\w-])(?:-?(?:ml|mr|pl|pr|left|right|rounded-l|rounded-r|rounded-tl|rounded-tr|rounded-bl|rounded-br|border-l|border-r|scroll-ml|scroll-mr|scroll-pl|scroll-pr)-[\w./[\]-]+|text-left|text-right|float-left|float-right|clear-left|clear-right|border-l|border-r|rounded-l|rounded-r)(?![\w-])/g
 

@@ -1,14 +1,13 @@
 import { cache } from 'react'
-import { getPayloadClient } from '@/lib/payload'
+import { getCms } from '@/lib/cms'
 import { publicWhere } from '@/lib/queries/common'
-import type { Author } from '@/payload-types'
+import type { Author } from '@/cms/content-types'
 
 type Loc = 'ar' | 'en'
 
-
 export const getAuthor = cache(async (slug: string, locale: Loc): Promise<Author | null> => {
-  const payload = await getPayloadClient()
-  const res = await payload.find({
+  const cms = await getCms()
+  const res = await cms.find({
     collection: 'authors',
     locale,
     fallbackLocale: false,
@@ -23,8 +22,8 @@ export const getAuthor = cache(async (slug: string, locale: Loc): Promise<Author
 
 export async function authorSlugs(locale: Loc): Promise<string[]> {
   try {
-    const payload = await getPayloadClient()
-    const res = await payload.find({
+    const cms = await getCms()
+    const res = await cms.find({
       collection: 'authors',
       locale,
       fallbackLocale: false,

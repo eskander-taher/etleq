@@ -1,14 +1,14 @@
 import { cache } from 'react'
-import { getPayloadClient } from '@/lib/payload'
+import { getCms } from '@/lib/cms'
 import { publicWhere } from '@/lib/queries/common'
-import type { Guide } from '@/payload-types'
+import type { Guide } from '@/cms/content-types'
 
 type Loc = 'ar' | 'en'
 export type GuideType = 'cost' | 'comparison'
 
 export async function listGuides(locale: Loc, type: GuideType) {
-  const payload = await getPayloadClient()
-  return payload.find({
+  const cms = await getCms()
+  return cms.find({
     collection: 'guides',
     locale,
     fallbackLocale: false,
@@ -23,8 +23,8 @@ export async function listGuides(locale: Loc, type: GuideType) {
 
 /** A guide is only found under its own type's URL (/cost or /compare); the other path 404s. */
 export const getGuide = cache(async (slug: string, type: GuideType, locale: Loc): Promise<Guide | null> => {
-  const payload = await getPayloadClient()
-  const res = await payload.find({
+  const cms = await getCms()
+  const res = await cms.find({
     collection: 'guides',
     locale,
     fallbackLocale: false,

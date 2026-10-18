@@ -15,7 +15,7 @@ import { collectHeadings, mediaOf, publicRelations, type Loc } from '@/component
 import { getPost, postSlugs, relatedPosts } from '@/lib/queries/posts'
 import { absoluteUrl, buildMetadata } from '@/lib/seo'
 import { blogPostingNode, faqPageNode, graph, personNode } from '@/lib/schema'
-import type { Category, Faq, Post } from '@/payload-types'
+import type { Category, Faq, Post } from '@/cms/content-types'
 
 export const revalidate = 3600
 export const dynamicParams = true

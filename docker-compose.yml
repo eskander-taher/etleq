@@ -1,4 +1,4 @@
-# Local dev MongoDB as a single-node replica set (transactions need a replica set).
+# Local dev MongoDB as a single-node replica set (matches the connection string in .env.example).
 services:
   mongo:
     image: mongo:8.0

@@ -160,14 +160,14 @@ describe('application validation', () => {
 })
 
 describe('CV checks', () => {
-  it('accepts a PDF up to 5 MB', () => {
+  it('accepts a PDF up to 4 MB', () => {
     expect(checkCvFile({ name: 'cv.pdf', size: 1000, type: 'application/pdf' }, 'en')).toBeNull()
     expect(checkCvFile({ name: 'cv.pdf', size: CV_MAX_BYTES, type: 'application/pdf' }, 'en')).toBeNull()
   })
 
   it('rejects other types, oversize files and missing files with a clear message', () => {
     expect(checkCvFile({ name: 'cv.docx', size: 1000, type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }, 'en')).toMatch(/PDF/)
-    expect(checkCvFile({ name: 'cv.pdf', size: CV_MAX_BYTES + 1, type: 'application/pdf' }, 'en')).toMatch(/5 MB/)
+    expect(checkCvFile({ name: 'cv.pdf', size: CV_MAX_BYTES + 1, type: 'application/pdf' }, 'en')).toMatch(/4 MB/)
     expect(checkCvFile(null, 'ar')).toBeTruthy()
   })
 

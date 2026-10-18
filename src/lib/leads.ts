@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from 'node:crypto'
-import { getPayloadClient } from '@/lib/payload'
+import { appSecret } from '@/cms/auth-crypto'
+import { getCms } from '@/lib/cms'
 import type { ScorecardTier } from '@/lib/scoring'
 
 export type LeadSource = 'scorecard' | 'contact' | 'booking' | 'newsletter' | 'playbook' | 'whatsapp'
@@ -46,10 +47,10 @@ export interface StoredLead {
 
 /** Creates a lead through the Local API (server only; bypasses access control on purpose). */
 export async function createLead({ retentionMonths = 24, ...data }: LeadInput): Promise<StoredLead> {
-  const payload = await getPayloadClient()
+  const cms = await getCms()
   const retainUntil = new Date()
   retainUntil.setMonth(retainUntil.getMonth() + retentionMonths)
-  const doc = await payload.create({
+  const doc = await cms.create({
     collection: 'leads',
     overrideAccess: true,
     // The generated Lead type is the source of truth; LeadInput mirrors docs/schema-contract.md.
@@ -60,8 +61,8 @@ export async function createLead({ retentionMonths = 24, ...data }: LeadInput): 
 
 export async function findLeadById(id: string): Promise<StoredLead | null> {
   try {
-    const payload = await getPayloadClient()
-    return (await payload.findByID({ collection: 'leads', id, overrideAccess: true, depth: 0 })) as unknown as StoredLead
+    const cms = await getCms()
+    return (await cms.findByID({ collection: 'leads', id, overrideAccess: true, depth: 0 })) as unknown as StoredLead
   } catch {
     return null
   }
@@ -69,8 +70,8 @@ export async function findLeadById(id: string): Promise<StoredLead | null> {
 
 /** Most recent lead for an email address (used by the booking webhook). */
 export async function findLatestLeadByEmail(email: string): Promise<StoredLead | null> {
-  const payload = await getPayloadClient()
-  const res = await payload.find({
+  const cms = await getCms()
+  const res = await cms.find({
     collection: 'leads',
     where: { email: { equals: email.trim().toLowerCase() } },
     sort: '-createdAt',
@@ -82,8 +83,8 @@ export async function findLatestLeadByEmail(email: string): Promise<StoredLead |
 }
 
 export async function setLeadStatus(id: string, status: LeadStatus) {
-  const payload = await getPayloadClient()
-  await payload.update({ collection: 'leads', id, data: { status } as never, overrideAccess: true })
+  const cms = await getCms()
+  await cms.update({ collection: 'leads', id, data: { status } as never, overrideAccess: true })
 }
 
 /* ---------- Signed result token: lets /scorecard/result render one lead's result without exposing others. ---------- */
@@ -96,11 +97,7 @@ export interface ResultTokenData {
 
 const TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000
 
-function secret() {
-  const s = process.env.PAYLOAD_SECRET
-  if (!s) throw new Error('PAYLOAD_SECRET is not set')
-  return s
-}
+const secret = appSecret
 
 const b64url = (b: Buffer | string) => Buffer.from(b).toString('base64url')
 const sign = (body: string) => createHmac('sha256', `${secret()}:scorecard-result`).update(body).digest('base64url')
@@ -118,7 +115,12 @@ export function verifyResultToken(token: string | null | undefined, now = Date.n
   const given = Buffer.from(sig)
   if (expected.length !== given.length || !timingSafeEqual(expected, given)) return null
   try {
-    const p = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')) as { l: string; t: ScorecardTier; s: number; e: number }
+    const p = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')) as {
+      l: string
+      t: ScorecardTier
+      s: number
+      e: number
+    }
     if (typeof p.e !== 'number' || p.e < now) return null
     if (!['ready', 'almost', 'explore'].includes(p.t)) return null
     return { leadId: String(p.l), tier: p.t, score: Number(p.s) }

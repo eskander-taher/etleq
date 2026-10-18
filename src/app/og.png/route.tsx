@@ -75,9 +75,9 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const locale = searchParams.get('locale') === 'en' ? 'en' : 'ar'
   const rtl = locale === 'ar'
-  const title = (searchParams.get('title') || (rtl ? 'إطلاق' : 'Etleq')).slice(0, 120)
+  const title = (searchParams.get('title') || (rtl ? 'اطلق' : 'Etleq')).slice(0, 120)
   const subtitle = (searchParams.get('subtitle') || '').slice(0, 140)
-  const brand = rtl ? 'إطلاق' : 'Etleq'
+  const brand = rtl ? 'اطلق' : 'Etleq'
   const tagline = rtl ? 'منصتك SaaS جاهزة خلال 30 يومًا' : 'Your SaaS, live in 30 days'
   const host = (process.env.NEXT_PUBLIC_SITE_URL || 'https://etleq.com').replace(/^https?:\/\//, '').replace(/\/$/, '')
 

@@ -1,4 +1,4 @@
-import { getPayloadClient } from '@/lib/payload'
+import { getCms } from '@/lib/cms'
 import { siteUrl, localePath } from '@/lib/utils'
 import type { LeadInput, StoredLead } from '@/lib/leads'
 
@@ -58,10 +58,10 @@ async function alertFoundersByEmail(ctx: NotifyContext) {
     .map((s) => s.trim())
     .filter(Boolean)
   if (!to.length) return
-  const payload = await getPayloadClient()
+  const cms = await getCms()
   const lines = summaryLines(ctx)
   const tierTag = ctx.input.tier ? ` [${ctx.input.tier.toUpperCase()} ${ctx.input.score}]` : ''
-  await payload.sendEmail({
+  await cms.sendEmail({
     to,
     subject: `New ${ctx.input.source} lead${tierTag}: ${ctx.input.name || ctx.input.email || ctx.lead.id}`,
     text: lines.map(([k, v]) => `${k}: ${v}`).join('\n'),
@@ -91,7 +91,7 @@ const replies: Record<L, (ctx: NotifyContext) => Reply> = {
     const when = responseTimePromise ? `سنتواصل معك ${responseTimePromise}.` : 'سنتواصل معك قريبًا عبر واتساب أو البريد.'
     if (input.source === 'scorecard' && input.tier === 'ready')
       return {
-        subject: 'نتيجتك في تقييم إطلاق: جاهز للإطلاق',
+        subject: 'نتيجتك في تقييم اطلق: جاهز للإطلاق',
         paragraphs: [
           hello,
           `حصلت على ${input.score} من 100 في التقييم، وفكرتك مناسبة للإطلاق.`,
@@ -101,7 +101,7 @@ const replies: Record<L, (ctx: NotifyContext) => Reply> = {
       }
     if (input.source === 'scorecard')
       return {
-        subject: 'نتيجتك في تقييم إطلاق',
+        subject: 'نتيجتك في تقييم اطلق',
         paragraphs: [
           hello,
           `حصلت على ${input.score} من 100 في التقييم.`,
@@ -110,11 +110,11 @@ const replies: Record<L, (ctx: NotifyContext) => Reply> = {
         ],
       }
     if (input.source === 'contact')
-      return { subject: 'وصلتنا رسالتك', paragraphs: [hello, 'شكرًا لتواصلك مع إطلاق. وصلتنا رسالتك وسيقرؤها أحد المؤسّسَين بنفسه.', when] }
+      return { subject: 'وصلتنا رسالتك', paragraphs: [hello, 'شكرًا لتواصلك مع اطلق. وصلتنا رسالتك وسيقرؤها أحد المؤسّسَين بنفسه.', when] }
     if (input.source === 'playbook')
       return { subject: 'سجّلناك لاستلام دليل الإطلاق', paragraphs: [hello, 'شكرًا لاهتمامك بدليل الإطلاق. سنرسله إلى بريدك فور جاهزيته.'] }
     return {
-      subject: 'أهلًا بك في نشرة إطلاق',
+      subject: 'أهلًا بك في نشرة اطلق',
       paragraphs: [hello, 'شكرًا لاشتراكك. سنرسل لك نماذج SaaS مجرّبة وأرقامًا موثّقة المصدر، دون إزعاج. يمكنك إلغاء الاشتراك في أي وقت.'],
     }
   },
@@ -157,10 +157,10 @@ async function autoReply(ctx: NotifyContext) {
   const links: string[] = []
   if (ctx.input.source === 'scorecard' && ctx.input.tier === 'ready') links.push(`${siteUrl()}${localePath(locale, '/book')}`)
   if (ctx.whatsappNumber) links.push(`https://wa.me/${ctx.whatsappNumber.replace(/\D/g, '')}`)
-  const signature = locale === 'ar' ? 'فريق إطلاق' : 'The Etleq team'
+  const signature = locale === 'ar' ? 'فريق اطلق' : 'The Etleq team'
   const dir = locale === 'ar' ? 'rtl' : 'ltr'
-  const payload = await getPayloadClient()
-  await payload.sendEmail({
+  const cms = await getCms()
+  await cms.sendEmail({
     to,
     subject,
     text: [...paragraphs, ...links, signature].join('\n\n'),

@@ -132,9 +132,9 @@ export const getTestimonials = (locale: Locale) =>
   safe(
     'testimonials',
     async () => {
-      const { getPayloadClient } = await import('@/lib/payload')
-      const payload = await getPayloadClient()
-      const res = await payload.find({
+      const { getCms } = await import('@/lib/cms')
+      const cms = await getCms()
+      const res = await cms.find({
         collection: 'testimonials' as never,
         locale,
         fallbackLocale: false,

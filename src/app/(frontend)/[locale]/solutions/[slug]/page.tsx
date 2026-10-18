@@ -29,7 +29,7 @@ import { mediaOf, publicRelations, videoMeta, type Loc } from '@/components/cont
 import { getSolution, solutionSlugs } from '@/lib/queries/solutions'
 import { absoluteUrl, buildMetadata } from '@/lib/seo'
 import { faqPageNode, graph, serviceNode } from '@/lib/schema'
-import type { Faq, Project } from '@/payload-types'
+import type { Faq, Project } from '@/cms/content-types'
 
 export const revalidate = 3600
 export const dynamicParams = true

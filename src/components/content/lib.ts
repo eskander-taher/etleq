@@ -4,7 +4,7 @@ export type Loc = 'ar' | 'en'
 
 type WithId = { id: string | number }
 
-/** Narrow a Payload relationship value (id or populated doc) to the populated doc. */
+/** Narrow a CMS relationship value (id or populated doc) to the populated doc. */
 export function populated<T extends WithId>(value: string | number | T | null | undefined): T | null {
   return value && typeof value === 'object' ? value : null
 }

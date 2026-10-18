@@ -1,6 +1,6 @@
 import { cache } from 'react'
 import { getGlobal } from '@/lib/queries/common'
-import type { Offer, SiteSettings } from '@/payload-types'
+import type { Offer, SiteSettings } from '@/cms/content-types'
 import type { Loc } from './lib'
 
 // Globals read by content templates. They never throw: a missing global must not take a page down.

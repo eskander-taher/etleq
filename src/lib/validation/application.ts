@@ -5,7 +5,7 @@ import { DEFAULT_DIAL_CODE, checkE164, toE164 } from './phone'
 // Job application schema, shared by the apply form (client) and src/actions/apply.ts (server).
 // Messages are written by hand in each language; Arabic first.
 
-export const CV_MAX_BYTES = 5 * 1024 * 1024
+export const CV_MAX_BYTES = 4 * 1024 * 1024 // Vercel request bodies are capped at 4.5 MB
 export const CV_MIME = 'application/pdf'
 export const MAX_ROLE_QUESTIONS = 5
 
@@ -13,7 +13,7 @@ const own = {
   ar: {
     cvRequired: 'أرفق سيرتك الذاتية بصيغة PDF.',
     cvType: 'نقبل السيرة الذاتية بصيغة PDF فقط. احفظ الملف بصيغة PDF ثم أعد رفعه.',
-    cvSize: 'حجم الملف أكبر من 5 ميغابايت. صغّر الملف ثم أعد رفعه.',
+    cvSize: 'حجم الملف أكبر من 4 ميغابايت. صغّر الملف ثم أعد رفعه.',
     urlInvalid: 'تأكّد من الرابط، ويجب أن يبدأ بـ https://',
     linkedinInvalid: 'هذا لا يبدو رابط ملف على LinkedIn، مثل https://www.linkedin.com/in/name',
     answerRequired: 'أجب عن هذا السؤال باختصار.',
@@ -23,7 +23,7 @@ const own = {
   en: {
     cvRequired: 'Please attach your CV as a PDF.',
     cvType: 'We only accept CVs as PDF files. Save your CV as a PDF and upload it again.',
-    cvSize: 'That file is larger than 5 MB. Please make it smaller and upload it again.',
+    cvSize: 'That file is larger than 4 MB. Please make it smaller and upload it again.',
     urlInvalid: 'Please check the link. It should start with https://',
     linkedinInvalid: "That doesn't look like a LinkedIn profile link, e.g. https://www.linkedin.com/in/name",
     answerRequired: 'Please answer this question briefly.',

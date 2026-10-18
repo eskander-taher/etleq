@@ -1,15 +1,18 @@
 import { cache } from 'react'
-import { getPayloadClient } from '@/lib/payload'
+import { getCms } from '@/lib/cms'
 import { publicWhere } from '@/lib/queries/common'
-import type { News } from '@/payload-types'
+import type { News } from '@/cms/content-types'
 
 type Loc = 'ar' | 'en'
 
 export const NEWS_PER_PAGE = 12
 
-export async function listNews(locale: Loc, { page = 1, limit = NEWS_PER_PAGE }: { page?: number; limit?: number } = {}) {
-  const payload = await getPayloadClient()
-  return payload.find({
+export async function listNews(
+  locale: Loc,
+  { page = 1, limit = NEWS_PER_PAGE }: { page?: number; limit?: number } = {},
+) {
+  const cms = await getCms()
+  return cms.find({
     collection: 'news',
     locale,
     fallbackLocale: false,
@@ -23,8 +26,8 @@ export async function listNews(locale: Loc, { page = 1, limit = NEWS_PER_PAGE }:
 }
 
 export const getNews = cache(async (slug: string, locale: Loc): Promise<News | null> => {
-  const payload = await getPayloadClient()
-  const res = await payload.find({
+  const cms = await getCms()
+  const res = await cms.find({
     collection: 'news',
     locale,
     fallbackLocale: false,
@@ -39,8 +42,8 @@ export const getNews = cache(async (slug: string, locale: Loc): Promise<News | n
 
 export async function newsSlugs(locale: Loc): Promise<string[]> {
   try {
-    const payload = await getPayloadClient()
-    const res = await payload.find({
+    const cms = await getCms()
+    const res = await cms.find({
       collection: 'news',
       locale,
       fallbackLocale: false,

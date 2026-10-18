@@ -1,10 +1,5 @@
-import type { ReactNode } from 'react'
+import { Fragment, type ReactNode } from 'react'
 import { getLocale, getTranslations } from 'next-intl/server'
-import {
-  RichText as LexicalRichText,
-  type JSXConverters,
-  type JSXConvertersFunction,
-} from '@payloadcms/richtext-lexical/react'
 import { AlertTriangle, CheckCircle2, Info, Lightbulb } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import { ButtonLink } from '@/components/ui/button-link'
@@ -43,7 +38,13 @@ type CtaFields = {
   href?: string | null
   label?: string | null
 }
-type VideoFields = { url?: string | null; title?: string | null; transcript?: string | null; posterImage?: unknown; platform?: string | null }
+type VideoFields = {
+  url?: string | null
+  title?: string | null
+  transcript?: string | null
+  posterImage?: unknown
+  platform?: string | null
+}
 
 const calloutTone: Record<string, { icon: typeof Info; className: string }> = {
   info: { icon: Info, className: 'border-ink-600/30 bg-sand-100' },
@@ -83,18 +84,100 @@ function docPath(relationTo: string, doc: any): string {
   }
 }
 
+type Node = { type: string; children?: Node[]; [key: string]: any }
+type BlockRenderer = (args: { node: Node }) => ReactNode
+
+// Lexical text format bits.
+const BOLD = 1
+const ITALIC = 2
+const STRIKE = 4
+const UNDERLINE = 8
+const CODE = 16
+
+function textNode(node: Node): ReactNode {
+  let out: ReactNode = node.text as string
+  const f = Number(node.format) || 0
+  if (f & CODE) out = <code>{out}</code>
+  if (f & BOLD) out = <strong>{out}</strong>
+  if (f & ITALIC) out = <em>{out}</em>
+  if (f & STRIKE) out = <s>{out}</s>
+  if (f & UNDERLINE) out = <u>{out}</u>
+  return out
+}
+
+/** Renders the Lexical-shaped tree built from Markdown (see src/cms/richtext.ts). */
+function renderNodes(
+  nodes: Node[] | undefined,
+  ids: WeakMap<object, string>,
+  blocks: Record<string, BlockRenderer>,
+): ReactNode {
+  return (nodes ?? []).map((node, i) => <Fragment key={i}>{renderNode(node, ids, blocks)}</Fragment>)
+}
+
+function renderNode(node: Node, ids: WeakMap<object, string>, blocks: Record<string, BlockRenderer>): ReactNode {
+  const children = () => renderNodes(node.children, ids, blocks)
+  switch (node.type) {
+    case 'text':
+      return textNode(node)
+    case 'linebreak':
+      return <br />
+    case 'paragraph':
+      return <p>{children()}</p>
+    case 'heading': {
+      const Tag = (['h2', 'h3', 'h4', 'h5', 'h6'].includes(node.tag) ? node.tag : 'h2') as 'h2'
+      return (
+        <Tag id={ids.get(node)} className="scroll-mt-28">
+          {children()}
+        </Tag>
+      )
+    }
+    case 'list':
+      return node.listType === 'number' ? <ol>{children()}</ol> : <ul>{children()}</ul>
+    case 'listitem':
+      return <li>{children()}</li>
+    case 'quote':
+      return <blockquote>{children()}</blockquote>
+    case 'horizontalrule':
+      return <hr />
+    case 'code':
+      return (
+        <pre dir="ltr" className="overflow-x-auto rounded-[12px] bg-ink-950 p-4 text-sm text-sand-50">
+          <code>{children()}</code>
+        </pre>
+      )
+    case 'link':
+    case 'autolink': {
+      const f = node.fields ?? {}
+      if (f.linkType === 'internal' && f.doc)
+        return <Link href={docPath(f.doc.relationTo, f.doc.value)}>{children()}</Link>
+      const href: string = f.url ?? '#'
+      if (href.startsWith('/')) return <Link href={href}>{children()}</Link>
+      return (
+        <a href={href} {...(f.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : { rel: 'noopener' })}>
+          {children()}
+        </a>
+      )
+    }
+    case 'block': {
+      const render = blocks[node.fields?.blockType]
+      return render ? render({ node }) : null
+    }
+    default:
+      return node.children ? children() : null
+  }
+}
+
 /** Accepts a plain string or nested Lexical data for block bodies. */
-function bodyOf(body: unknown, converters: JSXConverters | JSXConvertersFunction): ReactNode {
+function bodyOf(body: unknown, ids: WeakMap<object, string>, blocks: Record<string, BlockRenderer>): ReactNode {
   if (!body) return null
   if (typeof body === 'string') return <p className="whitespace-pre-line">{body}</p>
-  if (typeof body === 'object' && 'root' in (body as object)) {
-    return <LexicalRichText data={body as RichTextData} converters={converters} disableContainer />
-  }
+  if (typeof body === 'object' && 'root' in (body as object))
+    return renderNodes((body as { root: Node }).root.children, ids, blocks)
   return null
 }
 
 /**
- * Renders Payload Lexical rich text with Etleq's custom blocks.
+ * Renders CMS rich text (Markdown, converted to a Lexical-shaped tree) with Etleq's custom blocks.
  * h2/h3 headings get stable ids that match `collectHeadings()` so the table of contents can link to them.
  */
 export async function RichText({
@@ -111,135 +194,107 @@ export async function RichText({
   const t = await getTranslations({ locale, namespace: 'content' })
   const { ids } = collectHeadings(data)
 
-  const converters: JSXConvertersFunction = ({ defaultConverters }) => {
-    const own: JSXConverters = {
-      ...defaultConverters,
-      heading: ({ node, nodesToJSX }: any) => {
-        const Tag = (['h2', 'h3', 'h4', 'h5', 'h6'].includes(node.tag) ? node.tag : 'h2') as 'h2'
-        return (
-          <Tag id={ids.get(node)} className="scroll-mt-28">
-            {nodesToJSX({ nodes: node.children })}
-          </Tag>
-        )
-      },
-      link: ({ node, nodesToJSX }: any) => {
-        const children = nodesToJSX({ nodes: node.children })
-        const f = node.fields ?? {}
-        if (f.linkType === 'internal' && f.doc) {
-          return <Link href={docPath(f.doc.relationTo, f.doc.value)}>{children}</Link>
-        }
-        const href: string = f.url ?? '#'
-        if (href.startsWith('/')) return <Link href={href}>{children}</Link>
-        return (
-          <a href={href} {...(f.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : { rel: 'noopener' })}>
-            {children}
-          </a>
-        )
-      },
-      blocks: {
-        callout: ({ node }: any) => {
-          const f = node.fields as CalloutFields
-          const tone = calloutTone[f.tone ?? 'info'] ?? calloutTone.info
-          const Icon = tone.icon
-          return (
-            <aside className={cn('not-prose my-8 flex gap-3 rounded-[var(--radius-card)] border p-5', tone.className)}>
-              <Icon aria-hidden className="mt-1 size-5 shrink-0" />
-              <div>
-                {f.title && <p className="mb-1 font-semibold">{f.title}</p>}
-                {bodyOf(f.body, converters)}
-              </div>
-            </aside>
-          )
-        },
-        statWithSource: ({ node }: any) => {
-          const f = node.fields as StatFields
-          return (
-            <figure className="not-prose my-8 rounded-[var(--radius-card)] bg-ink-950 p-6 text-sand-50">
-              <p className="text-display-2 font-bold">
-                <bdi className="num">{f.value}</bdi>
-              </p>
-              <figcaption className="mt-2 text-sand-300">
-                <span>{f.label}</span>
-                {f.sourceUrl && (
-                  <span className="mt-2 block text-sm">
-                    <SourceCite
-                      label={f.sourceName ?? f.sourceLabel ?? f.sourceUrl}
-                      url={f.sourceUrl}
-                      date={f.checkedAt ?? f.date ?? undefined}
-                      locale={locale}
-                    />
-                  </span>
-                )}
-              </figcaption>
-            </figure>
-          )
-        },
-        comparisonTable: ({ node }: any) => (
-          <div className="not-prose my-8">
-            <ComparisonTable data={node.fields as ComparisonTableData} sourceLabel={t('common.source')} />
+  const blocks: Record<string, BlockRenderer> = {
+    callout: ({ node }: any) => {
+      const f = node.fields as CalloutFields
+      const tone = calloutTone[f.tone ?? 'info'] ?? calloutTone.info
+      const Icon = tone.icon
+      return (
+        <aside className={cn('not-prose my-8 flex gap-3 rounded-[var(--radius-card)] border p-5', tone.className)}>
+          <Icon aria-hidden className="mt-1 size-5 shrink-0" />
+          <div>
+            {f.title && <p className="mb-1 font-semibold">{f.title}</p>}
+            {bodyOf(f.body, ids, blocks)}
           </div>
-        ),
-        faq: ({ node }: any) => {
-          const f = node.fields as FaqFields
-          const inline = (f.items ?? [])
-            .filter((i) => i.question && typeof i.answer === 'string')
-            .map((i) => ({ question: String(i.question), answer: String(i.answer) }))
-          const linked = publicRelations((f.faqs ?? []) as any[], locale)
-            .filter((q: any) => q.question && q.answer)
-            .map((q: any) => ({ question: String(q.question), answer: String(q.answer) }))
-          const items = [...inline, ...linked]
-          if (!items.length) return null
-          return (
-            <div className="not-prose my-8">
-              {f.title && <p className="mb-4 text-xl font-semibold">{f.title}</p>}
-              <FaqList items={items} />
-            </div>
-          )
-        },
-        cta: ({ node }: any) => {
-          const f = node.fields as CtaFields
-          const heading = f.heading ?? f.title
-          const action = f.action ?? (f.href ? 'custom' : 'scorecard')
-          const href = action === 'custom' ? f.href : ctaHref[action]
-          const label = f.label || t(`cta.${action === 'custom' ? 'scorecard' : action}`)
-          return (
-            <aside className="not-prose my-10 rounded-[var(--radius-card)] bg-sand-100 p-6 lg:p-8">
-              {heading && <p className="text-display-3 font-bold">{heading}</p>}
-              {f.body && <p className="mt-2 text-ink-600">{f.body}</p>}
-              <div className="mt-5">
-                {action === 'whatsapp' ? (
-                  <WhatsAppButton message={t('cta.whatsappMessage')} placement="rich_text_cta" label={label} />
-                ) : href ? (
-                  <ButtonLink href={href}>{label}</ButtonLink>
-                ) : null}
-              </div>
-            </aside>
-          )
-        },
-        video: ({ node }: any) => {
-          const f = node.fields as VideoFields
-          if (!f.url) return null
-          return (
-            <div className="not-prose my-8">
-              <VideoFacade
-                url={f.url}
-                title={f.title ?? ''}
-                poster={mediaOf(f.posterImage)?.url}
-                vertical={f.platform === 'instagram' || f.platform === 'tiktok' || /\/shorts\//.test(f.url)}
-                playLabel={t('common.playVideo')}
-              />
-              {f.transcript && (
-                <details className="mt-3 rounded-[12px] border border-sand-300 p-4">
-                  <summary className="cursor-pointer font-semibold">{t('common.transcript')}</summary>
-                  <p className="mt-3 whitespace-pre-line text-ink-600">{f.transcript}</p>
-                </details>
-              )}
-            </div>
-          )
-        },
-      },
-    }
-    return own
+        </aside>
+      )
+    },
+    statWithSource: ({ node }: any) => {
+      const f = node.fields as StatFields
+      return (
+        <figure className="not-prose my-8 rounded-[var(--radius-card)] bg-ink-950 p-6 text-sand-50">
+          <p className="text-display-2 font-bold">
+            <bdi className="num">{f.value}</bdi>
+          </p>
+          <figcaption className="mt-2 text-sand-300">
+            <span>{f.label}</span>
+            {f.sourceUrl && (
+              <span className="mt-2 block text-sm">
+                <SourceCite
+                  label={f.sourceName ?? f.sourceLabel ?? f.sourceUrl}
+                  url={f.sourceUrl}
+                  date={f.checkedAt ?? f.date ?? undefined}
+                  locale={locale}
+                />
+              </span>
+            )}
+          </figcaption>
+        </figure>
+      )
+    },
+    comparisonTable: ({ node }: any) => (
+      <div className="not-prose my-8">
+        <ComparisonTable data={node.fields as ComparisonTableData} sourceLabel={t('common.source')} />
+      </div>
+    ),
+    faq: ({ node }: any) => {
+      const f = node.fields as FaqFields
+      const inline = (f.items ?? [])
+        .filter((i) => i.question && typeof i.answer === 'string')
+        .map((i) => ({ question: String(i.question), answer: String(i.answer) }))
+      const linked = publicRelations((f.faqs ?? []) as any[], locale)
+        .filter((q: any) => q.question && q.answer)
+        .map((q: any) => ({ question: String(q.question), answer: String(q.answer) }))
+      const items = [...inline, ...linked]
+      if (!items.length) return null
+      return (
+        <div className="not-prose my-8">
+          {f.title && <p className="mb-4 text-xl font-semibold">{f.title}</p>}
+          <FaqList items={items} />
+        </div>
+      )
+    },
+    cta: ({ node }: any) => {
+      const f = node.fields as CtaFields
+      const heading = f.heading ?? f.title
+      const action = f.action ?? (f.href ? 'custom' : 'scorecard')
+      const href = action === 'custom' ? f.href : ctaHref[action]
+      const label = f.label || t(`cta.${action === 'custom' ? 'scorecard' : action}`)
+      return (
+        <aside className="not-prose my-10 rounded-[var(--radius-card)] bg-sand-100 p-6 lg:p-8">
+          {heading && <p className="text-display-3 font-bold">{heading}</p>}
+          {f.body && <p className="mt-2 text-ink-600">{f.body}</p>}
+          <div className="mt-5">
+            {action === 'whatsapp' ? (
+              <WhatsAppButton message={t('cta.whatsappMessage')} placement="rich_text_cta" label={label} />
+            ) : href ? (
+              <ButtonLink href={href}>{label}</ButtonLink>
+            ) : null}
+          </div>
+        </aside>
+      )
+    },
+    video: ({ node }: any) => {
+      const f = node.fields as VideoFields
+      if (!f.url) return null
+      return (
+        <div className="not-prose my-8">
+          <VideoFacade
+            url={f.url}
+            title={f.title ?? ''}
+            poster={mediaOf(f.posterImage)?.url}
+            vertical={f.platform === 'instagram' || f.platform === 'tiktok' || /\/shorts\//.test(f.url)}
+            playLabel={t('common.playVideo')}
+          />
+          {f.transcript && (
+            <details className="mt-3 rounded-[12px] border border-sand-300 p-4">
+              <summary className="cursor-pointer font-semibold">{t('common.transcript')}</summary>
+              <p className="mt-3 whitespace-pre-line text-ink-600">{f.transcript}</p>
+            </details>
+          )}
+        </div>
+      )
+    },
   }
 
   return (
@@ -249,7 +304,7 @@ export async function RichText({
         className,
       )}
     >
-      <LexicalRichText data={data} converters={converters} disableContainer />
+      {renderNodes(data.root.children, ids, blocks)}
     </div>
   )
 }

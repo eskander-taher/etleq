@@ -23,7 +23,7 @@ import {
 import { submitApplication, type ApplyError } from '@/actions/apply'
 
 /**
- * Apply form on the job page (brief section 8): name, email, phone (+966 default, E.164), CV (PDF, max 5 MB),
+ * Apply form on the job page (brief section 8): name, email, phone (+966 default, E.164), CV (PDF, max 4 MB),
  * LinkedIn, portfolio/GitHub, role questions, PDPL consent, honeypot and Turnstile.
  */
 export function ApplyForm({

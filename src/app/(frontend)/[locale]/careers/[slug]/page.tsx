@@ -17,7 +17,7 @@ import { buildMetadata } from '@/lib/seo'
 import { graph, jobPostingNode } from '@/lib/schema'
 import { env } from '@/lib/env'
 import { formatDate } from '@/lib/format'
-import type { Job } from '@/payload-types'
+import type { Job } from '@/cms/content-types'
 
 export const revalidate = 3600
 export const dynamicParams = true

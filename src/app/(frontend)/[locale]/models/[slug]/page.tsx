@@ -33,7 +33,7 @@ import { getModel, modelSlugs } from '@/lib/queries/models'
 import { absoluteUrl, buildMetadata } from '@/lib/seo'
 import { articleNode, faqPageNode, graph, personNode, videoNode } from '@/lib/schema'
 import { formatDate, formatMoney, formatNumber } from '@/lib/format'
-import type { Faq, Model, Post, Solution } from '@/payload-types'
+import type { Faq, Model, Post, Solution } from '@/cms/content-types'
 
 export const revalidate = 3600
 export const dynamicParams = true

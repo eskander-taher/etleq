@@ -7,7 +7,7 @@ import { jobLocation } from '@/components/content/jobs'
 import { firstParam, withQuery, type Loc } from '@/components/content/lib'
 import { JOB_TEAMS, JOB_WORKPLACES, isJobTeam, isJobWorkplace, listOpenJobs } from '@/lib/queries/jobs'
 import { buildMetadata } from '@/lib/seo'
-import type { Job } from '@/payload-types'
+import type { Job } from '@/cms/content-types'
 
 export const revalidate = 3600
 

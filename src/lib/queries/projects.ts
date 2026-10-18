@@ -1,8 +1,8 @@
 import { cache } from 'react'
-import type { Where } from 'payload'
-import { getPayloadClient } from '@/lib/payload'
+import type { Where } from '@/cms/types'
+import { getCms } from '@/lib/cms'
 import { publicWhere } from '@/lib/queries/common'
-import type { Project } from '@/payload-types'
+import type { Project } from '@/cms/content-types'
 
 type Loc = 'ar' | 'en'
 
@@ -10,8 +10,8 @@ type Loc = 'ar' | 'en'
 const consented: Where = { consentGiven: { equals: true } }
 
 export async function listProjects(locale: Loc, { page = 1, limit = 12 }: { page?: number; limit?: number } = {}) {
-  const payload = await getPayloadClient()
-  return payload.find({
+  const cms = await getCms()
+  return cms.find({
     collection: 'projects',
     locale,
     fallbackLocale: false,
@@ -25,8 +25,8 @@ export async function listProjects(locale: Loc, { page = 1, limit = 12 }: { page
 }
 
 export const getProject = cache(async (slug: string, locale: Loc): Promise<Project | null> => {
-  const payload = await getPayloadClient()
-  const res = await payload.find({
+  const cms = await getCms()
+  const res = await cms.find({
     collection: 'projects',
     locale,
     fallbackLocale: false,
@@ -41,8 +41,8 @@ export const getProject = cache(async (slug: string, locale: Loc): Promise<Proje
 
 export async function projectSlugs(locale: Loc): Promise<string[]> {
   try {
-    const payload = await getPayloadClient()
-    const res = await payload.find({
+    const cms = await getCms()
+    const res = await cms.find({
       collection: 'projects',
       locale,
       fallbackLocale: false,

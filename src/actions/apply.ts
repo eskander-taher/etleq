@@ -2,7 +2,7 @@
 
 import { headers } from 'next/headers'
 import { after } from 'next/server'
-import { getPayloadClient } from '@/lib/payload'
+import { getCms } from '@/lib/cms'
 import { POLICY_VERSION } from '@/lib/consent'
 import { clientIp, isHoneypotTripped, rateLimit } from '@/lib/rate-limit'
 import { verifyTurnstile } from '@/lib/turnstile'
@@ -30,7 +30,7 @@ const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, (c) => ENTITIES[
 /**
  * Job application (brief sections 8 and 14). Receives multipart FormData from the apply form:
  * validates with the shared schema, rate-limits per IP, verifies Turnstile and the honeypot,
- * checks the CV by file signature (PDF, max 5 MB), stores it in `private-files`, creates the
+ * checks the CV by file signature (PDF, max 4 MB), stores it in `private-files`, creates the
  * `applications` record with the consent record, and alerts recruiters by email.
  * The client then queues `job_apply_submit` and navigates to /thank-you/application.
  */
@@ -87,11 +87,11 @@ export async function submitApplication(formData: FormData): Promise<ApplyResult
   const d = parsed.data
 
   try {
-    const payload = await getPayloadClient()
+    const cms = await getCms()
     const settings = await getSiteSettings(locale)
     const phone = toE164(d.phoneCountry, d.phone)
 
-    const file = await payload.create({
+    const file = await cms.create({
       collection: 'private-files',
       data: { purpose: 'cv', note: `CV: ${job.slug}` },
       file: {
@@ -103,7 +103,7 @@ export async function submitApplication(formData: FormData): Promise<ApplyResult
       overrideAccess: true,
     })
 
-    const application = await payload.create({
+    const application = await cms.create({
       collection: 'applications',
       data: {
         job: job.id,
@@ -130,7 +130,7 @@ export async function submitApplication(formData: FormData): Promise<ApplyResult
       if (!to.length) return
       try {
         const admin = `${siteUrl()}/admin/collections/applications/${application.id}`
-        await payload.sendEmail({
+        await cms.sendEmail({
           to,
           subject: `New application: ${job.title ?? job.slug} — ${d.name}`,
           html: [

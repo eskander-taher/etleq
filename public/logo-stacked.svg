@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" role="img" aria-label="إطلاق Etleq">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" role="img" aria-label="اطلق Etleq">
   <!-- Temporary stacked lockup. Live text in Alexandria Bold; outline the text before using this file outside the website. -->
   <g transform="translate(40 4) scale(1.25)">
     <path d="M6 26.5C14.5 26 21.5 20.5 23.5 4" stroke="#0B0F14" stroke-width="4" stroke-linecap="round"/>
     <circle cx="6" cy="26.5" r="3.25" fill="#FF5A1F"/>
   </g>
-  <text x="60" y="84" text-anchor="middle" direction="rtl" font-family="Alexandria, 'IBM Plex Sans Arabic', sans-serif" font-weight="700" font-size="32" fill="#0B0F14">إطلاق</text>
+  <text x="60" y="84" text-anchor="middle" direction="rtl" font-family="Alexandria, 'IBM Plex Sans Arabic', sans-serif" font-weight="700" font-size="32" fill="#0B0F14">اطلق</text>
   <text x="60" y="110" text-anchor="middle" letter-spacing="4" font-family="Alexandria, 'IBM Plex Sans', sans-serif" font-weight="600" font-size="13" fill="#0B0F14">ETLEQ</text>
 </svg>

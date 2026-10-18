@@ -21,7 +21,7 @@ describe('seo', () => {
   })
 
   it('applies the title template with locale fallbacks', () => {
-    expect(applyTitleTemplate('تكلفة نظام حجز', 'ar')).toBe('تكلفة نظام حجز — إطلاق')
+    expect(applyTitleTemplate('تكلفة نظام حجز', 'ar')).toBe('تكلفة نظام حجز — اطلق')
     expect(applyTitleTemplate('Cost guide', 'en')).toBe('Cost guide — Etleq')
     expect(applyTitleTemplate('Cost guide', 'en', '%s | Etleq')).toBe('Cost guide | Etleq')
     expect(applyTitleTemplate('Cost guide', 'en', 'no placeholder')).toBe('Cost guide — Etleq')
@@ -49,13 +49,13 @@ describe('seo', () => {
   })
 
   it('open graph locale and default image', () => {
-    const m = buildMetadata({ locale: 'ar', path: '/', title: 'إطلاق', absoluteTitle: true })
+    const m = buildMetadata({ locale: 'ar', path: '/', title: 'اطلق', absoluteTitle: true })
     const og = m.openGraph as Record<string, unknown>
     expect(og.locale).toBe('ar_SA')
     const img = (og.images as Array<{ url: string }>)[0]
-    expect(img.url).toBe(ogImageUrl('ar', 'إطلاق'))
+    expect(img.url).toBe(ogImageUrl('ar', 'اطلق'))
     expect(img.url.startsWith(`${SITE}/og.png?`)).toBe(true)
-    expect(m.title).toEqual({ absolute: 'إطلاق' })
+    expect(m.title).toEqual({ absolute: 'اطلق' })
   })
 
   it('noindex on request and always on staging', () => {

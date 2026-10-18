@@ -1,13 +1,13 @@
 import { cache } from 'react'
-import { getPayloadClient } from '@/lib/payload'
+import { getCms } from '@/lib/cms'
 import { publicWhere } from '@/lib/queries/common'
-import type { Solution } from '@/payload-types'
+import type { Solution } from '@/cms/content-types'
 
 type Loc = 'ar' | 'en'
 
 export async function listSolutions(locale: Loc) {
-  const payload = await getPayloadClient()
-  return payload.find({
+  const cms = await getCms()
+  return cms.find({
     collection: 'solutions',
     locale,
     fallbackLocale: false,
@@ -21,8 +21,8 @@ export async function listSolutions(locale: Loc) {
 }
 
 export const getSolution = cache(async (slug: string, locale: Loc): Promise<Solution | null> => {
-  const payload = await getPayloadClient()
-  const res = await payload.find({
+  const cms = await getCms()
+  const res = await cms.find({
     collection: 'solutions',
     locale,
     fallbackLocale: false,

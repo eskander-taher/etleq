@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { ArrowRight } from 'lucide-react'
-import type { Author, Media } from '@/payload-types'
+import type { Author, Media } from '@/cms/content-types'
 import type { Locale } from '@/i18n/routing'
 import { Link } from '@/i18n/navigation'
 import { env } from '@/lib/env'

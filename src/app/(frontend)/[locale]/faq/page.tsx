@@ -1,5 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import type { Faq } from '@/payload-types'
+import type { Faq } from '@/cms/content-types'
 import type { Locale } from '@/i18n/routing'
 import { absoluteUrl, buildMetadata } from '@/lib/seo'
 import { faqPageNode, graph, organizationNode, type SchemaNode } from '@/lib/schema'

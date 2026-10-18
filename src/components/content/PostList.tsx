@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server'
 import { Search } from 'lucide-react'
 import { formatDate } from '@/lib/format'
 import { localePath } from '@/lib/utils'
-import type { Category, Post } from '@/payload-types'
+import type { Category, Post } from '@/cms/content-types'
 import { ContentCard, EmptyState, FilterLink, Pagination } from './parts'
 import type { Loc } from './lib'
 

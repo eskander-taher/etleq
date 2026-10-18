@@ -38,7 +38,7 @@ export const ids = {
 }
 
 const ORG_NAME = 'Etleq'
-const ORG_ALT_NAMES = ['إطلاق', 'منصة اطلق']
+const ORG_ALT_NAMES = ['اطلق', 'منصة اطلق']
 
 /** Wrap nodes in a single `@graph`. Falsy entries are dropped. */
 export function graph(...nodes: Array<SchemaNode | null | undefined | false>): Graph {
@@ -70,7 +70,7 @@ type LexNode = { type?: string; text?: string; tag?: string; listType?: string; 
 
 const BLOCK_TYPES = ['paragraph', 'heading', 'listitem', 'quote']
 
-/** Flatten Payload Lexical JSON (or a string) to plain text, one block per line. */
+/** Flatten a rich-text tree (or a string) to plain text, one block per line. */
 export function richTextToPlain(value: unknown): string {
   if (!value) return ''
   if (typeof value === 'string') return value
@@ -193,8 +193,8 @@ export function websiteNode(locale: SchemaLocale, opts: { description?: string |
     '@type': 'WebSite',
     '@id': ids.website(locale),
     url: absoluteUrl(locale, '/'),
-    name: locale === 'ar' ? 'إطلاق' : 'Etleq',
-    alternateName: locale === 'ar' ? ['Etleq', 'منصة اطلق'] : ['إطلاق', 'منصة اطلق'],
+    name: locale === 'ar' ? 'اطلق' : 'Etleq',
+    alternateName: locale === 'ar' ? ['Etleq', 'منصة اطلق'] : ['اطلق', 'منصة اطلق'],
     inLanguage: inLang(locale),
     publisher: { '@id': ids.organization() },
     ...(opts.description ? { description: opts.description } : {}),

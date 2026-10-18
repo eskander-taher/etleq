@@ -18,7 +18,7 @@ export const SITEMAP_SECTIONS = [
 ] as const
 export type SitemapSection = (typeof SITEMAP_SECTIONS)[number]
 
-/** Payload collection behind each section. */
+/** CMS collection behind each section. */
 export const SECTION_COLLECTION: Record<Exclude<SitemapSection, 'static'>, string> = {
   models: 'models',
   solutions: 'solutions',

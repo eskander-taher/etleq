@@ -6,7 +6,7 @@ export type LogoVariant = 'ar' | 'en' | 'stacked' | 'mark'
 
 /**
  * The mark: the rising stroke of the alef drawn as a launch trajectory. It leaves the ground
- * almost flat (the launch point, a hamza-like dot) and bends upward into an upright alef.
+ * almost flat (the launch point, a dot) and bends upward into the upright alef that opens «اطلق».
  * Single colour by default (currentColor); `accent` paints the launch dot in ignition.
  * Never mirrored in RTL: logos keep their orientation.
  */
@@ -50,7 +50,7 @@ export function Logo({
       <span className={cn('inline-flex flex-col items-center gap-1 font-display font-bold leading-none', className)}>
         <LogoMark className="size-10" accent={accent} />
         <span lang="ar" dir="rtl" className="text-3xl">
-          إطلاق
+          اطلق
         </span>
         <span lang="en" dir="ltr" className="text-sm font-semibold tracking-[0.2em] uppercase">
           Etleq
@@ -64,7 +64,7 @@ export function Logo({
     <span className={cn('inline-flex items-center gap-2 font-display font-bold leading-none', className)}>
       <LogoMark accent={accent} />
       <span lang={isAr ? 'ar' : 'en'} dir={isAr ? 'rtl' : 'ltr'} className={cn(isAr ? 'text-[1.6rem] pb-1' : 'text-2xl tracking-tight')}>
-        {isAr ? 'إطلاق' : 'Etleq'}
+        {isAr ? 'اطلق' : 'Etleq'}
       </span>
     </span>
   )

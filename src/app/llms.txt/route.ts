@@ -5,7 +5,7 @@ import { findPublished, getSeoDefaults } from '@/components/seo/server-data'
 export const revalidate = 3600
 
 const HUBS: Array<{ path: string; en: string; ar: string }> = [
-  { path: '/launch-30', en: 'Launch 30: the offer', ar: 'إطلاق 30: العرض' },
+  { path: '/launch-30', en: 'Launch 30: the offer', ar: 'اطلق 30: العرض' },
   { path: '/how-it-works', en: 'How it works', ar: 'كيف نعمل' },
   { path: '/models', en: 'SaaS models library', ar: 'مكتبة نماذج SaaS' },
   { path: '/projects', en: 'Projects and case studies', ar: 'المشاريع' },
@@ -36,7 +36,7 @@ export async function GET() {
       .map((d) => `- [${String(d.title || d.slug)}](${absoluteUrl('en', `${base(d)}/${d.slug as string}`)})`)
       .join('\n')
 
-  const lines: string[] = ['# Etleq (إطلاق)', '', `> ${seoEn?.oneLiner || FALLBACK_ONE_LINER}`]
+  const lines: string[] = ['# Etleq (اطلق)', '', `> ${seoEn?.oneLiner || FALLBACK_ONE_LINER}`]
   if (seoAr?.oneLiner) lines.push(`> ${seoAr.oneLiner}`)
   lines.push(
     '',

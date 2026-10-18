@@ -40,7 +40,7 @@ describe('schema builders', () => {
     }) as Obj
     expect(org['@type']).toBe('Organization')
     expect(org.name).toBe('Etleq')
-    expect(org.alternateName).toEqual(['إطلاق', 'منصة اطلق'])
+    expect(org.alternateName).toEqual(['اطلق', 'منصة اطلق'])
     expect(org.sameAs).toHaveLength(2)
     expect(org.contactPoint.areaServed).toEqual(['SA', 'AE', 'OM'])
     expect(org.contactPoint.availableLanguage).toEqual(['ar', 'en'])

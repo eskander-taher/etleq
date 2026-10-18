@@ -8,11 +8,11 @@ export default [
     ignores: [
       '.next/**',
       'node_modules/**',
-      'src/app/(payload)/**',
-      'src/payload-types.ts',
+      'src/cms/content-types.ts',
       'playwright-report/**',
       'test-results/**',
       'next-env.d.ts',
+      'brag-output*/**',
     ],
   },
   ...nextVitals,
