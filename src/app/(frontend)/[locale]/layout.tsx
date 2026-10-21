@@ -13,8 +13,10 @@ const plexArabic = IBM_Plex_Sans_Arabic({
   weight: ['400', '500', '600', '700'],
   variable: '--font-plex-arabic',
   display: 'swap',
+  // Only the heading font (Alexandria, the LCP text) is preloaded; body fonts swap in when used.
+  preload: false,
 })
-const plexSans = IBM_Plex_Sans({ subsets: ['latin'], variable: '--font-plex-sans', display: 'swap' })
+const plexSans = IBM_Plex_Sans({ subsets: ['latin'], variable: '--font-plex-sans', display: 'swap', preload: false })
 const plexMono = IBM_Plex_Mono({
   subsets: ['latin'],
   weight: ['400', '500'],

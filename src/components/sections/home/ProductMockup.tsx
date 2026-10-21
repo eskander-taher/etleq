@@ -16,11 +16,12 @@ export async function ProductMockup({ locale }: { locale: 'ar' | 'en' }) {
       <style>{`
         @media (prefers-reduced-motion: no-preference) {
           .etq-float { animation: etq-float 6s ease-in-out infinite; }
-          .etq-rise { opacity: 0; transform: translateY(12px); animation: etq-rise .6s cubic-bezier(.22,.61,.36,1) forwards; }
+          /* Movement only: the text stays fully opaque, so it is readable (and paints) from the first frame. */
+          .etq-rise { transform: translateY(12px); animation: etq-rise .6s cubic-bezier(.22,.61,.36,1) forwards; }
           .etq-pulse { animation: etq-pulse 2.4s ease-in-out infinite; }
         }
         @keyframes etq-float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
-        @keyframes etq-rise { to { opacity: 1; transform: translateY(0) } }
+        @keyframes etq-rise { to { transform: translateY(0) } }
         @keyframes etq-pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
       `}</style>
 
