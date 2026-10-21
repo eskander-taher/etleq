@@ -1,4 +1,4 @@
-import type { RelOption, RelOptions } from '@/components/admin/DocumentForm'
+import type { RelOption, RelOptions } from '@/components/admin/fields'
 
 import { type Doc, isLocaleMap } from './fields'
 import { cms } from './local'
@@ -12,7 +12,7 @@ export const clientFields = (fields: Field[]): Field[] => JSON.parse(JSON.string
 /** A document's display title (Arabic first, then English). */
 export function titleOf(config: CollectionConfig, doc: Doc): string {
   const v = doc?.[config.useAsTitle]
-  if (isLocaleMap(v)) return String(v.ar || v.en || '') || String(doc.id)
+  if (isLocaleMap(v)) return String(v.ar || v.en || '') || String(doc.filename || doc.id)
   return v ? String(v) : String(doc?.filename || doc?.id || '')
 }
 
@@ -55,6 +55,9 @@ export async function relationOptions(fields: Field[]): Promise<RelOptions> {
         value: String(d.id),
         label: `${titleOf(config, d as Doc)}${(d as Doc)._status === 'draft' ? ' (draft)' : ''}`,
         thumb: config.upload === 'media' ? ((d as Doc).url as string) : null,
+        ...(config.upload === 'media' && isLocaleMap((d as Doc).alt)
+          ? { alt: { ar: String((d as Doc).alt.ar ?? ''), en: String((d as Doc).alt.en ?? '') } }
+          : {}),
       }))
     }),
   )
@@ -88,3 +91,18 @@ export function editableDoc(fields: Field[], doc: Doc): Doc {
 }
 
 const toMd = (v: unknown) => (v == null ? v : typeof v === 'string' ? v : lexicalToMarkdown(v))
+
+/**
+ * Values the form should show for documents saved before a field existed.
+ * Projects without `kind` predate own products and are treated as client
+ * projects (the consent gate keeps applying to them).
+ */
+export function withLegacyDefaults(config: CollectionConfig, doc: Doc): Doc {
+  if (config.slug === 'projects' && doc.id && !doc.kind) return { ...doc, kind: 'client' }
+  return doc
+}
+
+/** New content in the admin is meant for both languages; untick one to skip it. */
+export function newDocDefaults(config: CollectionConfig): Doc {
+  return config.fields.some((f) => f.name === 'translated') ? { translated: { ar: true, en: true } } : {}
+}

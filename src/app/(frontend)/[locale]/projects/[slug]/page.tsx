@@ -11,6 +11,8 @@ import { VideoFacade } from '@/components/content/VideoFacade'
 import { CtaPanel } from '@/components/content/CtaPanel'
 import { Alternates, ContentSection, DateLine, PageHero } from '@/components/content/parts'
 import { mediaOf, populated, publicRelations, videoMeta, type Loc } from '@/components/content/lib'
+import { ProjectKindBadge, ProjectLinkButtons } from '@/components/content/ProjectCard'
+import { isOwnProject, projectLinks } from '@/components/content/project-links'
 import { getProject, projectSlugs } from '@/lib/queries/projects'
 import { buildMetadata } from '@/lib/seo'
 import { articleNode, graph } from '@/lib/schema'
@@ -48,7 +50,10 @@ export default async function ProjectPage({ params }: Props) {
   setRequestLocale(locale)
   const p = await getProject(slug, locale)
   if (!p) notFound()
-  const t = await getTranslations({ locale, namespace: 'content' })
+  const [t, tp] = await Promise.all([
+    getTranslations({ locale, namespace: 'content' }),
+    getTranslations({ locale, namespace: 'projects' }),
+  ])
 
   const title = p.title ?? ''
   const path = `/projects/${slug}`
@@ -58,7 +63,11 @@ export default async function ProjectPage({ params }: Props) {
   const testimonial = populated<Testimonial>(p.testimonial as string | Testimonial)
   const showTestimonial = testimonial?.verified === true && !!testimonial.quote
   const relatedModel = publicRelations<Model>(p.relatedModel as string | Model, locale)[0]
-  const logo = mediaOf(p.clientLogo)
+  const own = isOwnProject(p)
+  // Our own products never show client fields, even if some were filled in earlier.
+  const logo = own ? null : mediaOf(p.clientLogo)
+  const clientName = own ? null : p.clientName
+  const links = projectLinks(p.links)
 
   const jsonLd = graph(
     articleNode({
@@ -69,7 +78,11 @@ export default async function ProjectPage({ params }: Props) {
       images: gallery.slice(0, 3).map((g) => g.url),
       datePublished: p.publishedAt ?? p.createdAt,
       dateModified: p.updatedAt,
-      about: p.clientName ? { '@type': 'Organization', name: p.clientName } : undefined,
+      about: own
+        ? { '@type': 'SoftwareApplication', name: title, ...(links[0] ? { url: links[0].url } : {}) }
+        : clientName
+          ? { '@type': 'Organization', name: clientName }
+          : undefined,
     }),
   )
 
@@ -87,15 +100,42 @@ export default async function ProjectPage({ params }: Props) {
         lead={p.context}
       >
         <div className="mt-5 flex flex-wrap items-center gap-4">
-          {logo && <Image src={logo.url} alt={logo.alt ?? p.clientName ?? ''} width={120} height={48} className="h-12 w-auto object-contain" />}
-          {p.clientName && (
+          <ProjectKindBadge locale={locale} project={{ ...p, clientName: null }} />
+          {logo && <Image src={logo.url} alt={logo.alt ?? clientName ?? ''} width={120} height={48} className="h-12 w-auto object-contain" />}
+          {clientName && (
             <p className="font-semibold">
-              {t('projects.client')}: <bdi>{p.clientName}</bdi>
+              {t('projects.client')}: <bdi>{clientName}</bdi>
             </p>
           )}
         </div>
+        {links.length > 0 && (
+          <ProjectLinkButtons locale={locale} links={links} slug={slug} placement="project_hero" className="mt-6" />
+        )}
         <DateLine locale={locale} published={p.publishedAt} updated={p.updatedAt} />
       </PageHero>
+
+      {gallery.length > 0 && (
+        <ContentSection id="gallery" title={t('projects.gallery')}>
+          <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {gallery.map((g, i) => {
+              const wide = (g.width ?? 0) > (g.height ?? 0)
+              return (
+                <li key={i} className={wide ? 'col-span-2' : undefined}>
+                  <Image
+                    src={g.url}
+                    alt={g.alt || tp('screenshotAlt', { n: i + 1, title })}
+                    width={g.width ?? 1200}
+                    height={g.height ?? 2400}
+                    sizes={wide ? '(min-width: 1024px) 50vw, 100vw' : '(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw'}
+                    className="h-auto w-full rounded-[var(--radius-card)] border border-sand-300 bg-white"
+                    priority={i === 0}
+                  />
+                </li>
+              )
+            })}
+          </ul>
+        </ContentSection>
+      )}
 
       {p.challenge && (
         <ContentSection id="challenge" title={t('projects.challenge')}>
@@ -104,7 +144,7 @@ export default async function ProjectPage({ params }: Props) {
       )}
 
       {p.solution && (
-        <ContentSection id="solution" title={t('projects.solution')} tone="alt">
+        <ContentSection id="solution" title={own ? tp('whatWeBuilt') : t('projects.solution')} tone="alt">
           <RichText data={p.solution} locale={locale} className="max-w-3xl" />
         </ContentSection>
       )}
@@ -175,25 +215,6 @@ export default async function ProjectPage({ params }: Props) {
             ))}
           </dl>
           <p className="mt-4 max-w-3xl text-sm text-ink-600">{t('projects.resultsDisclaimer')}</p>
-        </ContentSection>
-      )}
-
-      {gallery.length > 0 && (
-        <ContentSection id="gallery" title={t('projects.gallery')} tone="alt">
-          <ul className="grid gap-4 sm:grid-cols-2">
-            {gallery.map((g, i) => (
-              <li key={i}>
-                <Image
-                  src={g.url}
-                  alt={g.alt ?? ''}
-                  width={g.width ?? 1600}
-                  height={g.height ?? 1000}
-                  sizes="(min-width: 640px) 50vw, 100vw"
-                  className="h-auto w-full rounded-[var(--radius-card)] border border-sand-300"
-                />
-              </li>
-            ))}
-          </ul>
         </ContentSection>
       )}
 

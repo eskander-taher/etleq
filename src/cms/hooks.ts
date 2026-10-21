@@ -1,10 +1,4 @@
-import {
-  evidenceProblems,
-  type GateProblem,
-  missingTranslations,
-  projectConsentProblems,
-  dedupeProblems,
-} from '@/hooks/gates'
+import { dedupeProblems, evidenceProblems, type GateProblem } from '@/hooks/gates'
 import { PUBLIC_LOCALES } from '@/hooks/paths'
 import { computeRetainUntil, DECISIONS, DEFAULT_APPLICATIONS_MONTHS, DEFAULT_LEADS_MONTHS } from '@/hooks/retention'
 import { draftSlug, isDraftSlug, slugify, uniqueSlug } from '@/hooks/slug'
@@ -14,6 +8,7 @@ import { revalidateDoc, revalidateGlobal } from '@/lib/revalidate'
 import type { Document } from 'mongodb'
 
 import { hashPassword } from './auth-crypto'
+import { fieldLabel, noLanguageProblem, projectPublishProblems, translationProblems } from './gates'
 import { getDb, GLOBALS_COLLECTION, idCandidates } from './db'
 import { applyDefaults, type Doc, ensureIds, resolveDoc } from './fields'
 import type { CollectionConfig, Field, GlobalConfig } from './schema'
@@ -40,6 +35,9 @@ export async function beforeChange(
   if (!ctx.seed && config.drafts && doc._status === 'published') {
     const problems = publishProblems(config, doc)
     if (problems.length) throw new ValidationError(problems)
+    // First publish: stamp the publish date so founders never have to.
+    if (config.fields.some((f) => f.name === 'publishedAt') && !doc.publishedAt)
+      doc.publishedAt = new Date().toISOString()
   }
 
   if (config.hooks?.retention && !ctx.retentionJob) await setRetention(config.hooks.retention, doc, original)
@@ -88,18 +86,21 @@ export function afterGlobalChange(config: GlobalConfig, ctx: WriteContext = {}) 
 export function publishProblems(config: CollectionConfig, doc: Doc): GateProblem[] {
   const views = { ar: resolveDoc(config.fields, doc, 'ar'), en: resolveDoc(config.fields, doc, 'en') }
   const problems: GateProblem[] = []
+  if (config.fields.some((f) => f.name === 'translated')) problems.push(...noLanguageProblem(doc.translated))
   const required = config.hooks?.requiredLocalized
-  if (required?.length && (doc.translated?.ar || doc.translated?.en))
-    problems.push(...missingTranslations(doc.translated, views, required))
+  if (required?.length) problems.push(...translationProblems(config.fields, doc.translated, views, required))
   const kind = config.hooks?.evidence
   if (kind) {
     const locales = PUBLIC_LOCALES.filter((l) => doc.translated?.[l])
+    const both = locales.length > 1
     for (const locale of locales.length ? locales : (['ar'] as const)) {
-      for (const p of evidenceProblems(views[locale], kind))
-        problems.push({ ...p, message: `[${locale.toUpperCase()}] ${p.message}` })
+      for (const p of evidenceProblems(views[locale], kind)) {
+        const where = both ? ` (${locale === 'ar' ? 'Arabic' : 'English'})` : ''
+        problems.push({ ...p, message: `${fieldLabel(config.fields, p.path)}${where}: ${p.message}` })
+      }
     }
   }
-  if (config.hooks?.projectConsent) problems.push(...projectConsentProblems(doc))
+  if (config.hooks?.projectConsent) problems.push(...projectPublishProblems(doc))
   return dedupeProblems(problems)
 }
 
@@ -115,7 +116,7 @@ export function validateFields(fields: Field[], data: Doc, prefix = ''): GatePro
       field.type !== 'group' &&
       (value == null || value === '' || (Array.isArray(value) && !value.length))
     ) {
-      problems.push({ path, message: `"${path}" is required.` })
+      problems.push({ path, message: `“${fieldLabel(fields, field.name)}” cannot be empty.` })
     }
     if (field.validate && !field.localized) {
       const result = field.validate(value, data)

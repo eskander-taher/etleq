@@ -118,3 +118,48 @@ export async function saveGlobal(slug: string, json: string): Promise<SaveResult
     return errorResult(error)
   }
 }
+
+/** Gallery widget: save an image's description (alt text) without leaving the form. */
+export async function saveMediaAlt(id: string, alt: { ar?: string; en?: string }): Promise<SaveResult> {
+  const user = await getAdminUser()
+  const config = getCollectionConfig('media')
+  if (!user || !config || !canWrite(user, config)) return { ok: false, errors: [{ path: '', message: 'Not allowed.' }] }
+  try {
+    const current = (await cms.findByID({ collection: 'media', id, locale: 'all', depth: 0 })) as Doc
+    const clean = (v: unknown) => (typeof v === 'string' ? v.trim().slice(0, 300) : '')
+    await cms.update({
+      collection: 'media',
+      id,
+      data: { alt: { ...(current.alt || {}), ar: clean(alt.ar), en: clean(alt.en) } },
+    })
+    return { ok: true, id }
+  } catch (error) {
+    return errorResult(error)
+  }
+}
+
+/** Dashboard shortcut: update the launch-slot counter in one step. */
+export async function updateSlots(_prev: SaveResult | null, formData: FormData): Promise<SaveResult> {
+  const user = await getAdminUser()
+  const config = getGlobalConfig('site-settings')
+  if (!user || !config || !config.access.write.includes(user.role))
+    return { ok: false, errors: [{ path: '', message: 'Not allowed.' }] }
+  const num = (key: string) => {
+    const raw = String(formData.get(key) ?? '').trim()
+    const n = Number(raw)
+    return raw === '' || !Number.isInteger(n) || n < 0 ? null : n
+  }
+  const slotsLeft = num('slotsLeft')
+  const slotsTotal = num('slotsTotal')
+  if (slotsLeft === null || slotsTotal === null)
+    return { ok: false, errors: [{ path: 'slotsLeft', message: 'Use whole numbers, 0 or more.' }] }
+  if (slotsLeft > slotsTotal)
+    return { ok: false, errors: [{ path: 'slotsLeft', message: 'Slots left cannot be more than the total.' }] }
+  try {
+    await cms.updateGlobal({ slug: 'site-settings', data: { slotsLeft, slotsTotal } })
+    revalidatePath('/admin')
+    return { ok: true, id: 'site-settings' }
+  } catch (error) {
+    return errorResult(error)
+  }
+}

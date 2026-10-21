@@ -661,7 +661,21 @@ export interface Solution {
  */
 export interface Project {
   id: string
+  /**
+   * `own` = Etleq's own product (no client consent needed), `client` = built for a client.
+   * Documents saved before this field existed have no value and are treated as `client`.
+   */
+  kind?: ('own' | 'client') | null
   title?: string | null
+  /** Public links: website, App Store, Google Play… (absolute http(s) URLs). */
+  links?:
+    | {
+        url: string
+        /** Button text; empty = derived from the URL. */
+        label?: string | null
+        id?: string | null
+      }[]
+    | null
   /**
    * Generated from the English title. Lowercase Latin only. Changing it after publishing creates a 301 redirect.
    */
@@ -3253,6 +3267,10 @@ export interface SiteSettings {
    */
   slotsTotal?: number | null
   slotsLeft?: number | null
+  /**
+   * Month the slot numbers apply to (YYYY-MM). Set and not the current month hides the slot message.
+   */
+  slotsMonth?: string | null
   foundingPriceActive?: boolean | null
   /**
    * USD
@@ -3510,6 +3528,7 @@ export interface FooterSelect<T extends boolean = true> {
 export interface SiteSettingsSelect<T extends boolean = true> {
   slotsTotal?: T
   slotsLeft?: T
+  slotsMonth?: T
   foundingPriceActive?: T
   foundingPrice?: T
   foundingSlots?: T

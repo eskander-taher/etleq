@@ -1,0 +1,18 @@
+{
+  "indexLead": "Apps we have shipped: our own products, and client projects we publish with the client's written consent. We only show results we have checked.",
+  "homeLead": "Our own products and launches for clients, with real links you can try. Client work appears only with written consent.",
+  "kindOwn": "Built by Etleq",
+  "kindClient": "Client project",
+  "ownNote": "This is our own product, not a client project.",
+  "linksTitle": "Try it yourself",
+  "links": {
+    "website": "Open the website",
+    "appStore": "Download on the App Store",
+    "googlePlay": "Get it on Google Play"
+  },
+  "newTab": "(opens in a new tab)",
+  "screenshotAlt": "Screenshot {n} of {title}",
+  "builtIn": "Built in {days} days",
+  "ownProducts": "Our own products launched",
+  "whatWeBuilt": "What we built"
+}

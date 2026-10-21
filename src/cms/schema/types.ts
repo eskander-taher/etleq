@@ -26,13 +26,22 @@ type Base = {
   hidden?: boolean
   defaultValue?: unknown
   validate?: Validate
+  /**
+   * Where the field sits in the admin form: `more` = the collapsed "More details"
+   * section, `advanced` = the collapsed "Advanced" section (slugs, SEO, technical data).
+   * Omitted = shown up front.
+   */
+  section?: 'more' | 'advanced'
+  /** Show the field only when a sibling field has (or does not have) a value. */
+  showIf?: { field: string; equals?: string | boolean; notEquals?: string | boolean }
+  placeholder?: string
 }
 
 export type TextField = Base & { type: 'text' | 'textarea' | 'email' }
 export type NumberField = Base & { type: 'number'; min?: number; max?: number }
 export type CheckboxField = Base & { type: 'checkbox' }
 export type DateField = Base & { type: 'date'; time?: boolean }
-export type SelectField = Base & { type: 'select'; options: Option[] }
+export type SelectField = Base & { type: 'select'; options: Option[]; /** Big radio cards instead of a dropdown. */ ui?: 'radio' }
 export type JsonField = Base & { type: 'json' }
 export type RichTextField = Base & { type: 'richText' }
 export type RelationField = Base & {
@@ -43,7 +52,18 @@ export type RelationField = Base & {
   /** Equality filter applied to the options in the admin (e.g. `{ purpose: 'cv' }`). */
   filter?: Record<string, string>
 }
-export type ArrayField = Base & { type: 'array'; fields: Field[]; maxRows?: number }
+export type ArrayField = Base & {
+  type: 'array'
+  fields: Field[]
+  maxRows?: number
+  /**
+   * Admin widget: `tags` = chips for a single text field, `gallery` = multi-image
+   * uploader for a single upload field, `inline` = compact one-line rows.
+   */
+  ui?: 'tags' | 'gallery' | 'inline'
+  /** Singular noun for the "+ Add …" button. */
+  rowLabel?: string
+}
 export type GroupField = Base & { type: 'group'; fields: Field[] }
 export type BlocksField = Base & { type: 'blocks'; blocks: Block[] }
 
@@ -67,6 +87,8 @@ export type Access = { read: Role[]; write: Role[]; delete: Role[] }
 export type CollectionConfig = {
   slug: string
   labels: { singular: string; plural: string }
+  /** One plain sentence shown on the list page and above new-document forms. */
+  description?: string
   group: 'Content' | 'Careers' | 'Sales' | 'Marketing' | 'Private' | 'Admin'
   useAsTitle: string
   defaultColumns: string[]
@@ -92,6 +114,22 @@ export type CollectionConfig = {
   }
 }
 
-export type GlobalConfig = { slug: string; label: string; fields: Field[]; access: { write: Role[] } }
+export type GlobalConfig = {
+  slug: string
+  label: string
+  description?: string
+  fields: Field[]
+  access: { write: Role[] }
+}
 
-export const opts = (...values: string[]): Option[] => values.map((v) => ({ label: v, value: v }))
+/** `training-centres` → "Training centres", `FULL_TIME` → "Full time". */
+export const humanize = (value: string): string => {
+  const words = value
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/[-_]+/g, ' ')
+    .trim()
+    .toLowerCase()
+  return words.charAt(0).toUpperCase() + words.slice(1)
+}
+
+export const opts = (...values: string[]): Option[] => values.map((v) => ({ label: humanize(v), value: v }))

@@ -18,11 +18,15 @@ function transport(): Transporter | null {
   return transporter
 }
 
-/** Send an email through SMTP. Without SMTP_HOST the message is logged (development). */
+/** "sara@example.com" → "s***@example.com". Logs never carry full addresses. */
+export const redactEmail = (address: string) => address.replace(/^([^@])[^@]*@/, '$1***@')
+
+/** Send an email through SMTP. Without SMTP_HOST the message is logged (development), with recipients redacted. */
 export async function sendEmail(message: EmailMessage): Promise<void> {
   const t = transport()
   if (!t) {
-    console.log(`[email] SMTP_HOST not set; would send "${message.subject}" to ${[message.to].flat().join(', ')}`)
+    // Founder alert subjects end with the lead's name after a colon; keep only the part before it.
+    console.log(`[email] SMTP_HOST not set; would send "${message.subject.split(':')[0]}" to ${[message.to].flat().map(redactEmail).join(', ')}`)
     return
   }
   await t.sendMail({ from: process.env.SMTP_FROM || 'Etleq <hello@etleq.com>', ...message })

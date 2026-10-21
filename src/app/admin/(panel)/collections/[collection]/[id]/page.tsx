@@ -1,7 +1,14 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { clientFields, editableDoc, relationOptions, titleOf } from '@/cms/admin-data'
+import {
+  clientFields,
+  editableDoc,
+  newDocDefaults,
+  relationOptions,
+  titleOf,
+  withLegacyDefaults,
+} from '@/cms/admin-data'
 import { canDelete, canRead, canWrite, privateFileVisible, requireAdminUser } from '@/cms/auth'
 import type { Doc } from '@/cms/fields'
 import { cms } from '@/cms/local'
@@ -9,6 +16,7 @@ import { type Field, getCollectionConfig } from '@/cms/schema'
 import type { CollectionSlug } from '@/cms/types'
 import { DeleteButton } from '@/components/admin/DeleteButton'
 import { DocumentForm } from '@/components/admin/DocumentForm'
+import { newTitle } from '@/components/admin/nav'
 import { basePath, localizedPath } from '@/hooks/paths'
 
 export const metadata = { title: 'Edit' }
@@ -38,7 +46,7 @@ export default async function EditPage({ params }: { params: Promise<{ collectio
           name: 'password',
           type: 'text',
           label: isNew ? 'Password' : 'New password',
-          description: isNew ? undefined : 'Leave empty to keep the current password.',
+          description: isNew ? 'Use a long password you do not use anywhere else.' : 'Leave empty to keep the current password.',
         },
       ]
     : config.fields
@@ -46,23 +54,39 @@ export default async function EditPage({ params }: { params: Promise<{ collectio
   const formFields = clientFields(writable ? fields : (fields.map((f) => ({ ...f, readOnly: true })) as Field[]))
 
   const path = !isNew ? basePath(config.slug, doc) : null
-  const viewUrls = path
-    ? {
-        ar: doc.translated?.ar ? localizedPath(path, 'ar') : undefined,
-        en: doc.translated?.en ? localizedPath(path, 'en') : undefined,
-      }
-    : undefined
+  const viewUrls =
+    path && doc._status === 'published'
+      ? {
+          ar: doc.translated?.ar ? localizedPath(path, 'ar') : undefined,
+          en: doc.translated?.en ? localizedPath(path, 'en') : undefined,
+        }
+      : undefined
+
+  const initial = isNew ? newDocDefaults(config) : withLegacyDefaults(config, editableDoc(config.fields, doc))
+  const heading = isNew ? newTitle(config) : titleOf(config, doc) || config.labels.singular
 
   return (
     <div>
       <p className="text-sm">
         <Link href={`/admin/collections/${config.slug}`} className="text-ink-600 underline">
-          {config.labels.plural}
+          ← {config.labels.plural}
         </Link>
       </p>
-      <h1 className="mb-4 mt-1 text-2xl font-bold">
-        {isNew ? `New ${config.labels.singular.toLowerCase()}` : titleOf(config, doc) || config.labels.singular}
-      </h1>
+      <h1 className="mb-2 mt-1 text-2xl font-bold">{heading}</h1>
+      {isNew && config.slug === 'projects' ? (
+        <div className="mb-5 max-w-3xl rounded-xl border border-sand-300 bg-white p-4 text-sm">
+          <p className="font-semibold">Add an app you have shipped, in about 2 minutes:</p>
+          <ol className="mt-2 list-decimal space-y-1 ps-5 text-ink-800">
+            <li>Choose whose app it is.</li>
+            <li>Write its name and a one-line summary in Arabic and English.</li>
+            <li>Paste its link and drop in a few screenshots.</li>
+            <li>Press “Publish project”. Everything else is optional.</li>
+          </ol>
+        </div>
+      ) : (
+        isNew &&
+        config.description && <p className="mb-5 max-w-3xl text-sm text-ink-600">{config.description}</p>
+      )}
 
       {config.upload === 'media' && doc.url && (
         // eslint-disable-next-line @next/next/no-img-element -- admin preview
@@ -82,10 +106,11 @@ export default async function EditPage({ params }: { params: Promise<{ collectio
       <DocumentForm
         target={{ kind: 'collection', slug: config.slug, id: isNew ? null : String(doc.id) }}
         fields={formFields}
-        initial={editableDoc(config.fields, doc)}
+        initial={initial}
         options={await relationOptions(config.fields)}
         drafts={config.drafts}
         viewUrls={viewUrls}
+        singular={config.labels.singular.toLowerCase()}
         extraActions={
           !isNew && canDelete(user, config) ? <DeleteButton collection={config.slug} id={String(doc.id)} /> : null
         }
@@ -93,11 +118,7 @@ export default async function EditPage({ params }: { params: Promise<{ collectio
 
       {!isNew && (
         <p className="mt-8 text-xs text-ink-600">
-          Created{' '}
-          {String(doc.createdAt ?? '')
-            .slice(0, 16)
-            .replace('T', ' ')}{' '}
-          · Updated{' '}
+          Created {String(doc.createdAt ?? '').slice(0, 10)} · Last changed{' '}
           {String(doc.updatedAt ?? '')
             .slice(0, 16)
             .replace('T', ' ')}

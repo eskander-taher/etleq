@@ -6,8 +6,10 @@ import type { Project } from '@/cms/content-types'
 
 type Loc = 'ar' | 'en'
 
-// Belt and braces: the CMS blocks publishing without consent, and public queries also require it.
-const consented: Where = { consentGiven: { equals: true } }
+// Belt and braces: the CMS blocks publishing a client project without consent, and public queries
+// also require it. Etleq's own products need no client consent; projects saved before `kind`
+// existed have no kind and count as client projects.
+export const consented: Where = { or: [{ kind: { equals: 'own' } }, { consentGiven: { equals: true } }] }
 
 export async function listProjects(locale: Loc, { page = 1, limit = 12 }: { page?: number; limit?: number } = {}) {
   const cms = await getCms()

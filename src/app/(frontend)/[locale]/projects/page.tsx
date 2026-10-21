@@ -4,7 +4,9 @@ import { buttonVariants } from '@/components/ui/button'
 import { TrackedLink } from '@/components/ui/tracked-link'
 import { CtaPanel } from '@/components/content/CtaPanel'
 import { getSiteSettings } from '@/components/content/globals'
-import { ContentCard, ContentSection, EmptyState, PageHero, Pagination } from '@/components/content/parts'
+import { ContentSection, EmptyState, PageHero, Pagination } from '@/components/content/parts'
+import { ProjectCard } from '@/components/content/ProjectCard'
+import { EmptyCtas } from '@/components/content/EmptyCtas'
 import { pageParam, withQuery, type Loc } from '@/components/content/lib'
 import { listProjects } from '@/lib/queries/projects'
 import { buildMetadata } from '@/lib/seo'
@@ -17,12 +19,15 @@ type Props = { params: Promise<{ locale: Loc }>; searchParams: Promise<{ page?: 
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { locale } = await params
   const page = pageParam((await searchParams).page)
-  const t = await getTranslations({ locale, namespace: 'content' })
+  const [t, tp] = await Promise.all([
+    getTranslations({ locale, namespace: 'content' }),
+    getTranslations({ locale, namespace: 'projects' }),
+  ])
   return buildMetadata({
     locale,
     path: withQuery('/projects', { page }),
     title: t('projects.indexTitle'),
-    description: t('projects.indexLead'),
+    description: tp('indexLead'),
     alternates: { ar: true, en: true },
   })
 }
@@ -31,8 +36,9 @@ export default async function ProjectsIndex({ params, searchParams }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
   const page = pageParam((await searchParams).page)
-  const [t, settings, result] = await Promise.all([
+  const [t, tp, settings, result] = await Promise.all([
     getTranslations({ locale, namespace: 'content' }),
+    getTranslations({ locale, namespace: 'projects' }),
     getSiteSettings(locale),
     listProjects(locale, { page }),
   ])
@@ -47,23 +53,18 @@ export default async function ProjectsIndex({ params, searchParams }: Props) {
           { label: t('nav.projects'), href: '/projects' },
         ]}
         title={t('projects.indexTitle')}
-        lead={t('projects.indexLead')}
+        lead={tp('indexLead')}
       />
       <ContentSection>
         {result.docs.length ? (
           <>
-            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
               {result.docs.map((p) => (
-                <ContentCard
-                  key={p.id}
-                  locale={locale}
-                  href={`/projects/${p.slug}`}
-                  title={p.title ?? ''}
-                  excerpt={p.context}
-                  meta={p.clientName ? <bdi>{p.clientName}</bdi> : undefined}
-                />
+                <li key={p.id}>
+                  <ProjectCard locale={locale} project={p} placement="projects_index" headingLevel="h2" />
+                </li>
               ))}
-            </div>
+            </ul>
             <Pagination locale={locale} basePath="/projects" page={page} totalPages={result.totalPages} />
           </>
         ) : (
@@ -79,26 +80,34 @@ export default async function ProjectsIndex({ params, searchParams }: Props) {
                 : t('projects.emptyBody')
             }
           >
-            <TrackedLink
-              href="/scorecard"
-              event="cta_click"
-              params={{ cta_id: 'projects_empty_scorecard', location: 'projects_index' }}
-              className={buttonVariants()}
-            >
-              {t('cta.scorecard')}
-            </TrackedLink>
+            <EmptyCtas locale={locale} path="/projects" placement="projects_index" refCode="PROJECTS">
+              <TrackedLink
+                href="/demo/clinic"
+                event="cta_click"
+                params={{ cta_id: 'projects_empty_demo', location: 'projects_index' }}
+                className={buttonVariants({ variant: 'ghost' })}
+              >
+                {t('projects.demoLink')}
+              </TrackedLink>
+            </EmptyCtas>
             <TrackedLink
               href="/launch-30"
               event="cta_click"
               params={{ cta_id: 'projects_empty_offer', location: 'projects_index' }}
-              className={buttonVariants({ variant: 'secondary' })}
+              className={buttonVariants({ variant: 'ghost' })}
             >
               {t('projects.seeOffer')}
             </TrackedLink>
           </EmptyState>
         )}
       </ContentSection>
-      <CtaPanel locale={locale} title={t('projects.ctaTitle')} ctaId="projects_index_scorecard" placement="projects_index" refCode="PROJECTS" />
+      <CtaPanel
+        locale={locale}
+        title={t('projects.ctaTitle')}
+        ctaId="projects_index_scorecard"
+        placement="projects_index"
+        refCode="PROJECTS"
+      />
     </>
   )
 }

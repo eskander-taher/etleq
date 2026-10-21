@@ -20,7 +20,8 @@ export default async function GlobalPage({ params }: { params: Promise<{ slug: s
 
   return (
     <div>
-      <h1 className="mb-4 text-2xl font-bold">{config.label}</h1>
+      <h1 className="text-2xl font-bold">{config.label}</h1>
+      {config.description && <p className="mb-4 mt-1 max-w-3xl text-sm text-ink-600">{config.description}</p>}
       <DocumentForm
         target={{ kind: 'global', slug: config.slug }}
         fields={clientFields(config.fields)}
