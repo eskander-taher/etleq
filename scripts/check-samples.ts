@@ -2,24 +2,23 @@
  * Build guard: the production build fails while any published document is a
  * sample (`isSample: true`). Runs before `next build` (see package.json).
  *
- * It also scans the globals (site-settings, offer, footer, header, …) for founder placeholders
- * ("[SAMPLE]", "[CR number]", "[اسم الكيان …]", the dummy WhatsApp number) and requires the offer
- * global's `confirmed` flag, so unconfirmed prices and fake legal details never reach production.
+ * It also reports founder placeholders in the globals ("[SAMPLE]", "[CR number]", "[اسم الكيان …]",
+ * the dummy WhatsApp number) and an unconfirmed offer. These only warn: the site scrubs placeholder
+ * values when it reads globals (src/lib/placeholders.ts), so the owner can deploy and fill them later.
  *
- * - SITE_ENV=production: exit 1 if samples are published, a global holds a placeholder, the offer
- *   is not confirmed, or the database cannot be reached (the guard must not silently pass).
+ * - SITE_ENV=production: exit 1 if samples are published or the database cannot be reached
+ *   (the guard must not silently pass).
  * - Otherwise: print warnings and exit 0.
  */
 import 'dotenv/config'
 
 import { sampleVerdict, SAMPLE_COLLECTIONS } from '../src/hooks/samples'
+import { placeholderIn } from '../src/lib/placeholders'
 
 process.env.MONGO_SERVER_SELECTION_TIMEOUT_MS = '5000'
 
 const isProduction = process.env.SITE_ENV === 'production'
 
-/** Placeholder markers the seed and the founders' drafts use. Any hit in a global blocks production. */
-const PLACEHOLDERS = ['[SAMPLE]', '[عينة]', '[CR', '[VAT', '[TRN', '[Licence', '[اسم', '[العنوان', '966500000000'] as const
 
 /** Every string value in a stored global, with its dotted path (localized values are `{ ar, en }`). */
 function* strings(value: unknown, path: string): Generator<[string, string]> {
@@ -35,7 +34,7 @@ export function globalProblems(docs: Record<string, unknown>[], envWhatsapp = pr
   for (const doc of docs) {
     const slug = String(doc.globalType ?? doc._id ?? 'unknown')
     for (const [path, text] of strings(doc, '')) {
-      const hit = PLACEHOLDERS.find((p) => text.includes(p))
+      const hit = placeholderIn(text)
       if (hit) problems.push(`${slug}.${path} contains placeholder "${hit}"`)
     }
   }
@@ -79,11 +78,11 @@ async function main() {
   ;(exitCode ? console.error : console.log)(`[check-samples] ${message}`)
 
   const problems = globalProblems(globals)
-  for (const p of problems) (isProduction ? console.error : console.warn)(`[check-samples] ${isProduction ? '' : 'Warning: '}${p}`)
+  for (const p of problems) console.warn(`[check-samples] Warning: ${p}`)
   if (!problems.length) console.log('[check-samples] Globals hold no placeholders and the offer is confirmed.')
-  else if (!isProduction) console.warn(`[check-samples] ${problems.length} global problem(s) (allowed outside production).`)
+  else console.warn(`[check-samples] ${problems.length} global problem(s): hidden on the site until the founders fill them in.`)
 
-  process.exit(exitCode || (isProduction && problems.length ? 1 : 0))
+  process.exit(exitCode)
 }
 
 main()

@@ -8,6 +8,8 @@ import type {
   Where,
 } from '@/cms/types'
 
+import { scrubPlaceholders } from '@/lib/placeholders'
+
 // Loaded lazily so `publicWhere` can be imported without loading the database driver (tests, edge code).
 const getCms = async () => (await import('@/lib/cms')).getCms()
 
@@ -40,7 +42,8 @@ export async function getGlobal<S extends GlobalSlug>(
 ): Promise<DataFromGlobalSlug<S> | null> {
   try {
     const cms = await getCms()
-    return (await cms.findGlobal({ slug, locale, fallbackLocale: false, depth, draft: false })) as DataFromGlobalSlug<S>
+    // Unfinished founder placeholders never render publicly (src/lib/placeholders.ts).
+    return scrubPlaceholders(await cms.findGlobal({ slug, locale, fallbackLocale: false, depth, draft: false })) as DataFromGlobalSlug<S>
   } catch (error) {
     console.error(`[cms] getGlobal(${slug}, ${locale}) failed:`, (error as Error).message)
     return null
