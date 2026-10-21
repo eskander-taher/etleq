@@ -1,0 +1,135 @@
+{
+  "meta": {
+    "title": "Example: a clinic's own booking system",
+    "description": "Try a clinic booking system the way a patient sees it on their phone, and see what reaches the clinic dashboard: mada payments, WhatsApp reminders and ZATCA-ready invoices."
+  },
+  "header": {
+    "eyebrow": "Interactive example",
+    "h1": "Your clinic's own booking system",
+    "lead": "Book an appointment the way a patient does on their phone, and watch it reach the clinic dashboard at the same moment.",
+    "notice": "A fictional clinic with fictional data. No message is sent and no money is charged."
+  },
+  "patientView": "What the patient sees",
+  "clinicView": "What the clinic sees",
+  "clinic": {
+    "name": "Rayhan Dental Clinics",
+    "short": "Rayhan"
+  },
+  "data": {
+    "branches": { "malqa": "Al Malqa branch", "yasmin": "Al Yasmin branch" },
+    "services": {
+      "checkup": "Check-up and consultation",
+      "cleaning": "Cleaning and polishing",
+      "filling": "Cosmetic filling",
+      "whitening": "Teeth whitening"
+    },
+    "doctors": {
+      "sara": "Dr Sara Al-Otaibi",
+      "fahad": "Dr Fahad Al-Qahtani"
+    },
+    "specialties": {
+      "sara": "Cosmetic dentistry",
+      "fahad": "General dentistry"
+    },
+    "patients": { "p1": "Noura S.", "p2": "Abdullah M.", "p3": "Reem A.", "p4": "Khalid H.", "p5": "Mona Q." }
+  },
+  "booking": {
+    "stepOf": "Step {step} of 4",
+    "back": "Back",
+    "next": "Next",
+    "branch": "Choose a branch",
+    "service": "Choose a service",
+    "minutes": "{n} min",
+    "doctor": "Choose a doctor",
+    "day": "Choose a day",
+    "time": "Choose a time",
+    "today": "Today",
+    "closedFriday": "Closed on Fridays",
+    "details": "Your details",
+    "name": "Name",
+    "namePlaceholder": "e.g. Sara Ahmed",
+    "phone": "Mobile number",
+    "phonePlaceholder": "05xxxxxxxx",
+    "phoneError": "Enter a Saudi mobile number: 10 digits starting with 05",
+    "nameError": "Enter your name",
+    "summary": "Appointment summary",
+    "deposit": "Deposit to confirm",
+    "depositNote": "The deposit comes off the treatment price and is refunded if you cancel 24 hours ahead.",
+    "payMada": "Pay {amount} with mada",
+    "payApple": "Apple Pay",
+    "paying": "Processing…",
+    "demoPay": "Demo payment: nothing is charged.",
+    "doneTitle": "Your appointment is confirmed",
+    "doneLead": "A confirmation reached you on WhatsApp:",
+    "waConfirm": "Hi {name}, your appointment at {clinic}, {branch}, is confirmed for {day} at {time} with {doctor}. Deposit paid: {amount}. Reply to this message to change or cancel.",
+    "waReminder": "Reminder: your appointment at {clinic} is at {time}. See you soon.",
+    "waReminderNote": "Sent automatically 24 hours before the appointment",
+    "seeClinic": "See what reached the clinic",
+    "again": "Book another appointment"
+  },
+  "dashboard": {
+    "allBranches": "All branches",
+    "branchFilter": "Branch",
+    "todayAppointments": "Today's appointments",
+    "deposits": "Deposits today",
+    "reminders": "WhatsApp reminders scheduled",
+    "schedule": "Today's schedule",
+    "upcoming": "New bookings for later days",
+    "empty": "No appointments at this branch today.",
+    "status": { "arrived": "Arrived", "confirmed": "Confirmed", "new": "New" },
+    "depositPaid": "Deposit paid",
+    "activity": "Latest activity",
+    "activityEmpty": "Book an appointment on the phone and activity shows up here.",
+    "events": {
+      "booked": "New online booking: {patient}, {service}",
+      "paid": "Deposit of {amount} paid with mada",
+      "whatsapp": "WhatsApp confirmation sent to {patient}",
+      "invoice": "Simplified tax invoice {number} issued"
+    },
+    "invoice": {
+      "title": "Simplified tax invoice",
+      "number": "Invoice no.",
+      "vatNo": "VAT no.",
+      "item": "Appointment deposit: {service}",
+      "subtotal": "Amount before VAT",
+      "vat": "VAT 15%",
+      "total": "Total",
+      "qr": "QR code in the format ZATCA requires"
+    }
+  },
+  "features": {
+    "h2": "What the system includes",
+    "items": {
+      "booking": {
+        "title": "Online booking under your name",
+        "text": "A booking page on your domain, with your real branches, services, doctors and opening hours."
+      },
+      "whatsapp": {
+        "title": "WhatsApp confirmations and reminders",
+        "text": "A confirmation the moment someone books, an automatic reminder before the visit, and a link to change or cancel."
+      },
+      "payments": {
+        "title": "Deposits with mada and Apple Pay",
+        "text": "Patients pay a deposit when they book, so fewer booked slots go unused."
+      },
+      "zatca": {
+        "title": "ZATCA-ready invoices",
+        "text": "A simplified tax invoice with a QR code for every payment."
+      },
+      "branches": {
+        "title": "One dashboard for every branch",
+        "text": "Today's schedule, deposits and reminders per branch or all together."
+      },
+      "owned": {
+        "title": "Your system, your data",
+        "text": "No commission per booking, and patient data stays with you, not with a middleman platform."
+      }
+    },
+    "note": "This example shows the idea. Your system is built around your clinic and goes live within 30 working days at a fixed price."
+  },
+  "cta": {
+    "title": "Want this for your clinic?",
+    "text": "A free 15-minute call is enough to understand what you need and give you a fixed price.",
+    "whatsapp": "Hi, I saw the clinic booking example and would like to know more."
+  }
+}
