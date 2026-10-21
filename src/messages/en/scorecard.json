@@ -1,12 +1,12 @@
 {
   "meta": {
     "title": "Launch readiness scorecard: is your idea ready?",
-    "description": "12 questions, two minutes. Find out whether your idea is ready to launch as a SaaS, with an instant result and a clear next step."
+    "description": "A few short questions, two minutes. Find out whether your idea is ready to launch as a SaaS, with an instant result and a clear next step."
   },
   "intro": {
     "eyebrow": "Readiness scorecard",
     "h1": "Is your idea ready to launch?",
-    "lead": "Answer 12 short questions and get your result straight away. It takes about two minutes.",
+    "lead": "Answer {count, plural, =0 {a few short questions} one {one short question} other {# short questions}} and get your result straight away. It takes about two minutes.",
     "modelNote": "Scoring for the model: {model}"
   },
   "progress": "Question {n} of {total}",
@@ -16,6 +16,13 @@
   "next": "Next",
   "skip": "Skip this question",
   "optional": "Optional",
+  "missingAnswer": "We missed your answer to this question. Pick one to continue.",
+  "resume": {
+    "title": "Pick up where you left off",
+    "body": "You answered some questions on an earlier visit. Your answers are saved on this device.",
+    "continue": "Continue the scorecard",
+    "restart": "Start again"
+  },
   "questions": {
     "business": {
       "prompt": "Do you run a business today?",
@@ -47,7 +54,7 @@
     },
     "decisionMaker": {
       "prompt": "Are you the final decision-maker on this project?",
-      "options": { "yes": "Yes", "no": "No, others share the decision" }
+      "options": { "yes": "Yes", "partner": "I decide with a partner", "no": "No, someone else decides" }
     },
     "soldOnline": {
       "prompt": "Have you sold anything online before?",
@@ -60,18 +67,16 @@
     "commercialReg": {
       "prompt": "Do you have a commercial registration?",
       "options": { "yes": "Yes", "no": "No" }
-    },
-    "success": {
-      "prompt": "What would success look like six months from now?",
-      "placeholder": "e.g. 50 customers paying a monthly subscription",
-      "hint": "We'll read this before the call. You can skip it."
     }
   },
   "contact": {
     "title": "Where should we send your result?",
-    "reason": "So we can send you your detailed result",
+    "reason": "Your result is ready. We'll also email you a copy so you can come back to it.",
     "submit": "Show my result",
-    "submitting": "Calculating your result…"
+    "submitting": "Calculating your result…",
+    "reassurance": "We never share your details. We'll only message you on WhatsApp about your result.",
+    "whatsappFallback": "Send your answers on WhatsApp",
+    "whatsappAnswers": "Hi, I finished the readiness scorecard but verification didn't complete. Here are my answers:"
   },
   "result": {
     "meta": { "title": "Your scorecard result" },
@@ -82,22 +87,28 @@
     "ready": {
       "badge": "Ready to launch",
       "title": "Your idea is ready to launch",
+      "titleNamed": "{name}, your idea is ready to launch",
+      "bookTitle": "Book your 15-minute fit call",
       "body": "Next step: a free 15-minute fit call with one of the founders. Pick a time that suits you.",
       "nextTitle": "What happens on the call?",
-      "next": ["We get to know your idea and your customers.", "We tell you honestly whether we're the right fit.", "If we are, we schedule your Blueprint session."]
+      "next": ["We get to know your idea and your customers.", "We tell you honestly whether we're the right fit.", "If we are, we schedule your Blueprint session."],
+      "partner": "Invite your co-decision-maker to the same call."
     },
     "almost": {
       "badge": "Almost ready",
       "title": "You're close, with a few things to prepare",
+      "titleNamed": "{name}, you're close, with a few things to prepare",
       "body": "Your idea deserves attention, but a few things need sorting before a build. Here's what will help with the next step.",
       "playbook": "Get the free Launch Playbook",
-      "whatsapp": "Ask us on WhatsApp",
+      "whatsapp": "Talk to us on WhatsApp about what's missing",
+      "playbookSecondary": "Or get the free Launch Playbook by email:",
       "whatsappMessage": "Hi, I finished the scorecard with {score}/100. What am I missing to launch?",
       "retakeNote": "When things change, retake the scorecard and we'll look at your result again."
     },
     "explore": {
       "badge": "Explore first",
       "title": "Learn first, build later",
+      "titleNamed": "{name}, learn first and build later",
       "body": "Building right now may not be your best next step. These free resources will help you choose and prepare your idea.",
       "blog": "Read the blog",
       "models": "Browse proven models",
@@ -106,11 +117,23 @@
     "reasons": {
       "budget:lt2k": "The budget is below the minimum for a build.",
       "budget:2to5k": "The budget is below the minimum for a build.",
-      "decisionMaker:no": "Others need to be part of the decision before we start.",
+      "decisionMaker:no": "Someone else makes the decision, so it's best that we talk with them directly.",
       "timeline:later": "Your launch date is more than six months away.",
       "marketer:etleq": "We build and run the product; marketing stays with you."
     },
     "reasonsTitle": "What stops a booking right now"
+  },
+  "oneTap": {
+    "playbook": {
+      "button": "Send the playbook to <email>{address}</email>",
+      "consent": "By tapping, you accept the <privacy>privacy policy</privacy> and agree to receive the playbook and newsletter by email. Unsubscribe any time.",
+      "done": "You're on the list. The playbook goes to <email>{address}</email> as soon as it's ready."
+    },
+    "newsletter": {
+      "button": "Send the newsletter to <email>{address}</email>",
+      "consent": "By tapping, you accept the <privacy>privacy policy</privacy> and agree to receive the newsletter by email. Unsubscribe any time.",
+      "done": "You're subscribed. The next issue goes to <email>{address}</email>."
+    }
   },
   "booking": {
     "choose": "Choose a time",

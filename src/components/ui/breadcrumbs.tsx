@@ -50,7 +50,7 @@ export async function Breadcrumbs({
                     <Link
                       href={normalizeInternalHref(c.href)}
                       locale={localeProp}
-                      className="inline-flex min-h-6 items-center underline-offset-4 hover:text-ink-950 hover:underline in-data-[tone=dark]:hover:text-sand-50"
+                      className="inline-flex min-h-11 items-center underline-offset-4 md:min-h-6 hover:text-ink-950 hover:underline in-data-[tone=dark]:hover:text-sand-50"
                     >
                       {c.label}
                     </Link>

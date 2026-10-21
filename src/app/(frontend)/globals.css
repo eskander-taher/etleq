@@ -16,7 +16,9 @@
 
   --font-display: var(--font-alexandria), var(--font-plex-arabic), system-ui, sans-serif;
   --font-sans: var(--font-plex-sans), var(--font-plex-arabic), system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  /* Plex Mono has no Arabic glyphs: Arabic inside .num (ر.س, دولار) falls through to Plex Arabic
+     instead of a system mono, so the script stays joined. Digits still come from Plex Mono. */
+  --font-mono: var(--font-plex-mono), var(--font-plex-arabic), ui-monospace, monospace;
 
   --radius-card: 20px;
   --radius-button: 12px;
@@ -36,8 +38,16 @@
     font-size: 1rem;
     line-height: 1.6;
   }
+  html[lang='ar'] {
+    /* Arabic reads small at the Latin scale: 18px body, and secondary text never below 14px. */
+    --text-xs: 0.875rem;
+    --text-xs--line-height: 1.6;
+    --text-sm--line-height: 1.7;
+    /* A 5-line Arabic H1 pushed the hero CTA below the fold on desktop. */
+    --display-1-max: 3.25rem;
+  }
   html[lang='ar'] body {
-    font-size: 1.0625rem; /* 17px */
+    font-size: 1.125rem; /* 18px */
     line-height: 1.75;
   }
   /* Never letter-space or italicise Arabic */
@@ -69,11 +79,12 @@
   bdi.num {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
   }
 }
 
 @utility text-display-1 {
-  font-size: clamp(2.125rem, 1.4rem + 3.4vw, 4rem);
+  font-size: clamp(2.125rem, 1.4rem + 3.4vw, var(--display-1-max, 4rem));
 }
 @utility text-display-2 {
   font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);

@@ -125,3 +125,57 @@ The owner asked to drop Payload and build everything with Next.js, deployed on V
 ## Arabic brand name (owner, 2026-10-16)
 
 - The Arabic brand is **اطلق** (the imperative "launch!", written without hamza by the owner's choice), replacing «إطلاق». The offer is **اطلق 30**. Generic uses of the noun («الإطلاق», «تاريخ إطلاق», «مقاعد إطلاق», «استوديو إطلاق منصّات») are unchanged. Organization JSON-LD: name «اطلق», alternate names «Etleq» and «منصة اطلق».
+
+## CRO pass (2026-10-22)
+
+A conversion audit (home, funnel, landing pages, live mobile/desktop screenshots) and its fixes. These entries supersede the matching lines in "Conversion (workstream C)".
+
+- **Server-side ad events** need the visitor's cookie-banner marketing consent, sent at submit time and checked against the consent cookie. The scorecard/contact "send me models and tips" box is an email opt-in only: ticking it now creates a subscriber.
+- **Thank-you pages** no longer fire `generate_lead` / `booking_scheduled` on a plain visit; fallbacks remain only for playbook, newsletter and application. `qualify_lead` is sent only for tier `ready`; every queued event shares its `event_id` with its server copy.
+- **Cal webhook** matches the lead by `metadata.leadId` (set in the embed), then attendee email; with no match it creates a `booking` lead and alerts the founders.
+- **Scorecard auto-reply** links the signed result page (ready leads keep the pre-filled booking there). Progress (answers only, never contact details) is saved in localStorage for 7 days.
+- **Hero secondary CTA** links to `/demo/clinic` (a live example) instead of promising a video that doesn't exist.
+- **Bonuses** show "included at no extra cost, stated value {value}"; no struck-through total (it read as a fake discount).
+- **Slots**: optional `site-settings.slotsMonth` (YYYY-MM). When set and not the current Riyadh month, slot messages hide, so stale scarcity never shows.
+- **Placeholders**: `check-samples` also scans globals for bracketed placeholders and the dummy WhatsApp number, and requires `offer.confirmed` in production. Hero, footer, About and Contact skip bracketed entity values.
+- **Page CTA context** (`layout/page-cta.tsx`): the header, sticky bar and WhatsApp links carry the page's scorecard prefill (`?model=` / `?from=`) and ref code.
+- **Scorecard focus mode**: `/scorecard` and its result page show a minimal header (logo, language, WhatsApp) and footer.
+- **Delivery wording**: content pages say "30 working days" to match the guarantee. The home H1 still says "30 days" pending a founder decision.
+- **Open for founders**: 30 days vs 30 working days in the H1; code-ownership wording; a Blueprint guarantee; founder photos and shipped-work facts; scorecard question order and the free-text question; "not the decision-maker" as a hard disqualifier; new FAQs (marketing, free call, trust without case studies); a published playbook.
+
+## Owner decisions + strategy (2026-10-22, second pass)
+
+The owner settled the open items from the CRO pass and delegated the remaining strategy to the team. These entries supersede the "Open for founders" line above and the "Comparison code ownership" line in "Conversion (workstream C)".
+
+**Owner decisions**
+
+- **"30 working days" everywhere** (AR «30 يوم عمل»): home H1 and meta, Launch 30 and How it works meta, models teaser, careers, OG card tagline, llms.txt one-liner, the `/design` showcase, seeded hero/SEO defaults/solution steps/sample guides, and the brief. The product name stays «اطلق 30» / "Launch 30". Project "planned/actual days" are counts, not the promise, and are unchanged.
+- **The client owns the code.** Comparison row for Etleq: «ملكك بالكامل: الشيفرة والبيانات» / "Yours: the code and the data". Also in the offer lead, a line on `/launch-30`, the SEO one-liner and the new "Who owns the code?" FAQ. The old seeded ownership FAQ ("licence terms for Etleq Core in the contract") is replaced.
+- **Blueprint money-back guarantee**: refund in full within 7 days if the session, written scope and fixed quote weren't worth the fee; the client keeps the scope document; the fee is credited to the build. Shown in the home guarantee section and the `/launch-30` guarantee (both via `Guarantee`), on the Blueprint card of the offer stack (home and `/launch-30`), in How it works, and in the FAQ. The figure is always `offer.blueprint.price` (fallback 390), formatted per locale (SAR on Arabic pages, as for every other price). The owner's Arabic said «جلسة المخطّط»; the site calls the Blueprint «جلسة التخطيط», so the copy uses that name with the owner's terms unchanged. The text lives in messages because the offer global has no field for it (see below).
+
+**Strategy decisions (lead, delegated)**
+
+- **Comparison: stop competing on raw speed.** 30 working days is about six weeks, inside the agency range we used to cite (4–8 weeks), so a time row made us look average. The row is now "Launch date": Etleq «تاريخ إطلاق مضمون في العقد (30 يوم عمل)» / "Launch date guaranteed in the contract (30 working days)"; agency, freelancer and AI builder «حسب الاتفاق» / "Depends on the agreement", because no source says whether they guarantee dates. "With delivery taking 4–8 weeks" is gone from the agency problem card; the sourced price stays. Rows now lead with what is fixed for the client: price, contracted launch date, mada, ZATCA, a new Arabic-interface row, code ownership, support.
+- **Scorecard order**: model (when not pre-filled) → timeline → country → business → audience → marketer → sold online → hours → commercial registration → decision-maker → budget. Easy, identity-building answers first build commitment before the money questions (foot-in-the-door); budget sits last, right before the contact step, where drop-off costs least. Weights and thresholds are unchanged (max still 100). Applied to `DEFAULT_SCORECARD` and the seeded `scorecard-settings`.
+- **Free-text "success in 6 months" removed** from the scorecard: it opened the phone keyboard right before the contact gate. `RETIRED_QUESTION_KEYS` in `src/lib/scoring.ts` drops it even from an older CMS global; answers stored on old leads stay readable (the founder alert still prints them when present). **The Cal.com fit-call booking form should ask it instead** (founders: add the question to the event type).
+- **Decision-maker** options: Yes (10) · "I decide with a partner" (6, not a disqualifier) · "No, someone else decides" (0, disqualifier). Co-deciding is normal for owners with partners or spouses and shouldn't block a booking; the ready result shows «ادعُ شريكك في القرار إلى المكالمة نفسها.» / "Invite your co-decision-maker to the same call." when the stored answer is `partner`.
+- **New real FAQs** (`isSample: false`, AR+EN, seeded first with the lowest `order` so the home FAQ and `/launch-30` show them first): do you market it for me; is the fit call free; you're new, why trust you; who owns the code; what if the scope changes. The Blueprint refund FAQ is rewritten with the new guarantee and is also real. No seeded FAQ answer hardcodes a price any more; they point to the offer section.
+- **Almost-ready band**: until the playbook PDF exists, WhatsApp is the primary CTA ("Talk to us on WhatsApp about what's missing"); the one-tap playbook sign-up is secondary. A person can tell a 40–59 scorer what's missing today; a playbook that doesn't exist yet can't.
+- **Hero**: AR «فكرة مجرّبة، ومنصّتك جاهزة تستقبل المدفوعات خلال 30 يوم عمل», EN "A proven idea, live and taking payments in 30 working days." The microcopy no longer counts questions ("12 questions" was wrong after the change and depends on pre-fill): «أسئلة قصيرة، نتيجة فورية، دون أي التزام.» / "Short questions. Instant result. No commitment." Same for the shared scorecard micro-copy and How it works step 1.
+- **Proof wording**: Etleq has shipped apps (the owner adds them as projects in `/admin`), so no copy may imply zero shipped work. The founding-client offer is now about the first *published client case studies*; the projects lead and the projects empty state say we only show real projects and verified results, without "we're just starting out". No project was invented.
+
+**Needed in the CMS (not changed here; `src/cms/**` belongs to another workstream)**
+
+- `offer.blueprintGuarantee` (localized textarea) so the founders can edit the Blueprint guarantee; until then the text is in `home.guarantee.blueprint` / `home.offer.blueprintGuarantee` with the price interpolated from the offer.
+- Existing databases keep the old `scorecard-settings` order and `decisionMaker` options until the global is re-seeded or edited in `/admin` (add option `partner`, 6 points, and reorder). The retired `success` question is filtered in code either way.
+
+## Admin made simple (owner, 2026-10-22)
+
+The owner found the admin too complicated to add the apps Etleq has already shipped.
+
+- **"Add a shipped app"** fast path from the dashboard: whose app, name and one-line summary (AR + EN side by side), links, screenshots (multi-upload, first is the cover, alt text, large/HEIC images shrunk in the browser to stay under 4 MB), what we built, stack, days, related model. Everything else sits under "More details" / "Advanced".
+- **`projects.kind`** `own` | `client` (default `own`; a missing value counts as `client`). Own products skip the client-consent gate and publicly read "Built by Etleq", never a client name; client projects keep the consent gate. Public queries show `kind = own OR consentGiven = true`. JSON-LD: `SoftwareApplication` for own products.
+- **`projects.links[]`** `{ url (absolute https), label? }`; the button is named from the URL (App Store, Google Play, website).
+- **Schema-only field props**: `section`, `showIf`, `placeholder`, `ui`, `rowLabel`, collection/global `description`. Every visible field has a plain-English label and help text (unit test enforces it).
+- **Behaviour**: publish needs at least one language ticked; the publish date is stamped on first publish; new admin documents start with both languages ticked; plain-language publish errors with links to the field; unsaved-changes guard; task-grouped sidebar; dashboard quick actions and one-step launch-slots update.
+- **Left**: page-section block labels and UTM sub-fields are still technical.

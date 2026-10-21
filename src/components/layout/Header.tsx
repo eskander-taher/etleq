@@ -4,12 +4,12 @@ import type { Locale } from '@/i18n/routing'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { Container } from '@/components/ui/container'
-import { TrackedLink } from '@/components/ui/tracked-link'
-import { WhatsAppButton } from '@/components/ui/whatsapp-button'
 import { Logo } from './Logo'
 import { NavLink } from './NavLink'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { MobileMenu } from './MobileMenu'
+import { FocusSwitch } from './FocusSwitch'
+import { PageScorecardLink, PageWhatsAppLink } from './page-cta'
 import { FALLBACK_NAV } from './nav-config'
 import type { ShellData } from './shell-data'
 
@@ -28,15 +28,17 @@ export async function Header({ locale, data }: { locale: Locale; data: ShellData
       <Logo variant={locale} />
     </Link>
   )
-  const cta = (location: string, extra?: string) => (
-    <TrackedLink
-      href="/scorecard"
-      event="cta_click"
-      params={{ cta_id: 'scorecard', location }}
-      className={cn(buttonVariants({ variant: 'primary', size: 'sm' }), 'min-h-11', extra)}
-    >
-      {ctaLabel}
-    </TrackedLink>
+  // Arabic glyphs read small at text-sm; the short Arabic label still fits a 360px header at text-base.
+  const ctaText = locale === 'ar' ? 'text-base' : 'text-sm'
+  const whatsappIcon = (className?: string) => (
+    <PageWhatsAppLink
+      appearance="icon"
+      number={waNumber}
+      defaultMessage={waMessage}
+      placement="header"
+      label={t('a11y.whatsappIcon')}
+      className={className}
+    />
   )
 
   return (
@@ -44,51 +46,67 @@ export async function Header({ locale, data }: { locale: Locale; data: ShellData
       <Container className="flex h-16 items-center gap-2 lg:h-[72px] lg:gap-6">
         {logo}
 
-        <nav aria-label={t('a11y.mainNav')} className="hidden lg:block">
-          <ul className="flex items-center gap-1">
-            {items.map((item) => (
-              <li key={item.href}>
-                <NavLink
-                  href={item.href}
-                  className="relative inline-flex min-h-12 items-center rounded-button px-3 text-[0.95rem] font-medium text-ink-600 transition-colors duration-200 hover:text-ink-950"
-                  activeClassName="text-ink-950 after:absolute after:inset-x-3 after:bottom-2 after:h-0.5 after:rounded-full after:bg-ignition-500"
-                >
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <FocusSwitch
+          focused={
+            // Scorecard flow: no nav and no competing CTA; language and WhatsApp stay reachable.
+            <div className="ms-auto flex items-center gap-1">
+              <LanguageSwitcher />
+              {whatsappIcon()}
+            </div>
+          }
+        >
+          <nav aria-label={t('a11y.mainNav')} className="hidden lg:block">
+            <ul className="flex items-center gap-1">
+              {items.map((item) => (
+                <li key={item.href}>
+                  <NavLink
+                    href={item.href}
+                    className="relative inline-flex min-h-12 items-center rounded-button px-3 text-[0.95rem] font-medium text-ink-600 transition-colors duration-200 hover:text-ink-950"
+                    activeClassName="text-ink-950 after:absolute after:inset-x-3 after:bottom-2 after:h-0.5 after:rounded-full after:bg-ignition-500"
+                  >
+                    {item.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-        <div className="ms-auto flex items-center gap-1">
-          <LanguageSwitcher className="hidden md:inline-flex" />
-          <WhatsAppButton
-            appearance="icon"
-            number={waNumber}
-            message={waMessage}
-            placement="header"
-            label={t('a11y.whatsappIcon')}
-            className="hidden sm:inline-flex"
-          />
-          {cta('header', 'ms-1')}
-          <div className="lg:hidden">
-            <MobileMenu
-              items={items}
-              labels={{ open: t('a11y.openMenu'), close: t('a11y.closeMenu'), nav: t('a11y.mobileNav') }}
-              logo={<Logo variant={locale} />}
-              cta={cta('mobile_menu', 'min-h-12 w-full text-base')}
-              whatsapp={
-                <WhatsAppButton
-                  number={waNumber}
-                  message={waMessage}
-                  placement="mobile_menu"
-                  label={t('cta.whatsapp')}
-                  block
-                />
-              }
+          <div className="ms-auto flex items-center gap-1">
+            <LanguageSwitcher className="hidden md:inline-flex" />
+            {whatsappIcon('hidden sm:inline-flex')}
+            <PageScorecardLink
+              label={ctaLabel}
+              location="header"
+              className={cn(
+                buttonVariants({ variant: 'primary', size: 'sm' }),
+                'ms-1 min-h-11 whitespace-nowrap px-3 sm:px-4',
+                ctaText,
+              )}
             />
+            <div className="lg:hidden">
+              <MobileMenu
+                items={items}
+                labels={{ open: t('a11y.openMenu'), close: t('a11y.closeMenu'), nav: t('a11y.mobileNav') }}
+                logo={<Logo variant={locale} />}
+                cta={
+                  <PageScorecardLink
+                    label={ctaLabel}
+                    location="mobile_menu"
+                    className={cn(buttonVariants({ variant: 'primary', size: 'sm' }), 'min-h-12 w-full text-base')}
+                  />
+                }
+                whatsapp={
+                  <PageWhatsAppLink
+                    number={waNumber}
+                    defaultMessage={waMessage}
+                    placement="mobile_menu"
+                    label={t('cta.whatsapp')}
+                  />
+                }
+              />
+            </div>
           </div>
-        </div>
+        </FocusSwitch>
       </Container>
     </header>
   )

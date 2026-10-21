@@ -14,10 +14,14 @@ export async function ModelCard({ model, offer, locale }: { model: Model; offer?
   const days = model.buildDays ?? 30
   const mrr = model.mrr
   return (
-    <article className="relative flex flex-col rounded-[var(--radius-card)] border border-sand-300 bg-white p-5 transition-shadow hover:shadow-md">
+    // Whole card is one tap target (stretched title link); the source link sits above it.
+    <article className="group relative flex flex-col rounded-[var(--radius-card)] border border-sand-300 bg-white p-5 transition-shadow hover:shadow-md has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ignition-500">
       {model.category && <p className="mb-2 text-sm text-ink-600">{t(`models.categories.${model.category}`)}</p>}
       <h3 className="text-xl font-semibold">
-        <Link href={`/models/${model.slug}`} className="after:absolute after:inset-0 after:rounded-[var(--radius-card)]">
+        <Link
+          href={`/models/${model.slug}`}
+          className="after:absolute after:inset-0 after:rounded-[var(--radius-card)] after:content-[''] focus-visible:outline-none"
+        >
           <AutoBdi text={title} locale={locale} />
         </Link>
       </h3>
@@ -25,12 +29,18 @@ export async function ModelCard({ model, offer, locale }: { model: Model; offer?
       {mrrShowable(mrr) && (
         <div className="mt-4 rounded-[12px] bg-sand-100 p-3 text-sm">
           <p>
-            {t('mrr.label')}: <bdi className="num font-semibold">{formatMoney(mrr.amount, mrr.currency || 'USD', locale)}</bdi>{' '}
+            {t('mrr.label')}:{' '}
+            <bdi className="num font-semibold">{formatMoney(mrr.amount, mrr.currency || 'USD', locale)}</bdi>{' '}
             {t('mrr.perMonth')}
           </p>
           <p className="mt-1 text-xs text-stone-500">
             {t('mrr.source')}:{' '}
-            <a href={mrr.sourceUrl} rel="noopener nofollow" target="_blank" className="relative z-10 underline">
+            <a
+              href={mrr.sourceUrl}
+              rel="noopener nofollow"
+              target="_blank"
+              className="relative z-10 -my-3 inline-block py-3 underline"
+            >
               <AutoBdi text={mrr.sourceName || t('common.source')} locale={locale} />
             </a>
             {' · '}
@@ -45,7 +55,9 @@ export async function ModelCard({ model, offer, locale }: { model: Model; offer?
             ? t('models.cardGulf', { price: formatPrice(price, locale), days: formatNumber(days, locale) })
             : t('models.cardGulfNoPrice', { days: formatNumber(days, locale) })}
         </span>
-        <ForwardArrow />
+        <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-sand-100 transition-colors group-hover:bg-ignition-500">
+          <ForwardArrow className="size-5" />
+        </span>
       </p>
     </article>
   )

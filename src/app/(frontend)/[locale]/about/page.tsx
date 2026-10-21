@@ -10,7 +10,7 @@ import { aboutPageNode, graph, organizationNode, personNode, type SchemaNode } f
 import { findPublic, getGlobal } from '@/lib/queries/common'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { getShellData } from '@/components/layout/shell-data'
-import { EntityDetails } from '@/components/layout/Footer'
+import { EntityDetails, isReal } from '@/components/layout/Footer'
 import { Badge } from '@/components/ui/badge'
 import { Breadcrumbs } from '@/components/ui/breadcrumbs'
 import { Card } from '@/components/ui/card'
@@ -37,7 +37,12 @@ export async function generateMetadata({ params }: Props) {
 
 async function getFounders(locale: Locale): Promise<Author[]> {
   try {
-    const res = await findPublic('authors', locale, { where: { isFounder: { equals: true } }, limit: 12, sort: 'order', depth: 1 })
+    const res = await findPublic('authors', locale, {
+      where: { isFounder: { equals: true } },
+      limit: 12,
+      sort: 'order',
+      depth: 1,
+    })
     return res.docs.filter((a) => a.name && a.slug)
   } catch {
     return []
@@ -66,7 +71,7 @@ export default async function AboutPage({ params }: Props) {
   ])
   const story = t.raw('about.story') as string[]
   const values = t.raw('about.values') as { title: string; text: string }[]
-  const entities = data.settings.legalEntities
+  const entities = data.settings.legalEntities.filter((e) => isReal(e.legalName))
 
   const jsonLd = graph(
     aboutPageNode({ locale, name: t('about.metaTitle'), description: t('about.metaDescription') }),
@@ -81,19 +86,20 @@ export default async function AboutPage({ params }: Props) {
         sameAs: (f.sameAs || []).map((s) => s.url).filter((u): u is string => Boolean(u)),
       })),
     }) as SchemaNode,
-    ...founders.map((f) =>
-      personNode(
-        {
-          slug: f.slug as string,
-          name: f.name as string,
-          role: f.role,
-          bio: f.bio,
-          photoUrl: mediaOf(f.photo)?.url,
-          credentials: f.credentials,
-          sameAs: f.sameAs,
-        },
-        locale,
-      ) as SchemaNode,
+    ...founders.map(
+      (f) =>
+        personNode(
+          {
+            slug: f.slug as string,
+            name: f.name as string,
+            role: f.role,
+            bio: f.bio,
+            photoUrl: mediaOf(f.photo)?.url,
+            credentials: f.credentials,
+            sameAs: f.sameAs,
+          },
+          locale,
+        ) as SchemaNode,
     ),
   )
 
@@ -116,6 +122,13 @@ export default async function AboutPage({ params }: Props) {
                 <p key={p}>{p}</p>
               ))}
             </div>
+            <Link
+              href="/how-it-works"
+              className="mt-6 inline-flex min-h-11 items-center gap-2 font-semibold text-ink-950 underline underline-offset-4 hover:text-ignition-700"
+            >
+              {t('about.howItWorksLink')}
+              <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
+            </Link>
           </div>
           <aside className="lg:col-span-5">
             <Card tone="alt" className="h-full">
@@ -148,7 +161,10 @@ export default async function AboutPage({ params }: Props) {
                       ) : null}
                       <div className="flex flex-1 flex-col">
                         <h3 className="font-display text-xl font-semibold">
-                          <Link href={`/authors/${f.slug}`} className="hover:underline hover:underline-offset-4">
+                          <Link
+                            href={`/authors/${f.slug}`}
+                            className="inline-flex min-h-11 items-center hover:underline hover:underline-offset-4"
+                          >
                             {f.name}
                           </Link>
                         </h3>
@@ -163,7 +179,12 @@ export default async function AboutPage({ params }: Props) {
                           <ul className="mt-4 flex flex-wrap gap-x-4 text-sm">
                             {links.map((u) => (
                               <li key={u}>
-                                <a href={u} target="_blank" rel="noopener noreferrer me" className="inline-flex min-h-8 items-center font-semibold underline underline-offset-4">
+                                <a
+                                  href={u}
+                                  target="_blank"
+                                  rel="noopener noreferrer me"
+                                  className="relative inline-flex min-h-11 items-center font-semibold underline underline-offset-4"
+                                >
                                   <bdi>{hostOf(u)}</bdi>
                                   <span className="sr-only"> {t('a11y.opensNewTab')}</span>
                                 </a>
@@ -194,26 +215,6 @@ export default async function AboutPage({ params }: Props) {
         </Section>
       ) : null}
 
-      <Section aria-labelledby="team-h">
-        <div className="grid gap-6 lg:grid-cols-12 lg:items-center">
-          <div className="lg:col-span-8">
-            <h2 id="team-h" className="text-display-2 font-bold">
-              {t('about.teamTitle')}
-            </h2>
-            <p className="mt-4 text-lg text-ink-600">{t('about.teamText')}</p>
-          </div>
-          <div className="lg:col-span-4 lg:text-end">
-            <Link
-              href="/careers"
-              className="inline-flex min-h-12 items-center gap-2 rounded-button border border-ink-950 px-6 font-semibold hover:bg-ink-950 hover:text-sand-50"
-            >
-              {t('about.teamCta')}
-              <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
-            </Link>
-          </div>
-        </div>
-      </Section>
-
       <Section aria-labelledby="values-h">
         <h2 id="values-h" className="text-display-2 font-bold">
           {t('about.valuesTitle')}
@@ -243,12 +244,32 @@ export default async function AboutPage({ params }: Props) {
         </Section>
       ) : null}
 
+      <Section aria-labelledby="team-h">
+        <div className="grid gap-6 lg:grid-cols-12 lg:items-center">
+          <div className="lg:col-span-8">
+            <h2 id="team-h" className="text-display-2 font-bold">
+              {t('about.teamTitle')}
+            </h2>
+            <p className="mt-4 text-lg text-ink-600">{t('about.teamText')}</p>
+          </div>
+          <div className="lg:col-span-4 lg:text-end">
+            <Link
+              href="/careers"
+              className="inline-flex min-h-12 items-center gap-2 rounded-button border border-ink-950 px-6 font-semibold hover:bg-ink-950 hover:text-sand-50"
+            >
+              {t('about.teamCta')}
+              <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
+      </Section>
+
       <CtaBand
         locale={locale}
         title={t('about.ctaTitle')}
         text={t('about.ctaText')}
         placement="about_cta"
-        ctaLabel={t('cta.bookFitCall')}
+        ctaId="about_scorecard"
         whatsappNumber={data.settings.whatsappNumber}
         refCode="ABOUT"
       />

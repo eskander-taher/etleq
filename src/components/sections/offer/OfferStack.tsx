@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server'
-import { Check, Gift } from 'lucide-react'
+import { Check, Gift, ShieldCheck } from 'lucide-react'
 import { formatPrice } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -45,8 +45,6 @@ export async function TierCards({ locale, offer }: { locale: 'ar' | 'en'; offer:
 export async function Bonuses({ locale, offer }: { locale: 'ar' | 'en'; offer: ResolvedOffer }) {
   if (!offer.bonuses.length) return null
   const t = await getTranslations({ locale, namespace: 'home' })
-  const bonusTotal = offer.bonuses.reduce((s, b) => s + (b.statedValue || 0), 0)
-  const totalValue = offer.priceFrom + bonusTotal
   return (
     <div className="mt-12">
       <h3 className="text-display-3 font-bold">{t('offer.bonusesTitle')}</h3>
@@ -57,31 +55,14 @@ export async function Bonuses({ locale, offer }: { locale: 'ar' | 'en'; offer: R
             <div>
               <p className="font-semibold">{b.name}</p>
               {b.description ? <p className="mt-1 text-ink-600">{b.description}</p> : null}
-              {b.statedValue ? (
-                <Badge variant="outline" className="mt-2">
-                  {t('offer.statedValue', { value: formatPrice(b.statedValue, locale) })}
-                </Badge>
-              ) : null}
+              {/* Stated value only, no "total value" sum or struck-through price: nothing reads as a discount. */}
+              <Badge variant="outline" className="mt-2">
+                {b.statedValue ? t('offer.statedValue', { value: formatPrice(b.statedValue, locale) }) : t('offer.includedFree')}
+              </Badge>
             </div>
           </li>
         ))}
       </ul>
-      {bonusTotal > 0 ? (
-        <dl className="mt-8 grid gap-4 rounded-card bg-ink-950 p-6 text-sand-50 sm:grid-cols-2" data-tone="dark">
-          <div>
-            <dt className="text-sm text-sand-300">{t('offer.totalValue')}</dt>
-            <dd className="num mt-1 text-3xl line-through decoration-ignition-500 decoration-2">
-              <bdi>{formatPrice(totalValue, locale)}</bdi>
-            </dd>
-          </div>
-          <div>
-            <dt className="text-sm text-sand-300">{t('offer.yourPrice')}</dt>
-            <dd className="num mt-1 text-3xl text-ignition-500">
-              <bdi>{formatPrice(offer.priceFrom, locale)}</bdi>
-            </dd>
-          </div>
-        </dl>
-      ) : null}
     </div>
   )
 }
@@ -115,6 +96,10 @@ export async function BlueprintCard({ locale, offer }: { locale: 'ar' | 'en'; of
         <h3 className="mt-1 font-display text-xl font-semibold">{offer.blueprint.name}</h3>
         {offer.blueprint.description ? <p className="mt-1 text-ink-600">{offer.blueprint.description}</p> : null}
         <p className="mt-1 text-sm text-ink-600">{t('offer.blueprintCredited')}</p>
+        <p className="mt-1 flex items-start gap-1.5 text-sm font-medium text-ink-950">
+          <ShieldCheck className="mt-0.5 size-4 shrink-0 text-verified-600" aria-hidden="true" />
+          {t('offer.blueprintGuarantee', { price: formatPrice(offer.blueprint.price, locale) })}
+        </p>
       </div>
       <Price usd={offer.blueprint.price} locale={locale} size="md" />
     </Card>

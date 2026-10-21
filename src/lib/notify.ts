@@ -1,6 +1,8 @@
 import { getCms } from '@/lib/cms'
 import { siteUrl, localePath } from '@/lib/utils'
 import type { LeadInput, StoredLead } from '@/lib/leads'
+import { whatsappLink } from '@/lib/whatsapp'
+import enScorecard from '@/messages/en/scorecard.json'
 
 // Speed to lead (brief section 9): alert the founders by email + webhook, auto-reply to the lead in their language.
 // Never log form bodies or personal data: only lead ids and error messages.
@@ -12,6 +14,8 @@ export interface NotifyContext {
   input: LeadInput
   responseTimePromise?: string | null
   whatsappNumber?: string | null
+  /** Signed scorecard result token; the auto-reply links to the result page with it. */
+  resultToken?: string | null
 }
 
 const ENTITIES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
@@ -25,7 +29,59 @@ export async function notifyNewLead(ctx: NotifyContext) {
   })
 }
 
-function summaryLines({ lead, input }: NotifyContext): [string, string][] {
+/** Absolute result page URL for a signed token. */
+export function resultUrl(locale: L, token: string) {
+  return `${siteUrl()}${localePath(locale, '/scorecard/result')}?t=${encodeURIComponent(token)}`
+}
+
+export const firstName = (name?: string | null) => (name || '').trim().split(/\s+/)[0] || ''
+
+/** First WhatsApp message a founder sends the lead, in the lead's language and fitting their tier. */
+export function founderFirstMessage(input: Pick<LeadInput, 'name' | 'locale' | 'source' | 'tier' | 'score'>): string {
+  const name = firstName(input.name)
+  const score = `${input.score ?? 0}/100`
+  if (input.locale === 'ar') {
+    const hi = name ? `أهلًا ${name}، معك فريق اطلق.` : 'أهلًا، معك فريق اطلق.'
+    if (input.source === 'scorecard' && input.tier === 'ready') return `${hi} رأينا نتيجتك (${score}) وفكرتك مناسبة للإطلاق. متى يناسبك أن نتحدّث ربع ساعة؟`
+    if (input.source === 'scorecard' && input.tier === 'almost') return `${hi} رأينا نتيجتك (${score})، هل تودّ أن نراجع معًا ما ينقص للإطلاق؟`
+    if (input.source === 'scorecard') return `${hi} شكرًا لإكمالك التقييم. إن كان لديك سؤال عن فكرتك فنحن هنا.`
+    if (input.source === 'booking') return `${hi} وصلنا حجزك لمكالمة التعارف، ونتطلّع إلى الحديث معك.`
+    return `${hi} وصلتنا رسالتك، ويسعدنا أن نكمل الحديث هنا.`
+  }
+  const hi = name ? `Hi ${name}, this is the Etleq team.` : 'Hi, this is the Etleq team.'
+  if (input.source === 'scorecard' && input.tier === 'ready') return `${hi} We saw your result (${score}) and your idea looks ready to launch. When suits you for a 15-minute call?`
+  if (input.source === 'scorecard' && input.tier === 'almost') return `${hi} We saw your result (${score}). Would you like to go through what's missing before launch together?`
+  if (input.source === 'scorecard') return `${hi} Thanks for taking the scorecard. If you have a question about your idea, we're here.`
+  if (input.source === 'booking') return `${hi} We got your fit call booking and look forward to speaking with you.`
+  return `${hi} We got your message and are happy to continue the conversation here.`
+}
+
+/** One-tap wa.me link to the lead with the first message prefilled; undefined without a phone number. */
+export function founderWhatsappLink(input: LeadInput): string | undefined {
+  const digits = (input.phone || '').replace(/\D/g, '')
+  if (!digits || input.source === 'newsletter' || input.source === 'playbook') return undefined
+  return whatsappLink({ number: digits, message: founderFirstMessage(input) })
+}
+
+type QuestionMessages = Record<string, { options?: Record<string, string> } | undefined>
+const QUALIFYING: [key: string, label: string][] = [
+  ['budget', 'Budget (60 days)'],
+  ['timeline', 'Launch'],
+  ['decisionMaker', 'Decision-maker'],
+  ['marketer', 'Marketing by'],
+  ['country', 'Country'],
+]
+
+/** Qualifying answers in plain English for the founders (falls back to the stored option value). */
+function qualifyingLines(answers: Record<string, string> | undefined): [string, string | undefined][] {
+  const q = enScorecard.questions as QuestionMessages
+  return QUALIFYING.map(([key, label]) => {
+    const v = answers?.[key]
+    return [label, v ? (q[key]?.options?.[v] ?? v) : undefined]
+  })
+}
+
+export function summaryLines({ lead, input }: NotifyContext): [string, string][] {
   const utm = input.utm
     ? Object.entries(input.utm)
         .filter(([, v]) => v)
@@ -38,8 +94,10 @@ function summaryLines({ lead, input }: NotifyContext): [string, string][] {
     ['Disqualifiers', input.disqualifiers?.join(', ')],
     ['Name', input.name],
     ['Phone', input.phone],
+    ['WhatsApp them', founderWhatsappLink(input)],
     ['Email', input.email],
     ['Company', input.company],
+    ...qualifyingLines(input.answers),
     ['Model', input.modelSlug],
     ['Locale', input.locale],
     ['Landing page', input.landingPage],
@@ -65,7 +123,9 @@ async function alertFoundersByEmail(ctx: NotifyContext) {
     to,
     subject: `New ${ctx.input.source} lead${tierTag}: ${ctx.input.name || ctx.input.email || ctx.lead.id}`,
     text: lines.map(([k, v]) => `${k}: ${v}`).join('\n'),
-    html: `<table cellpadding="6">${lines.map(([k, v]) => `<tr><th align="left">${esc(k)}</th><td dir="auto">${esc(v)}</td></tr>`).join('')}</table>`,
+    html: `<table cellpadding="6">${lines
+      .map(([k, v]) => `<tr><th align="left">${esc(k)}</th><td dir="auto">${/^https:\/\//.test(v) ? `<a href="${esc(v)}">${esc(v)}</a>` : esc(v)}</td></tr>`)
+      .join('')}</table>`,
   })
 }
 
@@ -95,7 +155,7 @@ const replies: Record<L, (ctx: NotifyContext) => Reply> = {
         paragraphs: [
           hello,
           `حصلت على ${input.score} من 100 في التقييم، وفكرتك مناسبة للإطلاق.`,
-          'الخطوة التالية مكالمة تعارف مجانية مدتها 15 دقيقة. إن لم تحجز موعدًا بعد، احجزه من الرابط أدناه.',
+          'الخطوة التالية مكالمة تعارف مجانية مدتها 15 دقيقة. إن لم تحجز موعدًا بعد، تجد نتيجتك وجدول المواعيد في الرابط أدناه.',
           when,
         ],
       }
@@ -105,12 +165,12 @@ const replies: Record<L, (ctx: NotifyContext) => Reply> = {
         paragraphs: [
           hello,
           `حصلت على ${input.score} من 100 في التقييم.`,
-          'جمعنا لك في صفحة النتيجة خطوات عملية تساعدك على تجهيز فكرتك، ويمكنك إعادة التقييم متى شئت.',
+          'جمعنا لك في صفحة النتيجة (الرابط أدناه) خطوات عملية تساعدك على تجهيز فكرتك، ويمكنك إعادة التقييم متى شئت.',
           'إن كان لديك سؤال، ردّ على هذه الرسالة أو راسلنا عبر واتساب.',
         ],
       }
     if (input.source === 'contact')
-      return { subject: 'وصلتنا رسالتك', paragraphs: [hello, 'شكرًا لتواصلك مع اطلق. وصلتنا رسالتك وسيقرؤها أحد المؤسّسَين بنفسه.', when] }
+      return { subject: 'وصلتنا رسالتك', paragraphs: [hello, 'شكرًا لتواصلك مع اطلق. وصلتنا رسالتك، وسيقرؤها أحد المؤسّسين بنفسه.', when] }
     if (input.source === 'playbook')
       return { subject: 'سجّلناك لاستلام دليل الإطلاق', paragraphs: [hello, 'شكرًا لاهتمامك بدليل الإطلاق. سنرسله إلى بريدك فور جاهزيته.'] }
     return {
@@ -127,7 +187,7 @@ const replies: Record<L, (ctx: NotifyContext) => Reply> = {
         paragraphs: [
           hello,
           `You scored ${input.score} out of 100. Your idea looks ready to launch.`,
-          "Next step: a free 15-minute fit call. If you haven't booked a time yet, use the link below.",
+          "Next step: a free 15-minute fit call. If you haven't booked a time yet, your result and the booking calendar are at the link below.",
           when,
         ],
       }
@@ -137,26 +197,46 @@ const replies: Record<L, (ctx: NotifyContext) => Reply> = {
         paragraphs: [
           hello,
           `You scored ${input.score} out of 100.`,
-          'Your result page has practical next steps to get your idea ready. You can retake the scorecard any time.',
+          'Your result page (link below) has practical next steps to get your idea ready. You can retake the scorecard any time.',
           'Questions? Reply to this email or message us on WhatsApp.',
         ],
       }
     if (input.source === 'contact')
-      return { subject: 'We got your message', paragraphs: [hello, 'Thanks for contacting Etleq. One of the two founders will read your message personally.', when] }
+      return { subject: 'We got your message', paragraphs: [hello, 'Thanks for contacting Etleq. A founder will read your message personally.', when] }
     if (input.source === 'playbook')
       return { subject: "You're on the list for the Launch Playbook", paragraphs: [hello, "Thanks for your interest in the Launch Playbook. We'll email it to you as soon as it's ready."] }
     return { subject: 'Welcome to the Etleq newsletter', paragraphs: [hello, 'Thanks for subscribing. Expect proven SaaS models and sourced numbers, no spam. Unsubscribe any time.'] }
   },
 }
 
-async function autoReply(ctx: NotifyContext) {
-  const to = ctx.input.email
-  if (!to) return
+/** Subject, paragraphs and links of the lead's auto-reply (pure; exported for tests). */
+export function autoReplyContent(ctx: NotifyContext): Reply & { links: string[] } {
   const locale = ctx.input.locale
   const { subject, paragraphs } = replies[locale](ctx)
   const links: string[] = []
-  if (ctx.input.source === 'scorecard' && ctx.input.tier === 'ready') links.push(`${siteUrl()}${localePath(locale, '/book')}`)
+  // For ready leads the result page carries the booking calendar, pre-filled, so it replaces /book.
+  if (ctx.input.source === 'scorecard') links.push(ctx.resultToken ? resultUrl(locale, ctx.resultToken) : `${siteUrl()}${localePath(locale, '/book')}`)
   if (ctx.whatsappNumber) links.push(`https://wa.me/${ctx.whatsappNumber.replace(/\D/g, '')}`)
+  return { subject, paragraphs, links }
+}
+
+async function autoReply(ctx: NotifyContext) {
+  const to = ctx.input.email
+  // Cal.com already confirms bookings; a booking-only lead gets no second email.
+  if (!to || ctx.input.source === 'booking') return
+  await sendReply(to, ctx.input.locale, autoReplyContent(ctx))
+}
+
+/**
+ * Confirmation for a one-tap sign-up from the result page. No founder alert: the lead already exists
+ * and the founders were alerted when it was created.
+ */
+export async function notifySubscribed({ email, name, locale, source }: { email: string; name?: string | null; locale: L; source: 'newsletter' | 'playbook' }) {
+  const { subject, paragraphs } = replies[locale]({ lead: { id: '' }, input: { source, name: name || undefined, email, locale, consent: { given: true, at: '', policyVersion: '', marketing: true } } })
+  await sendReply(email, locale, { subject, paragraphs, links: [] })
+}
+
+async function sendReply(to: string, locale: L, { subject, paragraphs, links }: Reply & { links: string[] }) {
   const signature = locale === 'ar' ? 'فريق اطلق' : 'The Etleq team'
   const dir = locale === 'ar' ? 'rtl' : 'ltr'
   const cms = await getCms()

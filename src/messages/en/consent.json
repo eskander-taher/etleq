@@ -22,5 +22,8 @@
       "name": "Marketing",
       "description": "Meta, Snapchat and TikTok pixels measure whether our ads bring visitors who find us useful."
     }
-  }
+  },
+  "short": "Optional cookies load only if you agree.",
+  "acceptShort": "Accept",
+  "rejectShort": "Reject"
 }

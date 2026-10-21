@@ -7,11 +7,23 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { RichText } from '@/components/RichText'
 import { AutoBdi } from '@/components/content/Bdi'
 import { CtaPanel } from '@/components/content/CtaPanel'
+import { getSiteSettings } from '@/components/content/globals'
+import { SetPageCta } from '@/components/layout/page-cta'
 import { FaqList } from '@/components/content/FaqList'
 import { KeyTakeaways } from '@/components/content/GuideView'
 import { Toc } from '@/components/content/Toc'
-import { Alternates, AuthorBox, ContentCard, ContentSection, DateLine, PageHero, SourcesList, authorList } from '@/components/content/parts'
-import { collectHeadings, mediaOf, publicRelations, type Loc } from '@/components/content/lib'
+import {
+  Alternates,
+  AuthorBox,
+  ContentCard,
+  ContentSection,
+  DateLine,
+  ForwardArrow,
+  PageHero,
+  SourcesList,
+  authorList,
+} from '@/components/content/parts'
+import { collectHeadings, mediaOf, publicRelations, scorecardFrom, type Loc } from '@/components/content/lib'
 import { getPost, postSlugs, relatedPosts } from '@/lib/queries/posts'
 import { absoluteUrl, buildMetadata } from '@/lib/seo'
 import { blogPostingNode, faqPageNode, graph, personNode } from '@/lib/schema'
@@ -48,10 +60,13 @@ export default async function BlogPostPage({ params }: Props) {
   setRequestLocale(locale)
   const post = await getPost(slug, locale)
   if (!post) notFound()
-  const t = await getTranslations({ locale, namespace: 'content' })
+  const [t, settings] = await Promise.all([getTranslations({ locale, namespace: 'content' }), getSiteSettings(locale)])
 
   const title = post.title ?? ''
   const path = `/blog/${slug}`
+  const scorecardHref = scorecardFrom(path)
+  const refCode = `B-${slug}`
+  const waMessage = t('blog.whatsappMessage', { title })
   const pageUrl = absoluteUrl(locale, path)
   const authors = authorList(post.authors, locale)
   const faqs = publicRelations<Faq>(post.faqs as (string | Faq)[], locale).filter((f) => f.question && f.answer)
@@ -77,12 +92,18 @@ export default async function BlogPostPage({ params }: Props) {
     ...authors
       .filter((a) => a.slug && a.name)
       .map((a) => personNode({ ...a, slug: a.slug!, name: a.name!, photoUrl: mediaOf(a.photo)?.url }, locale)),
-    faqs.length ? faqPageNode(faqs.map((f) => ({ question: f.question!, answer: f.answer! })), { url: pageUrl, locale }) : null,
+    faqs.length
+      ? faqPageNode(
+          faqs.map((f) => ({ question: f.question!, answer: f.answer! })),
+          { url: pageUrl, locale },
+        )
+      : null,
   )
 
   return (
     <>
       <Alternates path={path} indexPath="/blog" available={post.translated} />
+      <SetPageCta scorecardHref={scorecardHref} waMessage={waMessage} refCode={refCode} />
       <JsonLd data={jsonLd} />
       <PageHero
         crumbs={[
@@ -102,7 +123,10 @@ export default async function BlogPostPage({ params }: Props) {
                 <span key={a.slug ?? i}>
                   {i > 0 && (locale === 'ar' ? '، ' : ', ')}
                   {a.slug ? (
-                    <Link href={`/authors/${a.slug}`} className="font-semibold underline">
+                    <Link
+                      href={`/authors/${a.slug}`}
+                      className="inline-flex min-h-11 items-center font-semibold underline md:min-h-0"
+                    >
                       {a.name}
                     </Link>
                   ) : (
@@ -132,14 +156,23 @@ export default async function BlogPostPage({ params }: Props) {
 
       {!!post.keyTakeaways?.length && (
         <ContentSection className="pb-0 lg:pb-0">
-          <KeyTakeaways title={t('common.keyTakeaways')} items={post.keyTakeaways.map((k) => k.text ?? '')} locale={locale} />
+          <KeyTakeaways
+            title={t('common.keyTakeaways')}
+            items={post.keyTakeaways.map((k) => k.text ?? '')}
+            locale={locale}
+          />
         </ContentSection>
       )}
 
       {post.content && (
         <ContentSection>
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_260px]">
-            <RichText data={post.content} locale={locale} className="max-w-3xl" />
+            <RichText
+              data={post.content}
+              locale={locale}
+              className="max-w-3xl"
+              ctx={{ scorecardHref, from: path, whatsappNumber: settings?.whatsappNumber, refCode, waMessage }}
+            />
             <Toc items={toc} title={t('common.toc')} />
           </div>
         </ContentSection>
@@ -160,21 +193,43 @@ export default async function BlogPostPage({ params }: Props) {
         locale={locale}
         title={t('blog.ctaTitle')}
         body={t('blog.ctaBody')}
+        href={scorecardHref}
         ctaId="blog_post_scorecard"
-        whatsappMessage={t('blog.whatsappMessage', { title })}
-        refCode={`B-${slug}`}
+        whatsappMessage={waMessage}
+        refCode={refCode}
         placement="blog_post_footer"
       />
 
-      {related.length > 0 && (
-        <ContentSection title={t('blog.relatedPosts')}>
-          <div className="grid gap-5 md:grid-cols-3">
-            {related.map((p) => (
-              <ContentCard key={p.id} locale={locale} href={`/blog/${p.slug}`} title={p.title ?? ''} excerpt={p.excerpt} image={p.heroImage} />
-            ))}
-          </div>
-        </ContentSection>
-      )}
+      <ContentSection title={related.length > 0 ? t('blog.relatedPosts') : t('blog.nextStep')}>
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {related.map((p) => (
+            <ContentCard
+              key={p.id}
+              locale={locale}
+              href={`/blog/${p.slug}`}
+              title={p.title ?? ''}
+              excerpt={p.excerpt}
+              image={p.heroImage}
+            />
+          ))}
+          {/* Next step beside the reading list: the offer, for readers who are ready to act. */}
+          <article
+            className="relative flex flex-col rounded-[var(--radius-card)] bg-ink-950 p-5 text-sand-50"
+            data-tone="dark"
+          >
+            <p className="mb-2 text-sm text-sand-300">{t('blog.nextStep')}</p>
+            <h3 className="text-xl font-semibold">
+              <Link href="/launch-30" className="after:absolute after:inset-0 after:rounded-[var(--radius-card)]">
+                {t('blog.nextStepTitle')}
+              </Link>
+            </h3>
+            <p className="mt-2 text-sand-300">{t('blog.nextStepBody')}</p>
+            <span className="mt-auto flex justify-end pt-4">
+              <ForwardArrow className="size-5" />
+            </span>
+          </article>
+        </div>
+      </ContentSection>
     </>
   )
 }

@@ -23,12 +23,12 @@ function fields(locale: ValidationLocale) {
 }
 
 /** Adds an E.164 phone check across `phoneCountry` + `phone`. */
-function phoneRefine(locale: ValidationLocale, optional = false) {
+function phoneRefine(locale: ValidationLocale, { optional = false, required = messages[locale].phoneRequired } = {}) {
   const m = messages[locale]
   return (val: { phoneCountry?: string; phone?: string }, ctx: z.RefinementCtx) => {
     const raw = (val.phone ?? '').trim()
     if (!raw) {
-      if (!optional) ctx.addIssue({ code: 'custom', path: ['phone'], message: m.phoneRequired })
+      if (!optional) ctx.addIssue({ code: 'custom', path: ['phone'], message: required })
       return
     }
     const problem = checkE164(toE164(val.phoneCountry || DEFAULT_DIAL_CODE, raw))
@@ -47,8 +47,16 @@ const phoneFields = {
 export function leadContactSchema(locale: ValidationLocale) {
   const f = fields(locale)
   return z
-    .object({ name: f.name, ...phoneFields, email: f.email, consent: f.consent, marketing: f.marketing })
-    .superRefine(phoneRefine(locale))
+    .object({
+      name: f.name,
+      ...phoneFields,
+      email: f.email,
+      consent: f.consent,
+      marketing: f.marketing,
+      // Cookie-banner marketing consent read in the browser at submit time; the server re-checks the cookie.
+      adConsent: z.boolean().default(false),
+    })
+    .superRefine(phoneRefine(locale, { required: f.m.phoneRequiredResult }))
 }
 
 /** Contact page form. WhatsApp number required, email optional. */
@@ -63,6 +71,7 @@ export function contactSchema(locale: ValidationLocale) {
       message: z.string({ error: f.m.messageRequired }).trim().min(1, f.m.messageRequired).min(10, f.m.messageTooShort).max(2000, f.m.messageTooLong),
       consent: f.consent,
       marketing: f.marketing,
+      adConsent: z.boolean().default(false),
     })
     .superRefine(phoneRefine(locale))
 }

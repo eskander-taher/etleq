@@ -8,6 +8,8 @@ export type Locale = 'ar' | 'en'
 export interface SiteSettingsData {
   slotsTotal?: number | null
   slotsLeft?: number | null
+  /** YYYY-MM the slot numbers are for; empty = always current. */
+  slotsMonth?: string | null
   foundingPriceActive?: boolean | null
   foundingPrice?: number | null
   foundingSlots?: number | null
@@ -153,6 +155,22 @@ export const mediaUrl = (m: MediaLike | string | null | undefined, size?: string
 /** Booking URL: site-settings per locale, then CAL_BOOKING_URL. */
 export function bookingUrlFor(settings: SiteSettingsData, locale: Locale) {
   return settings.bookingUrls?.[locale] || process.env.CAL_BOOKING_URL || ''
+}
+
+/** Current month in Riyadh as YYYY-MM. */
+export function riyadhMonth(now = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Riyadh', year: 'numeric', month: '2-digit' }).formatToParts(now)
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? ''
+  return `${get('year')}-${get('month')}`
+}
+
+/**
+ * Real scarcity only (guardrail 2): slot numbers count only for the month they were entered for.
+ * Unset slotsMonth keeps the old behaviour (always shown).
+ */
+export function slotsAreCurrent(slotsMonth: string | null | undefined, now = new Date()) {
+  const month = typeof slotsMonth === 'string' ? slotsMonth.trim() : ''
+  return !month || month === riyadhMonth(now)
 }
 
 export const whatsappNumberFor = (settings: SiteSettingsData) => (settings.whatsappNumber || process.env.WHATSAPP_NUMBER || '').replace(/\D/g, '')

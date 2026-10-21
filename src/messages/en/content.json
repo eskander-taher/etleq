@@ -15,6 +15,8 @@
     "by": "By",
     "from": "From",
     "exVat": "excl. VAT",
+    "etleqPrice": "Etleq's fixed price",
+    "offerLink": "See the Launch 30 offer and guarantee",
     "perMonth": "per month",
     "published": "Published",
     "updated": "Updated",
@@ -66,8 +68,10 @@
     "filterLabel": "Filter models by category",
     "empty": "No models in this category yet",
     "emptyBody": "Every model is researched and reviewed by hand before it goes live. Try another category or check back soon.",
-    "cardGulf": "Gulf version from {price} in {days} days",
-    "cardGulfNoPrice": "Gulf version in {days} days",
+    "cardGulf": "Gulf version from {price} in {days} working days",
+    "cardGulfNoPrice": "Gulf version in {days} working days",
+    "heroStrip": "Gulf version: from {price} · launch-date guarantee",
+    "heroStripNoPrice": "Gulf version with a launch-date guarantee",
     "categories": {
       "booking": "Booking",
       "membership": "Memberships",
@@ -110,7 +114,8 @@
       "timeline": "Time to launch",
       "days": "{days} working days",
       "care": "Care plan after launch",
-      "offerLink": "See the Launch 30 offer and guarantee"
+      "offerLink": "See the Launch 30 offer and guarantee",
+      "guarantee": "If we're late, we refund 10% of the build fee for every late week."
     },
     "fit": {
       "title": "Who should build this?"
@@ -120,7 +125,7 @@
     },
     "cta": {
       "title": "Want a Gulf version of {model}?",
-      "body": "Answer 12 questions in under two minutes. We'll tell you honestly whether it's a fit right now and what it would cost."
+      "body": "Answer 11 questions (model already selected) in under two minutes. We'll tell you honestly whether it's a fit right now and what it would cost."
     },
     "whatsappMessage": "I watched the {model} video and want to know more",
     "relatedModel": "Similar model",
@@ -131,7 +136,7 @@
   },
   "solutions": {
     "indexTitle": "Arabic-first software for your sector",
-    "indexLead": "Systems for clinics, gyms, salons, restaurants and training centres, with mada payments, e-invoicing and WhatsApp notifications, live in 30 days.",
+    "indexLead": "Systems for clinics, gyms, salons, restaurants and training centres, with mada payments, e-invoicing and WhatsApp notifications, live in 30 working days.",
     "empty": "Solution pages are on their way",
     "verticals": {
       "clinics": "Clinics",
@@ -150,6 +155,7 @@
     "steps": "How we roll it out",
     "caseStudies": "Case studies",
     "cta": "Book a demo call",
+    "ctaMicro": "Take the 2-minute scorecard, then we book a walkthrough for your case.",
     "ctaTitle": "Want {name} for your business?",
     "ctaBody": "Start with the short scorecard, then we'll book a call to walk you through the system for your case.",
     "whatsappMessage": "Hi, I saw the {name} page and want to know more",
@@ -159,9 +165,10 @@
     "indexTitle": "Projects we've launched",
     "indexLead": "Real case studies, published with written client consent. We only show results we have verified.",
     "emptyTitle": "No case studies published yet",
-    "emptyBody": "We're just starting out, and we won't show projects or results that aren't real. Our first clients get founding terms in return for letting us document the build.",
-    "emptyFounding": "We're just starting out, and we won't show projects or results that aren't real. Our first {slots} clients get a founding price from {price} in return for letting us document the build and publish it with their consent.",
+    "emptyBody": "We only show real projects and verified results. Founding clients get special terms in return for letting us document their build and publish it with their consent.",
+    "emptyFounding": "We only show real projects and verified results. {slots} founding clients get a price from {price} in return for letting us document their build and publish it with their consent.",
     "seeOffer": "See the offer",
+    "demoLink": "Try the clinic system demo",
     "client": "Client",
     "challenge": "The challenge",
     "solution": "The solution",
@@ -190,6 +197,7 @@
     "ctaTitle": "Get a fixed quote for your project",
     "ctaBody": "Take the short scorecard. If it's a fit, we'll book a scoping session that ends with a fixed quote within 48 hours.",
     "ctaLabel": "Get a fixed quote",
+    "tableCtaTitle": "Want a fixed price for your own project?",
     "whatsappMessage": "Hi, I read \"{title}\" and want a quote for my project"
   },
   "compare": {
@@ -200,6 +208,7 @@
     "ctaTitle": "Is Launch 30 the right choice for you?",
     "ctaBody": "The scorecard gives you an honest answer in two minutes. Sometimes the answer is another option.",
     "ctaLabel": "Take the scorecard",
+    "tableCtaTitle": "Want to know which option fits your project?",
     "whatsappMessage": "Hi, I read \"{title}\" and have a question"
   },
   "blog": {
@@ -214,6 +223,9 @@
     "noResults": "No articles match that title. Try another word.",
     "empty": "No articles published here yet",
     "relatedPosts": "Related articles",
+    "nextStep": "Next step",
+    "nextStepTitle": "Launch 30: your product at a fixed price",
+    "nextStepBody": "We build your Arabic-first product and take it live in 30 working days, with a launch-date guarantee. See the tiers, prices and guarantee.",
     "ctaTitle": "Is your idea ready to launch?",
     "ctaBody": "The scorecard takes two minutes and tells you the right next step.",
     "whatsappMessage": "Hi, I read \"{title}\" and have a question"

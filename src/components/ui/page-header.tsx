@@ -22,9 +22,12 @@ export function PageHeader({
   className?: string
 }) {
   return (
-    <header className={cn('relative overflow-hidden border-b border-sand-300 bg-sand-100', className)}>
+    <header id="hero" className={cn('relative overflow-hidden border-b border-sand-300 bg-sand-100', className)}>
       {motif ? (
-        <div className="pointer-events-none absolute -bottom-6 end-0 hidden w-[28rem] opacity-60 md:block" aria-hidden="true">
+        <div
+          className="pointer-events-none absolute -bottom-6 end-0 hidden w-[28rem] opacity-60 md:block"
+          aria-hidden="true"
+        >
           <Trajectory milestones={false} />
         </div>
       ) : null}

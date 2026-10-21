@@ -16,10 +16,11 @@ import { getSiteSettings, whatsappNumberFor } from '@/components/sections/offer/
 const TYPES = ['booking', 'contact', 'playbook', 'newsletter', 'application'] as const
 type ThankYouType = (typeof TYPES)[number]
 
-/** Conversion event fired once when nothing more specific was queued at submit time. */
-const FALLBACK_EVENT: Record<ThankYouType, string> = {
-  booking: 'booking_scheduled',
-  contact: 'generate_lead',
+/**
+ * Event fired once when nothing was queued at submit time. Key conversions (generate_lead,
+ * booking_scheduled) have no fallback: a visit to the URL alone must never count as a lead or a booking.
+ */
+const FALLBACK_EVENT: Partial<Record<ThankYouType, string>> = {
   playbook: 'playbook_download',
   newsletter: 'newsletter_signup',
   application: 'job_apply_submit',
@@ -52,20 +53,30 @@ export default async function ThankYouPage({ params, searchParams }: Props) {
   const start = type === 'booking' && sp.start ? new Date(sp.start) : null
   const validStart = start && !Number.isNaN(start.getTime()) ? start : null
   const minutes = Math.min(240, Math.max(5, Number(sp.duration) || 15))
+  // Fit calls are scheduled in Riyadh time; say so, since the visitor may be elsewhere.
   const callTime = validStart
-    ? new Intl.DateTimeFormat(locale === 'ar' ? 'ar-SA-u-nu-latn-ca-gregory' : 'en-GB', {
-        dateStyle: 'full',
-        timeStyle: 'short',
-        timeZone: 'Asia/Riyadh',
-      }).format(validStart)
+    ? t('thankYou.callTime', {
+        time: new Intl.DateTimeFormat(locale === 'ar' ? 'ar-SA-u-nu-latn-ca-gregory' : 'en-GB', {
+          dateStyle: 'full',
+          timeStyle: 'short',
+          timeZone: 'Asia/Riyadh',
+        }).format(validStart),
+      })
     : null
   const ics = validStart
-    ? icsDataUrl({ start: validStart, minutes, title: t('thankYou.calendarTitle'), url: `${siteUrl()}${localePath(locale, '/')}` })
+    ? icsDataUrl({
+        start: validStart,
+        minutes,
+        title: t('thankYou.calendarTitle'),
+        description: t('thankYou.calendarDescription', { minutes, time: callTime! }),
+        url: `${siteUrl()}${localePath(locale, '/')}`,
+      })
     : null
+  const fallback = FALLBACK_EVENT[type]
 
   return (
     <Container className="py-16 sm:py-24">
-      <FireOnce onceKey={sp.start ? `${type}:${sp.start}` : type} fallback={[{ name: FALLBACK_EVENT[type], params: { source: type } }]} />
+      <FireOnce onceKey={sp.start ? `${type}:${sp.start}` : type} fallback={fallback ? [{ name: fallback, params: { source: type } }] : []} />
       <div className="mx-auto flex max-w-2xl flex-col gap-8">
         <div>
           <CheckCircle2 className="size-12 text-verified-600" aria-hidden="true" />

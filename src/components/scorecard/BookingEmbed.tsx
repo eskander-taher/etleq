@@ -6,11 +6,15 @@ import { CalendarDays, ExternalLink } from 'lucide-react'
 import { useRouter } from '@/i18n/navigation'
 import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button'
-import { trackEvent } from '@/lib/analytics'
+import { newEventId, trackEvent } from '@/lib/analytics'
+import { hasConsent } from '@/lib/consent'
+import { queueEvents } from '@/components/forms/pending-event'
 import { cn } from '@/lib/utils'
 
 // Cal.com loads only after the visitor clicks "Choose a time" (brief section 14: no third-party
 // script on page load). Non-Cal booking URLs open in a new tab with name and email pre-filled.
+// Booking metadata carries the lead id (so the webhook matches the right lead), the browser
+// event id for booking_scheduled (so Meta counts it once) and the visitor's ad-consent choice.
 
 type CalFn = ((...args: unknown[]) => void) & { loaded?: boolean; ns?: Record<string, unknown>; q?: unknown[] }
 declare global {
@@ -69,11 +73,12 @@ export function parseCalUrl(url: string): { origin: string; calLink: string } | 
   }
 }
 
-export function prefilledUrl(url: string, name?: string | null, email?: string | null) {
+export function prefilledUrl(url: string, name?: string | null, email?: string | null, leadId?: string | null) {
   try {
     const u = new URL(url)
     if (name) u.searchParams.set('name', name)
     if (email) u.searchParams.set('email', email)
+    if (leadId) u.searchParams.set('metadata[leadId]', leadId)
     return u.toString()
   } catch {
     return url
@@ -85,6 +90,8 @@ export function BookingEmbed({
   locale,
   name,
   email,
+  phone,
+  leadId,
   leadToken,
   location,
 }: {
@@ -92,6 +99,9 @@ export function BookingEmbed({
   locale: 'ar' | 'en'
   name?: string | null
   email?: string | null
+  /** E.164; pre-fills Cal's attendee phone field when the event type shows it. */
+  phone?: string | null
+  leadId?: string | null
   /** Passed through to the thank-you page so it can confirm without exposing data. */
   leadToken?: string | null
   location: string
@@ -107,6 +117,9 @@ export function BookingEmbed({
     trackEvent('cta_click', { cta_id: 'choose_time', location })
     if (!cal) return
     setOpen(true)
+    const eventId = newEventId()
+    const metadata: Record<string, string> = { 'metadata[eventId]': eventId, 'metadata[adConsent]': hasConsent('marketing') ? 'yes' : 'no' }
+    if (leadId) metadata['metadata[leadId]'] = leadId
     // Wait one frame for the container to mount.
     requestAnimationFrame(() => {
       const Cal = ensureCal()
@@ -115,7 +128,7 @@ export function BookingEmbed({
       api('inline', {
         elementOrSelector: '#etleq-cal-inline',
         calLink: cal.calLink,
-        config: { name: name || undefined, email: email || undefined, locale, layout: 'month_view', theme: 'light' },
+        config: { name: name || undefined, email: email || undefined, attendeePhoneNumber: phone || undefined, ...metadata, locale, layout: 'month_view', theme: 'light' },
       })
       api('ui', { hideEventTypeDetails: false, layout: 'month_view' })
       api('on', {
@@ -126,6 +139,7 @@ export function BookingEmbed({
           if (d?.date) query.start = d.date
           if (d?.duration) query.duration = String(d.duration)
           if (leadToken) query.t = leadToken
+          queueEvents([{ name: 'booking_scheduled', params: { event_type: 'fit_call', event_id: eventId } }])
           router.push({ pathname: '/thank-you/booking', query })
         },
       })
@@ -135,7 +149,7 @@ export function BookingEmbed({
   if (!cal) {
     return (
       <a
-        href={prefilledUrl(bookingUrl, name, email)}
+        href={prefilledUrl(bookingUrl, name, email, leadId)}
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => trackEvent('cta_click', { cta_id: 'choose_time', location })}

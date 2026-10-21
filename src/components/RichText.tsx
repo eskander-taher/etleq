@@ -2,7 +2,9 @@ import { Fragment, type ReactNode } from 'react'
 import { getLocale, getTranslations } from 'next-intl/server'
 import { AlertTriangle, CheckCircle2, Info, Lightbulb } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
-import { ButtonLink } from '@/components/ui/button-link'
+import { buttonVariants } from '@/components/ui/button'
+import { TrackedAnchor, TrackedLink } from '@/components/ui/tracked-link'
+import { isExternalHref, normalizeInternalHref } from '@/components/ui/smart-link'
 import { WhatsAppButton } from '@/components/ui/whatsapp-button'
 import { SourceCite } from '@/components/ui/source-cite'
 import { cn } from '@/lib/utils'
@@ -55,6 +57,18 @@ const calloutTone: Record<string, { icon: typeof Info; className: string }> = {
 }
 
 const ctaHref: Record<string, string> = { scorecard: '/scorecard', book: '/book', playbook: '/playbook' }
+
+/** Page context for inline CTA blocks: where the visitor is, and how to reach us from here. */
+export type RichTextCtx = {
+  /** Scorecard link for this page (e.g. model prefilled); defaults to /scorecard?from={from}. */
+  scorecardHref?: string
+  /** Current page path, sent to the scorecard as `from`. */
+  from?: string
+  whatsappNumber?: string | null
+  refCode?: string
+  /** Page-specific WhatsApp message. */
+  waMessage?: string
+}
 
 /** Internal link targets → public paths. Guides route by type. */
 function docPath(relationTo: string, doc: any): string {
@@ -141,7 +155,7 @@ function renderNode(node: Node, ids: WeakMap<object, string>, blocks: Record<str
       return <hr />
     case 'code':
       return (
-        <pre dir="ltr" className="overflow-x-auto rounded-[12px] bg-ink-950 p-4 text-sm text-sand-50">
+        <pre dir="ltr" className="relative overflow-x-auto rounded-[12px] bg-ink-950 p-4 text-sm text-sand-50">
           <code>{children()}</code>
         </pre>
       )
@@ -184,10 +198,12 @@ export async function RichText({
   data,
   className,
   locale: localeProp,
+  ctx,
 }: {
   data: RichTextData
   className?: string
   locale?: Loc
+  ctx?: RichTextCtx
 }) {
   if (!data?.root) return null
   const locale = (localeProp ?? ((await getLocale()) as Loc)) as Loc
@@ -258,17 +274,44 @@ export async function RichText({
       const f = node.fields as CtaFields
       const heading = f.heading ?? f.title
       const action = f.action ?? (f.href ? 'custom' : 'scorecard')
-      const href = action === 'custom' ? f.href : ctaHref[action]
+      const scorecard =
+        ctx?.scorecardHref ?? (ctx?.from ? `/scorecard?from=${encodeURIComponent(ctx.from)}` : ctaHref.scorecard)
+      const href = action === 'custom' ? f.href : action === 'scorecard' ? scorecard : ctaHref[action]
       const label = f.label || t(`cta.${action === 'custom' ? 'scorecard' : action}`)
+      const params = { cta_id: 'rich_text_cta', location: 'rich_text_cta', action, ref_code: ctx?.refCode }
+      const external = !!href && isExternalHref(href)
       return (
         <aside className="not-prose my-10 rounded-[var(--radius-card)] bg-sand-100 p-6 lg:p-8">
           {heading && <p className="text-display-3 font-bold">{heading}</p>}
           {f.body && <p className="mt-2 text-ink-600">{f.body}</p>}
           <div className="mt-5">
             {action === 'whatsapp' ? (
-              <WhatsAppButton message={t('cta.whatsappMessage')} placement="rich_text_cta" label={label} />
+              <WhatsAppButton
+                message={ctx?.waMessage ?? t('cta.whatsappMessage')}
+                refCode={ctx?.refCode}
+                number={ctx?.whatsappNumber}
+                placement="rich_text_cta"
+                label={label}
+              />
+            ) : href && external ? (
+              <TrackedAnchor
+                href={href}
+                event="cta_click"
+                params={params}
+                className={buttonVariants()}
+                {...(/^https?:|^\/\//i.test(href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              >
+                {label}
+              </TrackedAnchor>
             ) : href ? (
-              <ButtonLink href={href}>{label}</ButtonLink>
+              <TrackedLink
+                href={normalizeInternalHref(href)}
+                event="cta_click"
+                params={params}
+                className={buttonVariants()}
+              >
+                {label}
+              </TrackedLink>
             ) : null}
           </div>
         </aside>

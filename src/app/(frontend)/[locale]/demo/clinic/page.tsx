@@ -6,7 +6,9 @@ import { ClinicDemo } from '@/components/demo/ClinicDemo'
 import { CtaBand } from '@/components/ui/cta-band'
 import { PageHeader } from '@/components/ui/page-header'
 import { Section, SectionHeading } from '@/components/ui/section'
-import { getSiteSettings } from '@/components/sections/offer/data'
+import { getSiteSettings, whatsappNumberFor } from '@/components/sections/offer/data'
+import { SetPageCta } from '@/components/layout/page-cta'
+import { scorecardFrom } from '@/components/content/lib'
 
 export const revalidate = 3600
 
@@ -46,8 +48,12 @@ export default async function ClinicDemoPage({ params }: Props) {
     getSiteSettings(locale),
   ])
 
+  const scorecardHref = scorecardFrom('/demo/clinic')
+  const refCode = 'DEMO-CLINIC'
+
   return (
     <>
+      <SetPageCta scorecardHref={scorecardHref} waMessage={t('cta.whatsapp')} refCode={refCode} />
       <PageHeader eyebrow={t('header.eyebrow')} title={t('header.h1')} lead={t('header.lead')}>
         <p className="inline-flex rounded-button border border-sand-300 bg-sand-50 px-4 py-2 text-sm text-ink-600">
           {t('header.notice')}
@@ -55,7 +61,12 @@ export default async function ClinicDemoPage({ params }: Props) {
       </PageHeader>
 
       <Section className="py-10 lg:py-16">
-        <ClinicDemo />
+        <ClinicDemo
+          scorecardHref={scorecardHref}
+          whatsappNumber={whatsappNumberFor(settings)}
+          whatsappMessage={t('cta.whatsapp')}
+          refCode={refCode}
+        />
       </Section>
 
       <Section tone="alt">
@@ -77,8 +88,9 @@ export default async function ClinicDemoPage({ params }: Props) {
         title={t('cta.title')}
         text={t('cta.text')}
         placement="demo_clinic_cta"
-        ctaLabel={tc('cta.bookFitCall')}
-        ctaHref="/book"
+        ctaLabel={tc('cta.scorecard')}
+        ctaHref={scorecardHref}
+        ctaId="scorecard"
         whatsappNumber={settings.whatsappNumber}
         whatsappMessage={t('cta.whatsapp')}
         refCode="DEMO-CLINIC"

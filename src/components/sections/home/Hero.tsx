@@ -1,6 +1,5 @@
 import { getTranslations } from 'next-intl/server'
-import { ArrowRight, CreditCard, PlayCircle } from 'lucide-react'
-import { Link } from '@/i18n/navigation'
+import { ArrowRight, CreditCard } from 'lucide-react'
 import { formatPrice } from '@/lib/format'
 import { localePath, cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
@@ -17,19 +16,27 @@ const COUNTRY: Record<'ar' | 'en', Record<string, string>> = {
 export async function Hero({ locale, priceFrom, settings }: { locale: 'ar' | 'en'; priceFrom: number; settings: SiteSettingsData }) {
   const t = await getTranslations({ locale, namespace: 'home' })
   const price = formatPrice(priceFrom, locale)
-  // Entity claims only when the founders have entered legal entities.
-  const countries = [...new Set((settings.legalEntities ?? []).filter((e) => e.legalName && e.country).map((e) => e.country!.toUpperCase()))]
+  // Entity claims only for real legal entities: bracketed founder placeholders ("[CR number]") don't count.
+  const real = (v?: string | null) => Boolean(v?.trim()) && !v!.trim().startsWith('[')
+  const countries = [
+    ...new Set(
+      (settings.legalEntities ?? [])
+        .filter((e) => real(e.legalName) && real(e.crNumber) && e.country)
+        .map((e) => e.country!.toUpperCase()),
+    ),
+  ]
 
   return (
     <section id="hero" className="relative overflow-hidden bg-sand-50">
-      <Container className="grid gap-12 py-12 sm:py-16 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-16 lg:py-24">
+      <Container className="grid gap-12 py-8 sm:py-16 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:gap-16 lg:py-24">
         <div>
-          <p className="mb-4 text-sm font-semibold text-ignition-700">{t('hero.eyebrow')}</p>
+          <p className="mb-3 text-sm font-semibold text-ignition-700 sm:mb-4">{t('hero.eyebrow')}</p>
           <h1 className="text-display-1 font-bold">{t('hero.h1')}</h1>
-          <p className="mt-6 max-w-xl text-lg text-ink-600 sm:text-xl">
-            {t.rich('hero.sub', { price, num: (chunks) => <bdi className="num font-medium text-ink-950">{chunks}</bdi> })}
+          <p className="mt-4 inline-flex rounded-full border border-sand-300 bg-white px-4 py-1.5 text-sm font-semibold text-ink-950">
+            <span>{t.rich('hero.priceChip', { price, num: (chunks) => <bdi className="num">{chunks}</bdi> })}</span>
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <p className="mt-4 max-w-xl text-lg text-ink-600 sm:mt-6 sm:text-xl">{t('hero.sub')}</p>
+          <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center">
             <TrackedAnchor
               href={localePath(locale, '/scorecard')}
               event="cta_click"
@@ -39,10 +46,15 @@ export async function Hero({ locale, priceFrom, settings }: { locale: 'ar' | 'en
               {t('hero.cta')}
               <ArrowRight className="size-5 rtl:rotate-180" aria-hidden="true" />
             </TrackedAnchor>
-            <Link href="/how-it-works" className={cn(buttonVariants({ variant: 'ghost', size: 'lg' }))}>
-              <PlayCircle className="size-5" aria-hidden="true" />
+            <TrackedAnchor
+              href={localePath(locale, '/demo/clinic')}
+              event="cta_click"
+              params={{ cta_id: 'demo', location: 'hero' }}
+              className={cn(buttonVariants({ variant: 'ghost', size: 'lg' }), 'px-4 sm:px-6')}
+            >
               {t('hero.secondary')}
-            </Link>
+              <ArrowRight className="size-5 shrink-0 rtl:rotate-180" aria-hidden="true" />
+            </TrackedAnchor>
           </div>
           <p className="mt-3 text-sm text-ink-600">{t('hero.microcopy')}</p>
 

@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { CtaPanel } from '@/components/content/CtaPanel'
 import { ContentCard, ContentSection, EmptyState, PageHero } from '@/components/content/parts'
-import type { Loc } from '@/components/content/lib'
+import { EmptyCtas } from '@/components/content/EmptyCtas'
+import { scorecardFrom, type Loc } from '@/components/content/lib'
 import { listSolutions } from '@/lib/queries/solutions'
 import { buildMetadata } from '@/lib/seo'
 import { formatPrice } from '@/lib/format'
@@ -27,7 +28,9 @@ export default async function SolutionsIndex({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: 'content' })
-  const result = await listSolutions(locale).catch(() => ({ docs: [] as Awaited<ReturnType<typeof listSolutions>>['docs'] }))
+  const result = await listSolutions(locale).catch(() => ({
+    docs: [] as Awaited<ReturnType<typeof listSolutions>>['docs'],
+  }))
 
   return (
     <>
@@ -61,10 +64,20 @@ export default async function SolutionsIndex({ params }: Props) {
             ))}
           </div>
         ) : (
-          <EmptyState title={t('solutions.empty')} />
+          <EmptyState title={t('solutions.empty')}>
+            <EmptyCtas locale={locale} path="/solutions" placement="solutions_index" refCode="SOLUTIONS" />
+          </EmptyState>
         )}
       </ContentSection>
-      <CtaPanel locale={locale} title={t('solutions.indexCtaTitle')} label={t('solutions.cta')} ctaId="solutions_index" placement="solutions_index" refCode="SOLUTIONS" />
+      <CtaPanel
+        locale={locale}
+        title={t('solutions.indexCtaTitle')}
+        body={t('solutions.ctaMicro')}
+        href={scorecardFrom('/solutions')}
+        ctaId="solutions_index"
+        placement="solutions_index"
+        refCode="SOLUTIONS"
+      />
     </>
   )
 }

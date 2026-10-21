@@ -2,7 +2,7 @@
   "list": {
     "crumb": "Careers",
     "title": "Join the Etleq team",
-    "lead": "We build software products for Gulf business owners and take them live in 30 days. If you like careful work and clear deadlines, you may fit right in.",
+    "lead": "We build software products for Gulf business owners and take them live in 30 working days. If you like careful work and clear deadlines, you may fit right in.",
     "openRoles": "Open roles",
     "filterTeam": "Filter by team",
     "filterWorkplace": "Filter by workplace",
@@ -53,7 +53,7 @@
       "ownership": { "title": "Real ownership", "body": "You own your work from first commit to launch, without layers of management." },
       "craft": { "title": "Careful work", "body": "We build on one shared codebase that keeps getting better, and we sweat the details." },
       "arabic": { "title": "Arabic first", "body": "Our products are designed and written in Arabic first, for customers in the Gulf." },
-      "cycles": { "title": "Clear deadlines", "body": "We work in 30-day launch cycles with the scope agreed up front." },
+      "cycles": { "title": "Clear deadlines", "body": "We work in launch cycles of 30 working days with the scope agreed up front." },
       "small": { "title": "A small team", "body": "A small senior team, so your impact shows from day one." },
       "honest": { "title": "Honest with clients", "body": "We never promise clients revenue. We promise what we control: launching on time and support after." }
     }

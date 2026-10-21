@@ -11,9 +11,11 @@ import { Card } from '@/components/ui/card'
 import { Container } from '@/components/ui/container'
 import { WhatsAppButton } from '@/components/ui/whatsapp-button'
 import { BookingPanel } from '@/components/scorecard/BookingPanel'
+import { OneTapSubscribe } from '@/components/scorecard/OneTapSubscribe'
 import { FireOnce } from '@/components/forms/FireOnce'
 import { NewsletterForm } from '@/components/forms/NewsletterForm'
 import { getSiteSettings, whatsappNumberFor } from '@/components/sections/offer/data'
+import { firstName } from '@/lib/notify'
 import { cn } from '@/lib/utils'
 
 type Props = { params: Promise<{ locale: string }>; searchParams: Promise<{ t?: string }> }
@@ -53,6 +55,13 @@ export default async function ScorecardResultPage({ params, searchParams }: Prop
   const disqualifiers = (Array.isArray(lead?.disqualifiers) ? lead.disqualifiers : []).filter((d) => t.has(`result.reasons.${d}`))
   const reasons = [...new Set(disqualifiers.map((d) => t(`result.reasons.${d}`)))]
   const whatsapp = whatsappNumberFor(settings)
+  const name = firstName(lead?.name)
+  // A per-lead reference the founders can look up when the visitor writes on WhatsApp.
+  const refCode = `SC-${result.leadId.slice(-6).toUpperCase()}`
+  const email = lead?.email || null
+  // Leads store their answers as a flat map; only the decision-maker answer matters here.
+  const answers = (lead as { answers?: Record<string, unknown> | null } | null)?.answers
+  const decidesWithPartner = answers?.decisionMaker === 'partner'
 
   return (
     <Container className="py-12 sm:py-20">
@@ -60,7 +69,7 @@ export default async function ScorecardResultPage({ params, searchParams }: Prop
       <div className="mx-auto max-w-3xl">
         <Badge variant={tier === 'ready' ? 'verified' : tier === 'almost' ? 'accent' : 'neutral'}>{t(`result.${tier}.badge`)}</Badge>
         <div className="mt-6 flex flex-wrap items-end gap-x-6 gap-y-2">
-          <h1 className="text-display-2 font-bold">{t(`result.${tier}.title`)}</h1>
+          <h1 className="text-display-2 font-bold">{name ? t(`result.${tier}.titleNamed`, { name }) : t(`result.${tier}.title`)}</h1>
         </div>
         <p className="mt-4 flex items-baseline gap-2 text-ink-600">
           <span>{t('result.scoreLabel')}:</span>
@@ -83,10 +92,21 @@ export default async function ScorecardResultPage({ params, searchParams }: Prop
         {tier === 'ready' ? (
           <section className="mt-10" aria-labelledby="book-heading">
             <h2 id="book-heading" className="text-display-3 font-bold">
-              {t('booking.choose')}
+              {t('result.ready.bookTitle')}
             </h2>
+            {decidesWithPartner ? <p className="mt-3 text-lg font-semibold">{t('result.ready.partner')}</p> : null}
             <div className="mt-6">
-              <BookingPanel locale={locale} settings={settings} name={lead?.name} email={lead?.email} leadToken={token} location="result_ready" />
+              <BookingPanel
+                locale={locale}
+                settings={settings}
+                name={lead?.name}
+                email={email}
+                phone={lead?.phone}
+                leadId={result.leadId}
+                leadToken={token}
+                refCode={refCode}
+                location="result_ready"
+              />
             </div>
             <Card className="mt-10">
               <h3 className="font-display text-lg font-semibold">{t('result.ready.nextTitle')}</h3>
@@ -99,22 +119,29 @@ export default async function ScorecardResultPage({ params, searchParams }: Prop
           </section>
         ) : null}
 
+        {/* Until the playbook PDF exists, WhatsApp is the primary next step; the playbook sign-up is secondary. */}
         {tier === 'almost' ? (
           <section className="mt-10 flex flex-col gap-6">
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <ButtonLink href="/playbook" size="lg">
+            <WhatsAppButton
+              number={whatsapp}
+              message={t('result.almost.whatsappMessage', { score })}
+              refCode={refCode}
+              placement="result_almost"
+              label={t('result.almost.whatsapp')}
+              size="lg"
+              className="self-start"
+            />
+            {email && token ? (
+              <div className="flex flex-col gap-3">
+                <p className="text-ink-600">{t('result.almost.playbookSecondary')}</p>
+                <OneTapSubscribe locale={locale} token={token} email={email} source="playbook" />
+              </div>
+            ) : (
+              <ButtonLink href="/playbook" variant="secondary" size="lg" className="self-start">
                 <BookOpen className="size-5" aria-hidden="true" />
                 {t('result.almost.playbook')}
               </ButtonLink>
-              <WhatsAppButton
-                number={whatsapp}
-                message={t('result.almost.whatsappMessage', { score })}
-                refCode={`SC-${score}`}
-                placement="result_almost"
-                label={t('result.almost.whatsapp')}
-                size="lg"
-              />
-            </div>
+            )}
             <p className="text-ink-600">{t('result.almost.retakeNote')}</p>
             <Link href="/scorecard" className={cn(buttonVariants({ variant: 'ghost' }), 'self-start')}>
               <RotateCcw className="size-5" aria-hidden="true" />
@@ -144,7 +171,7 @@ export default async function ScorecardResultPage({ params, searchParams }: Prop
             <Card tone="alt">
               <h2 className="font-display text-lg font-semibold">{t('result.explore.newsletter')}</h2>
               <div className="mt-4">
-                <NewsletterForm locale={locale} source="newsletter" compact />
+                {email && token ? <OneTapSubscribe locale={locale} token={token} email={email} source="newsletter" /> : <NewsletterForm locale={locale} source="newsletter" compact />}
               </div>
             </Card>
             <Link href="/scorecard" className={cn(buttonVariants({ variant: 'ghost' }), 'self-start')}>

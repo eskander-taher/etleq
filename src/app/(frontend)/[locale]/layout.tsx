@@ -44,7 +44,7 @@ export default async function LocaleLayout({
       dir={dirOf(locale as Locale)}
       className={`${alexandria.variable} ${plexArabic.variable} ${plexSans.variable} ${plexMono.variable}`}
     >
-      <body className="min-h-dvh bg-sand-50 text-ink-950 antialiased">
+      <body className="flex min-h-dvh flex-col bg-sand-50 text-ink-950 antialiased">
         <NextIntlClientProvider>
           <SiteShell locale={locale as Locale}>{children}</SiteShell>
         </NextIntlClientProvider>

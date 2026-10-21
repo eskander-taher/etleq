@@ -38,7 +38,7 @@ export function SourceCite({
           href={url}
           target="_blank"
           rel="noopener noreferrer nofollow"
-          className="inline-flex items-center gap-0.5 underline decoration-sand-300 underline-offset-2 hover:text-ink-950 hover:decoration-ink-950 in-data-[tone=dark]:hover:text-sand-50"
+          className="relative inline-flex items-center gap-0.5 underline decoration-sand-300 underline-offset-2 hover:text-ink-950 hover:decoration-ink-950 in-data-[tone=dark]:hover:text-sand-50"
         >
           <bdi>{label}</bdi>
           <ExternalLink className="size-3" aria-hidden="true" />

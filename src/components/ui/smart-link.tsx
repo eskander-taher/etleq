@@ -1,5 +1,6 @@
 import type { AnchorHTMLAttributes, ReactNode } from 'react'
 import { Link } from '@/i18n/navigation'
+import { cn } from '@/lib/utils'
 
 export const isExternalHref = (href: string) => /^(https?:|mailto:|tel:|\/\/)/i.test(href)
 
@@ -18,19 +19,31 @@ export function SmartLink({
   href,
   children,
   newTabLabel,
+  className,
   ...props
-}: Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> & { href: string; children: ReactNode; newTabLabel?: string }) {
+}: Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> & {
+  href: string
+  children: ReactNode
+  newTabLabel?: string
+}) {
   if (isExternalHref(href)) {
     const web = /^https?:|^\/\//i.test(href)
+    // `relative` keeps the absolutely positioned sr-only note inside the link, so it can never
+    // escape a scrolling ancestor and widen the page.
     return (
-      <a href={href} {...(web ? { target: '_blank', rel: 'noopener noreferrer' } : {})} {...props}>
+      <a
+        href={href}
+        {...(web ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        className={cn(web && newTabLabel && 'relative', className)}
+        {...props}
+      >
         {children}
         {web && newTabLabel ? <span className="sr-only"> {newTabLabel}</span> : null}
       </a>
     )
   }
   return (
-    <Link href={normalizeInternalHref(href)} {...props}>
+    <Link href={normalizeInternalHref(href)} className={className} {...props}>
       {children}
     </Link>
   )

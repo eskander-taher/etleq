@@ -3,7 +3,7 @@
     "name": "Name",
     "phone": "WhatsApp number",
     "phoneCountry": "Country code",
-    "phoneHint": "e.g. 5X XXX XXXX",
+    "phoneHint": "e.g. {example}",
     "email": "Email",
     "emailOptional": "Email (optional)",
     "company": "Company or business name (optional)",
@@ -41,14 +41,18 @@
   "errors": {
     "summary": "Please check the highlighted fields and try again.",
     "rateLimited": "You've sent several requests in a short time. Please wait a few minutes and try again.",
-    "spam": "We couldn't verify this request. Refresh the page and try again.",
+    "spam": "Verification didn't finish. Tap the button again, or send your answers on WhatsApp.",
+    "spamContact": "Verification didn't finish. Tap the button again, or message us on WhatsApp.",
+    "spamRetry": "Verification didn't finish. Tap the button again.",
     "server": "Something went wrong on our side and your request wasn't saved. Please try again, or message us on WhatsApp.",
     "invalid": "Some details aren't valid. Please check them and try again."
   },
   "contact": {
     "submit": "Send your message",
     "submitting": "Sending…",
-    "note": "We read every message ourselves."
+    "note": "We read every message ourselves.",
+    "whatsappFallback": "Message us on WhatsApp",
+    "whatsappMessage": "Hi, I tried to send a message from the contact page but verification didn't finish."
   },
   "newsletter": {
     "title": "The Etleq newsletter",
@@ -75,6 +79,7 @@
     "submitting": "Signing you up…",
     "consent": "I agree to the <privacy>privacy policy</privacy> and to receiving the playbook and newsletter by email."
   },
+  "verifying": "Verifying…",
   "turnstile": "This form is protected from spam by Cloudflare Turnstile.",
   "thankYou": {
     "meta": {
@@ -109,6 +114,8 @@
     "responseTime": "We usually reply {promise}.",
     "addToCalendar": "Add to calendar",
     "calendarTitle": "Fit call with Etleq",
+    "callTime": "{time}, Riyadh time",
+    "calendarDescription": "A {minutes}-minute fit call with Etleq. Booked for {time} (UTC+3).",
     "whatsapp": "Need something now? Message us on WhatsApp",
     "whatsappMessage": "Hi, I just submitted a request on the Etleq site and have a question",
     "next": "What's next?",

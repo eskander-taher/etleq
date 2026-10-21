@@ -2,7 +2,7 @@
   "brand": {
     "name": "Etleq",
     "latin": "Etleq",
-    "tagline": "The SaaS launch studio. Live in 30 days.",
+    "tagline": "The SaaS launch studio. Live in 30 working days.",
     "home": "Etleq home"
   },
   "nav": {
@@ -24,7 +24,7 @@
   "cta": {
     "scorecard": "Take the scorecard",
     "scorecardLong": "Take the 2-minute scorecard",
-    "scorecardMicro": "12 questions. Instant result. No commitment.",
+    "scorecardMicro": "Short questions. Instant result. No commitment.",
     "whatsapp": "Chat with us on WhatsApp",
     "whatsappShort": "WhatsApp",
     "bookFitCall": "Book a fit call",
@@ -69,7 +69,7 @@
     "stickyMessage": "Hi, I'd like to know more about Launch 30"
   },
   "footer": {
-    "about": "We build your software product and take it live in 30 days at a fixed price: Arabic-first, with payments, invoicing and hosting.",
+    "about": "We build your software product and take it live in 30 working days at a fixed price: Arabic-first, with payments, invoicing and hosting.",
     "explore": "Explore",
     "company": "Company",
     "contact": "Contact",
@@ -123,11 +123,12 @@
   },
   "about": {
     "metaTitle": "About",
-    "metaDescription": "Etleq is a SaaS launch studio that builds Arabic-first software products and takes them live in 30 days at a fixed price. Meet the founders.",
+    "metaDescription": "Etleq is a SaaS launch studio that builds Arabic-first software products and takes them live in 30 working days at a fixed price. Meet the founders.",
     "eyebrow": "About",
     "title": "We build your product like it's our own",
-    "lead": "Etleq is a SaaS launch studio founded by engineers and run by a team of engineers and specialists. We build Arabic-first SaaS products on a ready foundation called Etleq Core and take them live in 30 days at a fixed price.",
+    "lead": "Etleq is a SaaS launch studio founded by engineers and run by a team of engineers and specialists. We build Arabic-first SaaS products on a ready foundation called Etleq Core and take them live in 30 working days at a fixed price.",
     "storyTitle": "Why we started",
+    "howItWorksLink": "How we work, step by step",
     "story": [
       "We kept meeting Gulf business owners with a clear idea and customers waiting, who then got stuck on the build: agencies that need months and big budgets, freelancers who disappear after launch, and AI builders that stall at payments, Arabic and invoicing.",
       "So we built one technical foundation with what every product needs before day one: an Arabic interface, mada and Apple Pay billing, ZATCA-ready invoicing, hosting and backups. That way the build time goes into what makes your idea different."
@@ -183,7 +184,7 @@
       "general": "General"
     },
     "ctaTitle": "Ready to see where your idea stands?",
-    "ctaText": "12 questions. Instant result. No commitment."
+    "ctaText": "Short questions. Instant result. No commitment."
   },
   "contact": {
     "metaTitle": "Contact",

@@ -46,4 +46,13 @@ export const LEGAL_LINKS = [
 ] as const
 
 /** Pages where the sticky mobile CTA bar would compete with the page's own action. */
-export const NO_STICKY_BAR = ['/scorecard', '/book']
+export const NO_STICKY_BAR = ['/scorecard', '/book', '/thank-you', '/careers']
+
+/**
+ * Focused flows: the header keeps only the logo, language switch and WhatsApp, and the footer
+ * shrinks to the legal line, so the visitor finishes the scorecard. Covers /scorecard/result too.
+ */
+export const FOCUSED_PATHS = ['/scorecard']
+
+export const isFocusedPath = (pathname: string) =>
+  FOCUSED_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))

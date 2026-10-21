@@ -78,7 +78,7 @@ export async function GET(req: Request) {
   const title = (searchParams.get('title') || (rtl ? 'اطلق' : 'Etleq')).slice(0, 120)
   const subtitle = (searchParams.get('subtitle') || '').slice(0, 140)
   const brand = rtl ? 'اطلق' : 'Etleq'
-  const tagline = rtl ? 'منصتك SaaS جاهزة خلال 30 يومًا' : 'Your SaaS, live in 30 days'
+  const tagline = rtl ? 'منصتك SaaS جاهزة خلال 30 يوم عمل' : 'Your SaaS, live in 30 working days'
   const host = (process.env.NEXT_PUBLIC_SITE_URL || 'https://etleq.com').replace(/^https?:\/\//, '').replace(/\/$/, '')
 
   const text = `${title}${subtitle}${brand}${tagline}${host}Etleq0123456789`

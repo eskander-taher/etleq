@@ -25,6 +25,8 @@ export type AnalyticsEvent =
   | 'scorecard_start'
   | 'scorecard_step'
   | 'scorecard_complete'
+  | 'scorecard_contact_view'
+  | 'form_error'
   | 'generate_lead'
   | 'qualify_lead'
   | 'disqualify_lead'

@@ -43,6 +43,8 @@ export function useTurnstile(siteKey: string | null | undefined, locale: 'ar' | 
   const ref = useRef<HTMLDivElement>(null)
   const widgetId = useRef<string | null>(null)
   const [token, setToken] = useState<string | null>(null)
+  // Mirror of `token` readable from inside a pending submit (state would be stale there).
+  const latest = useRef<string | null>(null)
 
   useEffect(() => {
     if (!siteKey || !ref.current) return
@@ -54,9 +56,18 @@ export function useTurnstile(siteKey: string | null | undefined, locale: 'ar' | 
           sitekey: siteKey,
           appearance: 'interaction-only',
           language: locale,
-          callback: (t: string) => setToken(t),
-          'expired-callback': () => setToken(null),
-          'error-callback': () => setToken(null),
+          callback: (t: string) => {
+            latest.current = t
+            setToken(t)
+          },
+          'expired-callback': () => {
+            latest.current = null
+            setToken(null)
+          },
+          'error-callback': () => {
+            latest.current = null
+            setToken(null)
+          },
         })
       })
       .catch(() => {
@@ -71,10 +82,25 @@ export function useTurnstile(siteKey: string | null | undefined, locale: 'ar' | 
 
   const reset = useCallback(() => {
     setToken(null)
+    latest.current = null
     if (widgetId.current && window.turnstile) window.turnstile.reset(widgetId.current)
   }, [])
 
-  return { ref, token, reset, enabled: Boolean(siteKey) }
+  /**
+   * Resolves with the token, waiting up to `timeoutMs` for the invisible check to finish (it can lag
+   * on slow phones). Null without a site key (the server skips verification) or when it never arrives.
+   */
+  const waitForToken = useCallback(
+    async (timeoutMs = 8000): Promise<string | null> => {
+      if (!siteKey) return null
+      const until = Date.now() + timeoutMs
+      while (!latest.current && Date.now() < until) await new Promise((r) => setTimeout(r, 150))
+      return latest.current
+    },
+    [siteKey],
+  )
+
+  return { ref, token, reset, waitForToken, enabled: Boolean(siteKey) }
 }
 
 export function TurnstileBox({ boxRef, note }: { boxRef: React.RefObject<HTMLDivElement | null>; note?: string }) {

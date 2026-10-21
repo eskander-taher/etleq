@@ -38,18 +38,22 @@ export function PageHero({
   lead,
   children,
   className,
+  titleClassName = 'text-display-1',
 }: {
   crumbs: Crumb[]
   title: ReactNode
   lead?: ReactNode
   children?: ReactNode
   className?: string
+  /** Size of the H1 (default text-display-1). */
+  titleClassName?: string
 }) {
   return (
-    <header className={cn('bg-sand-100 pb-10 pt-6 lg:pb-14', className)}>
+    // id="hero": the sticky mobile CTA bar appears once this scrolls out of view.
+    <header id="hero" className={cn('bg-sand-100 pb-10 pt-6 lg:pb-14', className)}>
       <Container>
         <Breadcrumbs items={crumbs} />
-        <h1 className="mt-6 max-w-4xl text-display-1 font-bold">{title}</h1>
+        <h1 className={cn('mt-6 max-w-4xl font-bold', titleClassName)}>{title}</h1>
         {lead && <div className="mt-4 max-w-3xl text-lg text-ink-600">{lead}</div>}
         {children}
       </Container>
@@ -135,7 +139,15 @@ export async function MrrFigure({
 }
 
 /** "From {price}" in SAR (with USD) on Arabic pages and USD on English pages. Prices exclude VAT. */
-export async function PriceFrom({ usd, locale, className }: { usd: number | null | undefined; locale: Loc; className?: string }) {
+export async function PriceFrom({
+  usd,
+  locale,
+  className,
+}: {
+  usd: number | null | undefined
+  locale: Loc
+  className?: string
+}) {
   if (typeof usd !== 'number' || usd <= 0) return null
   const t = await getTranslations({ locale, namespace: 'content' })
   return (
@@ -189,7 +201,10 @@ export async function DateLine({
             {' · '}
             {t('common.reviewedBy')}{' '}
             {reviewer.slug ? (
-              <Link href={`/authors/${reviewer.slug}`} className="underline">
+              <Link
+                href={`/authors/${reviewer.slug}`}
+                className="inline-flex min-h-11 items-center underline md:min-h-0"
+              >
                 {reviewer.name}
               </Link>
             ) : (
@@ -208,7 +223,12 @@ export async function DateLine({
   )
 }
 
-export type SourceItem = { label?: string | null; url?: string | null; accessedAt?: string | null; checkedAt?: string | null }
+export type SourceItem = {
+  label?: string | null
+  url?: string | null
+  accessedAt?: string | null
+  checkedAt?: string | null
+}
 
 /** Numbered sources list with links and access dates. */
 export async function SourcesList({ sources, locale }: { sources: SourceItem[] | null | undefined; locale: Loc }) {
@@ -259,14 +279,26 @@ export async function AuthorBox({ authors, locale }: { authors: AuthorLike[]; lo
         {authors.map((a) => {
           const photo = mediaOf(a.photo)
           return (
-            <div key={a.slug ?? a.name} className="flex gap-4 rounded-[var(--radius-card)] border border-sand-300 bg-white p-5">
+            <div
+              key={a.slug ?? a.name}
+              className="flex gap-4 rounded-[var(--radius-card)] border border-sand-300 bg-white p-5"
+            >
               {photo && (
-                <Image src={photo.url} alt={photo.alt ?? a.name ?? ''} width={72} height={72} className="size-18 shrink-0 rounded-full object-cover" />
+                <Image
+                  src={photo.url}
+                  alt={photo.alt ?? a.name ?? ''}
+                  width={72}
+                  height={72}
+                  className="size-18 shrink-0 rounded-full object-cover"
+                />
               )}
               <div>
                 <p className="text-lg font-semibold">
                   {a.slug ? (
-                    <Link href={`/authors/${a.slug}`} className="hover:underline">
+                    <Link
+                      href={`/authors/${a.slug}`}
+                      className="inline-flex min-h-11 items-center hover:underline md:min-h-0"
+                    >
                       {a.name}
                     </Link>
                   ) : (
@@ -316,7 +348,11 @@ export async function Pagination({
   return (
     <nav aria-label={t('common.pagination')} className="mt-10 flex flex-wrap items-center justify-center gap-2">
       {page > 1 && (
-        <Link href={withQuery(basePath, { ...query, page: page - 1 })} rel="prev" className="min-h-12 rounded-[12px] px-4 py-3 hover:bg-sand-100">
+        <Link
+          href={withQuery(basePath, { ...query, page: page - 1 })}
+          rel="prev"
+          className="min-h-12 rounded-[12px] px-4 py-3 hover:bg-sand-100"
+        >
           {t('common.previous')}
         </Link>
       )}
@@ -336,7 +372,11 @@ export async function Pagination({
         </span>
       ))}
       {page < totalPages && (
-        <Link href={withQuery(basePath, { ...query, page: page + 1 })} rel="next" className="min-h-12 rounded-[12px] px-4 py-3 hover:bg-sand-100">
+        <Link
+          href={withQuery(basePath, { ...query, page: page + 1 })}
+          rel="next"
+          className="min-h-12 rounded-[12px] px-4 py-3 hover:bg-sand-100"
+        >
           {t('common.next')}
         </Link>
       )}
@@ -420,7 +460,7 @@ export function FilterLink({ href, active, label }: { href: string; active: bool
       href={href}
       aria-current={active ? 'page' : undefined}
       className={cn(
-        'inline-flex min-h-10 items-center rounded-full border px-4 text-sm font-semibold',
+        'inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-full border px-4 text-sm font-semibold',
         active ? 'border-ink-950 bg-ink-950 text-sand-50' : 'border-sand-300 hover:border-ink-950',
       )}
     >

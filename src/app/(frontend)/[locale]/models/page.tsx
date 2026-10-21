@@ -5,7 +5,8 @@ import { ModelCard } from '@/components/content/ModelCard'
 import { CtaPanel } from '@/components/content/CtaPanel'
 import { getOffer } from '@/components/content/globals'
 import { ContentSection, EmptyState, FilterLink, PageHero, Pagination } from '@/components/content/parts'
-import { firstParam, pageParam, withQuery, type Loc } from '@/components/content/lib'
+import { EmptyCtas } from '@/components/content/EmptyCtas'
+import { firstParam, pageParam, scorecardFrom, withQuery, type Loc } from '@/components/content/lib'
 import { MODEL_CATEGORIES, isModelCategory, listModels } from '@/lib/queries/models'
 import { absoluteUrl, buildMetadata } from '@/lib/seo'
 import { graph } from '@/lib/schema'
@@ -53,7 +54,11 @@ export default async function ModelsIndex({ params, searchParams }: Props) {
     url,
     name: t('models.indexTitle'),
     inLanguage: locale,
-    hasPart: result.docs.map((m) => ({ '@type': 'Article' as const, headline: m.title ?? '', url: absoluteUrl(locale, `/models/${m.slug}`) })),
+    hasPart: result.docs.map((m) => ({
+      '@type': 'Article' as const,
+      headline: m.title ?? '',
+      url: absoluteUrl(locale, `/models/${m.slug}`),
+    })),
   })
 
   return (
@@ -69,10 +74,19 @@ export default async function ModelsIndex({ params, searchParams }: Props) {
       />
 
       <ContentSection>
-        <nav aria-label={t('models.filterLabel')} className="mb-8 flex flex-wrap gap-2">
+        {/* One scrolling row on phones (links stay server-rendered and crawlable); wraps from sm up. */}
+        <nav
+          aria-label={t('models.filterLabel')}
+          className="relative -mx-4 mb-8 flex gap-2 overflow-x-auto overscroll-x-contain px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+        >
           <FilterLink href="/models" active={!cat} label={t('common.all')} />
           {MODEL_CATEGORIES.map((c) => (
-            <FilterLink key={c} href={withQuery('/models', { category: c })} active={cat === c} label={t(`models.categories.${c}`)} />
+            <FilterLink
+              key={c}
+              href={withQuery('/models', { category: c })}
+              active={cat === c}
+              label={t(`models.categories.${c}`)}
+            />
           ))}
         </nav>
 
@@ -83,13 +97,29 @@ export default async function ModelsIndex({ params, searchParams }: Props) {
             ))}
           </div>
         ) : (
-          <EmptyState title={t('models.empty')} body={t('models.emptyBody')} />
+          <EmptyState title={t('models.empty')} body={t('models.emptyBody')}>
+            <EmptyCtas locale={locale} path="/models" placement="models_index" refCode="MODELS" />
+          </EmptyState>
         )}
 
-        <Pagination locale={locale} basePath="/models" page={page} totalPages={result.totalPages} query={{ category: cat }} />
+        <Pagination
+          locale={locale}
+          basePath="/models"
+          page={page}
+          totalPages={result.totalPages}
+          query={{ category: cat }}
+        />
       </ContentSection>
 
-      <CtaPanel locale={locale} title={t('models.indexCtaTitle')} body={t('models.indexCtaBody')} ctaId="models_index_scorecard" placement="models_index" refCode="MODELS" />
+      <CtaPanel
+        locale={locale}
+        title={t('models.indexCtaTitle')}
+        body={t('models.indexCtaBody')}
+        href={scorecardFrom('/models')}
+        ctaId="models_index_scorecard"
+        placement="models_index"
+        refCode="MODELS"
+      />
     </>
   )
 }

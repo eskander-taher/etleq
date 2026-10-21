@@ -18,7 +18,7 @@ const HUBS: Array<{ path: string; en: string; ar: string }> = [
 ]
 
 const FALLBACK_ONE_LINER =
-  'Etleq is a SaaS launch studio for Saudi Arabia and the Gulf: we build and launch your SaaS in 30 days at a fixed price, and you own the code.'
+  'Etleq is a SaaS launch studio for Saudi Arabia and the Gulf: we build and launch your SaaS in 30 working days at a fixed price, and you own the code.'
 
 export async function GET() {
   const includeSamples = process.env.SITE_ENV !== 'production'

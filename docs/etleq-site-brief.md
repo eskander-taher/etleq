@@ -44,15 +44,15 @@ You are the lead engineer, product designer, conversion strategist and technical
 
 ## 2. Business context
 
-**What Etleq is:** a SaaS launch studio. An engineering team led by the two co-founders builds a client's software product on a reusable codebase ("Etleq Core") and take it live in 30 days at a fixed price, with Arabic, mada payments, ZATCA-ready invoicing and hosting built in. The client runs the business; Etleq runs the technology. The name means "launch" (إطلاق).
+**What Etleq is:** a SaaS launch studio. An engineering team led by the two co-founders builds a client's software product on a reusable codebase ("Etleq Core") and takes it live in 30 working days at a fixed price, with Arabic, mada payments, ZATCA-ready invoicing and hosting built in. The client runs the business; Etleq runs the technology. The name means "launch" (إطلاق).
 
-**Positioning statement (use it, don't print it verbatim):** For Gulf business owners and creators who want their own software product without hiring a tech team, Etleq is the SaaS launch studio that takes a proven model live in 30 days at a fixed price. Unlike agencies, we charge for outcomes, not hours; unlike AI app builders, we deliver a business that takes payments, not a demo.
+**Positioning statement (use it, don't print it verbatim):** For Gulf business owners and creators who want their own software product without hiring a tech team, Etleq is the SaaS launch studio that takes a proven model live in 30 working days at a fixed price, and the client owns the code. Unlike agencies, we charge for outcomes, not hours; unlike AI app builders, we deliver a business that takes payments, not a demo.
 
 **The offer ("Etleq Launch 30" / «إطلاق ٣٠»):**
 
 | Product | Price (USD) | What it is |
 | --- | --- | --- |
-| SaaS Blueprint | $390, credited to a build | 90-minute paid scoping session, fixed quote within 48 hours |
+| SaaS Blueprint | $390, credited to a build, money-back guarantee | 90-minute paid scoping session, written scope and fixed quote within 48 hours |
 | Launch 30 — Core | from $5,900 | Single-role SaaS (booking, memberships, directory) on Etleq Core |
 | Launch 30 — Pro | from $8,900 | Multi-role, marketplace or B2B portal |
 | Launch 30 — Vertical | from $12,000 | Clinic, restaurant, gym operations systems with ZATCA invoicing |
@@ -60,7 +60,13 @@ You are the lead engineer, product designer, conversion strategist and technical
 
 Prices are managed in the CMS, never hard-coded. Show SAR equivalents at the fixed 3.75 peg on Arabic pages. Prices exclude VAT.
 
+**Delivery promise:** always "30 working days" (AR «30 يوم عمل»), never "30 days", in every headline, meta text and content page (owner decision, 22 Oct 2026). The product name stays «اطلق 30» / "Launch 30".
+
 **Guarantee:** live within 30 working days of the signed scope, or 10% of the build fee is refunded for each late week and building continues free. The clock pauses while client inputs are overdue. There is no revenue guarantee: the client's commercial results are the client's responsibility.
+
+**Blueprint guarantee (owner decision, 22 Oct 2026):** if, after the 90-minute session and receiving the written scope and fixed quote, the client feels it wasn't worth the Blueprint fee, they tell us within 7 days and we refund it in full; they keep the scope document. If they go ahead with the build, the fee is credited to it. AR: «إن رأيت بعد الجلسة واستلام النطاق المكتوب والسعر الثابت أنها لا تستحق 390$، أخبرنا خلال 7 أيام ونعيد لك المبلغ كاملًا، ويبقى مستند النطاق لك. وإن بدأت البناء معنا، تُخصم رسوم الجلسة من قيمته.» Shown in the home guarantee section, on `/launch-30` (offer, guarantee and Blueprint card), on the Blueprint row of the offer stack and in the FAQ. The figure always comes from the offer global.
+
+**Code ownership (owner decision, 22 Oct 2026):** the client owns the code and the data. AR «ملكك بالكامل: الشيفرة والبيانات», EN "Yours: the code and the data".
 
 **Who buys (in priority order):**
 
@@ -71,7 +77,7 @@ Prices are managed in the CMS, never hard-coded. Show SAR equivalents at the fix
 
 **The funnel the site must serve:**
 
-> Instagram/TikTok/Snapchat/YouTube reel about a real SaaS success story → the model's page on etleq.com → 12-question scorecard → score 60+ books a free 15-minute fit call; under 60 gets the playbook and newsletter → paid Blueprint → contract → 30-day build → launch → Care plan → referral.
+> Instagram/TikTok/Snapchat/YouTube reel about a real SaaS success story → the model's page on etleq.com → 11-question scorecard → score 60+ books a free 15-minute fit call; under 60 gets WhatsApp help and the playbook or newsletter → paid Blueprint (money-back guarantee) → contract → build in 30 working days → launch → Care plan → referral.
 
 Most visitors arrive on a phone from a reel, already curious about one specific model. Search and AI visitors arrive with a question ("how much does it cost to build a clinic booking app in Saudi?").
 
@@ -177,7 +183,7 @@ Arabic lives at the root, English under `/en`, and both share the same short Lat
 | Authors | `/authors/[slug]` | `/en/authors/[slug]` | Expertise pages for founders and writers | Follow, read more |
 | FAQ | `/faq` | `/en/faq` | Objection handling | Take the scorecard |
 | Contact | `/contact` | `/en/contact` | WhatsApp, email, addresses | WhatsApp |
-| Scorecard | `/scorecard` | `/en/scorecard` | 12-question qualifier | Finish the scorecard |
+| Scorecard | `/scorecard` | `/en/scorecard` | 11-question qualifier | Finish the scorecard |
 | Scorecard result | `/scorecard/result` (noindex) | `/en/scorecard/result` (noindex) | Score, tier, next step | Book or get the playbook |
 | Book | `/book` | `/en/book` | Booking embed for qualified leads | Confirm booking |
 | Playbook | `/playbook` | `/en/playbook` | Lead magnet for scores under 60 | Download |
@@ -292,18 +298,18 @@ The home page is a long-form sales page in a fixed order: promise, proof, mechan
 | --- | --- | --- | --- | --- |
 | 0 | Announcement bar | "{n} of {total} launch slots left this month" linking to `/launch-30` | Real scarcity (Priestley: demand before supply) | `SiteSettings` global |
 | 1 | Header | Wordmark, nav (Launch 30, Models, Solutions, Projects, Blog, About, Careers), language switch, "Take the scorecard" button, WhatsApp icon | One clear action; WhatsApp is the Gulf default channel | `Header` global |
-| 2 | Hero | H1 promise with price and timeline, subhead, primary CTA, secondary 60-second founder video, trust row (mada, Apple Pay, cards; KSA, UAE and Oman entities), animated Arabic product mockup with a Day 1 → Day 30 trajectory | States dream outcome, time and price above the fold (Hormozi value equation) | `Pages` block |
+| 2 | Hero | H1 promise with price and timeline, subhead, primary CTA, secondary 60-second founder video, trust row (mada, Apple Pay, cards; KSA, UAE and Oman entities), animated Arabic product mockup with a Day 1 → Day 30 trajectory (working days) | States dream outcome, time and price above the fold (Hormozi value equation) | `Pages` block |
 | 3 | Proof strip | Only true facts: founders' shipped products, years of experience, live client launches once they exist | Credibility before claims | `Pages` block, each item sourced |
-| 4 | Problem | Three cards: agencies (SAR 35k–65k, 4–8 weeks ([Sendan](https://www.sendantech.com/en-SA/mobile-app-development-cost-saudi-arabia))), freelancers (disappear after launch), AI app builders (from $25/month ([eesel](https://eesel.ai/blog/lovable-pricing)), stall at payments, Arabic, ZATCA and hosting) | Names the visitor's current options and their failure points | `Pages` block with sources |
+| 4 | Problem | Three cards: agencies (SAR 35k–65k ([Sendan](https://www.sendantech.com/en-SA/mobile-app-development-cost-saudi-arabia)); no delivery-time comparison, since 30 working days is about six weeks), freelancers (disappear after launch), AI app builders (from $25/month ([eesel](https://eesel.ai/blog/lovable-pricing)), stall at payments, Arabic, ZATCA and hosting) | Names the visitor's current options and their failure points | `Pages` block with sources |
 | 5 | Mechanism: Etleq Core | Bento grid of what already exists before day one: Arabic RTL UI, mada and Apple Pay billing, ZATCA invoicing, admin panel, OTP login, hosting, backups | Raises perceived likelihood of success | `Pages` block |
-| 6 | Models teaser | 6 model cards from the library: what it does, reported MRR with source, "Gulf version from $X in 30 days" | Mirrors the reel that brought them; shows a concrete path | `Models` collection |
+| 6 | Models teaser | 6 model cards from the library: what it does, reported MRR with source, "Gulf version from $X in 30 working days" | Mirrors the reel that brought them; shows a concrete path | `Models` collection |
 | 7 | Offer stack | Core deliverables plus named bonuses with stated values, total value vs price, three tiers and Care plans | Hormozi Grand Slam Offer: value far above price | `Offer` global |
-| 8 | How it works | 7-step stepper: Scorecard → Fit call → Blueprint → 30-day build (demo on day 10) → Launch → First 10 customers sprint → Care | Reduces uncertainty and effort | `Pages` block |
-| 9 | Guarantee | Launch-date guarantee and Blueprint satisfaction, plus the honest line about revenue | Risk reversal; honesty builds trust | `Offer` global |
-| 10 | Comparison table | Etleq vs agency vs freelancer vs AI builder on price, time, mada, ZATCA, code ownership, support after launch | Makes the choice obvious; every cell sourced | `Pages` block |
+| 8 | How it works | 7-step stepper: Scorecard → Fit call → Blueprint (money-back guarantee) → Build in 30 working days (demo on day 10) → Launch → First 10 customers sprint → Care | Reduces uncertainty and effort | `Pages` block |
+| 9 | Guarantee | Launch-date guarantee and the Blueprint money-back guarantee, plus the honest line about revenue | Risk reversal; honesty builds trust | `Offer` global |
+| 10 | Comparison table | Etleq vs agency vs freelancer vs AI builder on price, a launch date guaranteed in the contract, mada, ZATCA, Arabic interface, code ownership, support after launch. We don't compete on raw speed; unsourced cells for the others read "Depends on the agreement" | Makes the choice obvious; every cell sourced | `Pages` block |
 | 11 | Founders and team | The two co-founders (photos, two-line bios, 60-second video, links to their accounts) plus a line on the wider team linking to careers | People buy from people (Key Person of Influence) | `Authors` collection |
-| 12 | Projects and testimonials | Real case studies and verified testimonials; until they exist, the founding-client offer (3 clients at $4,500 in exchange for a filmed case study) | Social proof without fabrication | `Projects`, `Testimonials` |
-| 13 | FAQ | 8–10 objections: price, ownership, delays, payments, hosting location, languages, equity, refunds | Handles objections before the call | `FAQs` collection |
+| 12 | Projects and testimonials | Real case studies and verified testimonials; until they exist, the founding-client offer (3 clients at $4,500 in exchange for a filmed case study). Wording must stay true whether or not shipped apps are listed: the offer is about the first published client case studies, never "we haven't built anything" | Social proof without fabrication | `Projects`, `Testimonials` |
+| 13 | FAQ | 8–10 objections, these first: do you market it for me, is the fit call free, why trust a new studio, who owns the code, what if the scope changes; then price (pointing to the offer section, no hardcoded figures), delays, payments, hosting location, languages, equity, Blueprint refund | Handles objections before the call | `FAQs` collection |
 | 14 | Final CTA | Scorecard, booking and WhatsApp side by side | Last chance, three channels | `Pages` block |
 | 15 | Footer | Legal entity names, CR and VAT numbers, addresses, phone, WhatsApp, email, socials, newsletter, legal links, language switch | Trust and entity signals for search and AI | `Footer` global |
 | — | Sticky mobile bar | "Take the scorecard" + WhatsApp, appears after the hero | Keeps the action one tap away on phones | Component |
@@ -317,14 +323,14 @@ The home page is a long-form sales page in a fixed order: promise, proof, mechan
 
 **Hero**
 
-- AR H1: «فكرة مجرّبة، ومنصّتك جاهزة تستقبل المدفوعات خلال 30 يومًا»
+- AR H1: «فكرة مجرّبة، ومنصّتك جاهزة تستقبل المدفوعات خلال 30 يوم عمل»
 - AR sub: «نبني لك منصّة SaaS متكاملة بالعربية: دفع عبر مدى وApple Pay، فوترة متوافقة مع ZATCA، استضافة وصيانة، بسعر ثابت يبدأ من 22,125 ر.س. أنت تركّز على عملائك، ونحن نتولّى التقنية.»
 - AR CTA: «ابدأ التقييم (دقيقتان)» · secondary: «شاهد كيف نعمل في 60 ثانية»
-- AR microcopy: «12 سؤالًا، نتيجة فورية، دون أي التزام.»
-- EN H1: "A proven idea, live and taking payments in 30 days."
+- AR microcopy: «أسئلة قصيرة، نتيجة فورية، دون أي التزام.»
+- EN H1: "A proven idea, live and taking payments in 30 working days."
 - EN sub: "We build your complete software product, Arabic-first, with mada and Apple Pay, ZATCA-ready invoicing, hosting and maintenance, at a fixed price from $5,900. You run the business. We run the tech."
 - EN CTA: "Take the 2-minute scorecard" · secondary: "See how it works in 60 seconds"
-- EN microcopy: "12 questions. Instant result. No commitment."
+- EN microcopy: "Short questions. Instant result. No commitment."
 
 **Problem**
 
@@ -342,6 +348,13 @@ The home page is a long-form sales page in a fixed order: promise, proof, mechan
 - AR honest line: «لا نَعِدك بأرباح. نَعِدك بمنصّة تعمل، وتاريخ إطلاق، ودعم بعد الإطلاق.»
 - EN: "If we're late, we pay: 10% of the build fee back for every late week, and we keep building for free."
 - EN honest line: "We don't promise you profit. We promise a working product, a launch date and support after launch."
+- AR Blueprint guarantee: «ضمان جلسة التخطيط: إن رأيت بعد الجلسة واستلام النطاق المكتوب والسعر الثابت أنها لا تستحق {السعر}، أخبرنا خلال 7 أيام ونعيد لك المبلغ كاملًا، ويبقى مستند النطاق لك. وإن بدأت البناء معنا، تُخصم رسوم الجلسة من قيمته.»
+- EN Blueprint guarantee: "If, after the session and receiving the written scope and fixed quote, you feel it wasn't worth {price}, tell us within 7 days and we refund it in full. You keep the scope document. If you go ahead with the build, the session fee is credited to it."
+
+**Comparison**
+
+- Launch-date row, Etleq: AR «تاريخ إطلاق مضمون في العقد (30 يوم عمل)» · EN "Launch date guaranteed in the contract (30 working days)". Others: «حسب الاتفاق» / "Depends on the agreement".
+- Code ownership, Etleq: AR «ملكك بالكامل: الشيفرة والبيانات» · EN "Yours: the code and the data".
 
 **Founders**
 
@@ -443,26 +456,29 @@ The site has one conversion path (scorecard → fit call) and one fallback chann
 
 Priestley-style scorecard: one question per screen, progress bar, back button, under two minutes. Contact details (name, WhatsApp number, email) are asked after the last question, before the result, with the reason shown: «لنرسل لك نتيجتك المفصّلة».
 
+Question order (owner decision, 22 Oct 2026): easy, identity-building questions first, money last. The model question is skipped when the model page pre-fills it, so most visitors see 10 or 11 questions. Points are unchanged.
+
 | # | Question | Answers → points | Max |
 | --- | --- | --- | --- |
-| 1 | Do you run a business today? | No 0 · under SAR 1M revenue 10 · SAR 1–5M 15 · over SAR 5M 20 | 20 |
-| 2 | Budget available in the next 60 days | under $2k 0 · $2–5k 5 · $5–10k 15 · $10k+ 20 | 20 |
-| 3 | Who will market the product? | Me or my team 10 · I hope Etleq will 0 | 10 |
-| 4 | Existing customers or audience | None 0 · under 500 4 · 500–5,000 7 · 5,000+ 10 | 10 |
-| 5 | Which model or idea interests you? | Routing only (pre-filled from the model page) | 0 |
-| 6 | Country | KSA or UAE 5 · other GCC 3 · elsewhere 1 | 5 |
-| 7 | When do you want to launch? | Within a month 10 · 1–3 months 7 · 3–6 months 3 · later 0 | 10 |
-| 8 | Are you the final decision-maker? | Yes 10 · No 0 | 10 |
-| 9 | Have you sold anything online before? | Yes 5 · No 0 | 5 |
-| 10 | Hours per week you can give the launch | under 3 0 · 3–8 3 · 8+ 5 | 5 |
-| 11 | Do you have a commercial registration? | Yes 5 · No 0 | 5 |
-| 12 | What would success in 6 months look like? | Free text, stored for the call | 0 |
+| 1 | Which model or idea interests you? | Routing only (pre-filled from the model page, then skipped) | 0 |
+| 2 | When do you want to launch? | Within a month 10 · 1–3 months 7 · 3–6 months 3 · later 0 | 10 |
+| 3 | Country | KSA or UAE 5 · other GCC 3 · elsewhere 1 | 5 |
+| 4 | Do you run a business today? | No 0 · under SAR 1M revenue 10 · SAR 1–5M 15 · over SAR 5M 20 | 20 |
+| 5 | Existing customers or audience | None 0 · under 500 4 · 500–5,000 7 · 5,000+ 10 | 10 |
+| 6 | Who will market the product? | Me or my team 10 · I hope Etleq will 0 | 10 |
+| 7 | Have you sold anything online before? | Yes 5 · No 0 | 5 |
+| 8 | Hours per week you can give the launch | under 3 0 · 3–8 3 · 8+ 5 | 5 |
+| 9 | Do you have a commercial registration? | Yes 5 · No 0 | 5 |
+| 10 | Are you the final decision-maker? | Yes 10 · I decide with a partner 6 · No, someone else decides 0 | 10 |
+| 11 | Budget available in the next 60 days | under $2k 0 · $2–5k 5 · $5–10k 15 · $10k+ 20 | 20 |
+
+The free-text "What would success in 6 months look like?" is no longer asked on the site (it opened the phone keyboard right before the contact step). The Cal.com booking form asks it instead; answers already stored on older leads stay readable.
 
 **Routing:**
 
-- **Hard disqualifiers** (no booking offered, whatever the score): budget under $5k, not the decision-maker, launch later than 6 months, or "I hope Etleq will market it".
+- **Hard disqualifiers** (no booking offered, whatever the score): budget under $5k, "No, someone else decides", launch later than 6 months, or "I hope Etleq will market it". "I decide with a partner" is not a disqualifier; the ready result asks the visitor to bring the partner to the same call («ادعُ شريكك في القرار إلى المكالمة نفسها.» / "Invite your co-decision-maker to the same call.").
 - **60–100, no disqualifier → "Ready to launch":** result page with the booking embed inline, pre-filled.
-- **40–59 → "Almost ready":** the playbook, a WhatsApp nurture message, and an invitation to retake later.
+- **40–59 → "Almost ready":** WhatsApp is the primary next step («تحدّث معنا على واتساب عمّا ينقصك» / "Talk to us on WhatsApp about what's missing") until the playbook PDF exists; the one-tap playbook sign-up is secondary; plus an invitation to retake later.
 - **0–39 → "Explore first":** free content and the newsletter.
 
 Keep weights and thresholds in a `ScorecardSettings` global so the founders can tune them; the scoring function lives in `lib/scoring.ts` with unit tests for every band and disqualifier.
@@ -498,7 +514,7 @@ Every page has a click-to-chat link (`https://wa.me/{number}?text={encoded}`) wi
 
 ### Testing backlog (in order)
 
-Hero headline; price shown vs "from" price; founder video vs product video in the hero; scorecard with 12 vs 8 questions; CTA label. Run A/B tests only when a variant can collect enough conversions to decide; until then, learn from session recordings and short user tests with real prospects.
+Hero headline; price shown vs "from" price; founder video vs product video in the hero; scorecard with 11 vs 8 questions; CTA label. Run A/B tests only when a variant can collect enough conversions to decide; until then, learn from session recordings and short user tests with real prospects.
 
 ## 10. CMS specification (Payload)
 

@@ -28,6 +28,47 @@ export const DIAL_CODES = [
 ] as const
 
 export const DEFAULT_DIAL_CODE = '966'
+
+/** Regional flag emoji for an ISO 3166-1 alpha-2 code (renders as letters where flags are unsupported). */
+export const flagEmoji = (iso: string) => String.fromCodePoint(...[...iso.toUpperCase()].map((c) => 0x1f1a5 + c.charCodeAt(0)))
+
+/** Typical mobile number shape after the dial code, used as the placeholder and hint example. */
+const MOBILE_EXAMPLES: Record<string, string> = {
+  '966': '5X XXX XXXX',
+  '971': '5X XXX XXXX',
+  '965': 'XXXX XXXX',
+  '974': 'XXXX XXXX',
+  '973': 'XXXX XXXX',
+  '968': '9XXX XXXX',
+  '20': '1X XXXX XXXX',
+  '962': '7X XXX XXXX',
+  '964': '7XX XXX XXXX',
+  '961': 'XX XXX XXX',
+  '212': '6XX XXX XXX',
+  '213': '5XX XX XX XX',
+  '216': 'XX XXX XXX',
+  '249': '9X XXX XXXX',
+  '967': '7XX XXX XXX',
+  '970': '5XX XXX XXX',
+  '963': '9XX XXX XXX',
+  '218': '9X XXX XXXX',
+  '90': '5XX XXX XX XX',
+  '92': '3XX XXX XXXX',
+  '91': 'XXXXX XXXXX',
+  '44': '7XXX XXX XXX',
+  '1': 'XXX XXX XXXX',
+}
+export const mobileExample = (dialCode: string | null | undefined) => MOBILE_EXAMPLES[dialCode || DEFAULT_DIAL_CODE] ?? 'XXX XXX XXXX'
+
+/**
+ * Dial code implied by the scorecard's country answer, only when it names exactly one country.
+ * The default answers ("Saudi Arabia or the UAE", "another GCC country") are ambiguous and return null.
+ */
+export function dialCodeForCountryAnswer(answer: string | null | undefined): string | null {
+  if (!answer) return null
+  const iso = { ksa: 'SA', saudi: 'SA', uae: 'AE' }[answer.toLowerCase()] ?? answer.toUpperCase()
+  return DIAL_CODES.find((d) => d.iso === iso)?.code ?? null
+}
 export const DIAL_CODE_VALUES = DIAL_CODES.map((d) => d.code) as unknown as [string, ...string[]]
 
 const ARABIC_DIGITS = /[٠-٩۰-۹]/g

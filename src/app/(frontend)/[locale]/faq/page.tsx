@@ -15,7 +15,18 @@ import { WhatsAppButton } from '@/components/ui/whatsapp-button'
 
 export const revalidate = 3600
 
-const CATEGORY_ORDER = ['price', 'ownership', 'timeline', 'payments', 'hosting', 'languages', 'equity', 'refunds', 'process', 'general'] as const
+const CATEGORY_ORDER = [
+  'price',
+  'ownership',
+  'timeline',
+  'payments',
+  'hosting',
+  'languages',
+  'equity',
+  'refunds',
+  'process',
+  'general',
+] as const
 type Category = (typeof CATEGORY_ORDER)[number]
 
 type Props = { params: Promise<{ locale: string }> }
@@ -52,7 +63,11 @@ export default async function FaqPage({ params }: Props) {
   const { locale: raw } = await params
   const locale = raw as Locale
   setRequestLocale(locale)
-  const [t, faqs, data] = await Promise.all([getTranslations({ locale, namespace: 'common' }), getFaqs(locale), getShellData(locale)])
+  const [t, faqs, data] = await Promise.all([
+    getTranslations({ locale, namespace: 'common' }),
+    getFaqs(locale),
+    getShellData(locale),
+  ])
 
   const groups = CATEGORY_ORDER.map((cat) => ({
     cat,
@@ -139,6 +154,8 @@ export default async function FaqPage({ params }: Props) {
         title={t('faq.ctaTitle')}
         text={t('faq.ctaText')}
         placement="faq_cta"
+        ctaId="faq_scorecard"
+        micro={false}
         whatsappNumber={data.settings.whatsappNumber}
         refCode="FAQ"
       />

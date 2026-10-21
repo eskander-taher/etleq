@@ -6,6 +6,8 @@ export interface ValidationMessages {
   nameTooShort: string
   nameTooLong: string
   phoneRequired: string
+  /** Scorecard contact step: the number is how we follow up on the result. */
+  phoneRequiredResult: string
   phoneInvalid: string
   phoneSaudi: string
   phoneUae: string
@@ -24,7 +26,8 @@ export const messages: Record<ValidationLocale, ValidationMessages> = {
     nameRequired: 'اكتب اسمك لنعرف كيف نناديك.',
     nameTooShort: 'الاسم قصير جدًا، اكتبه كاملًا من فضلك.',
     nameTooLong: 'الاسم طويل جدًا، اختصره إلى 80 حرفًا أو أقل.',
-    phoneRequired: 'نحتاج رقم واتساب لنرسل لك النتيجة.',
+    phoneRequired: 'نحتاج رقم واتساب لنتواصل معك.',
+    phoneRequiredResult: 'نحتاج رقم واتساب لنتواصل معك بخصوص نتيجتك.',
     phoneInvalid: 'هذا الرقم لا يبدو صحيحًا. تأكّد من رمز الدولة وعدد الأرقام.',
     phoneSaudi: 'رقم الجوال السعودي يبدأ بـ 5 ويتكوّن من 9 أرقام، مثل 5X XXX XXXX.',
     phoneUae: 'رقم الجوال الإماراتي يبدأ بـ 5 ويتكوّن من 9 أرقام، مثل 5X XXX XXXX.',
@@ -41,7 +44,8 @@ export const messages: Record<ValidationLocale, ValidationMessages> = {
     nameRequired: 'Please tell us your name.',
     nameTooShort: 'That name looks too short. Please write your full name.',
     nameTooLong: 'Please keep your name under 80 characters.',
-    phoneRequired: 'We need a WhatsApp number to send you your result.',
+    phoneRequired: 'We need a WhatsApp number to reach you.',
+    phoneRequiredResult: 'We need a WhatsApp number to reach you about your result.',
     phoneInvalid: "That number doesn't look right. Check the country code and the number of digits.",
     phoneSaudi: 'Saudi mobile numbers start with 5 and have 9 digits, like 5X XXX XXXX.',
     phoneUae: 'UAE mobile numbers start with 5 and have 9 digits, like 5X XXX XXXX.',

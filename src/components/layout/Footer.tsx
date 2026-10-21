@@ -20,28 +20,48 @@ export function countryName(code: string | null | undefined, locale: Locale) {
   }
 }
 
+/** Founder placeholders such as "[CR number]" or «[العنوان — الرياض]» are never shown as facts. */
+export const isReal = (v: string | null | undefined): v is string => Boolean(v?.trim()) && !v!.trim().startsWith('[')
+
+/** Display names for social platforms, in the page's language. Unknown platforms keep the CMS text. */
+const SOCIAL_NAMES: Record<string, { ar: string; en: string }> = {
+  instagram: { ar: 'إنستغرام', en: 'Instagram' },
+  x: { ar: 'إكس', en: 'X' },
+  twitter: { ar: 'إكس', en: 'X' },
+  linkedin: { ar: 'لينكدإن', en: 'LinkedIn' },
+  tiktok: { ar: 'تيك توك', en: 'TikTok' },
+  snapchat: { ar: 'سناب شات', en: 'Snapchat' },
+  youtube: { ar: 'يوتيوب', en: 'YouTube' },
+  facebook: { ar: 'فيسبوك', en: 'Facebook' },
+  threads: { ar: 'ثريدز', en: 'Threads' },
+  github: { ar: 'GitHub', en: 'GitHub' },
+}
+const socialName = (platform: string, locale: Locale) => SOCIAL_NAMES[platform.trim().toLowerCase().replace(/[\s.-]/g, '')]?.[locale] ?? platform
+
+// min-h-11: 44px tap targets on phones.
 const linkClass =
-  'inline-flex min-h-10 items-center text-sand-300 transition-colors duration-200 hover:text-sand-50 hover:underline hover:underline-offset-4'
+  'inline-flex min-h-11 items-center text-sand-300 transition-colors duration-200 hover:text-sand-50 hover:underline hover:underline-offset-4'
 
 /** One entity: only the fields present in SiteSettings are shown (missing facts are omitted). */
 export async function EntityDetails({ entity, locale, tone = 'dark' }: { entity: LegalEntity; locale: Locale; tone?: 'dark' | 'light' }) {
   const t = await getTranslations({ locale, namespace: 'common' })
   const muted = tone === 'dark' ? 'text-sand-300' : 'text-ink-600'
+  if (!isReal(entity.legalName)) return null
   return (
     <div className="text-sm">
       <p className="font-semibold">{entity.legalName}</p>
       {entity.country ? <p className={muted}>{countryName(entity.country, locale)}</p> : null}
-      {entity.crNumber ? (
+      {isReal(entity.crNumber) ? (
         <p className={muted}>
           {t('footer.crNumber')}: <bdi className="num">{entity.crNumber}</bdi>
         </p>
       ) : null}
-      {entity.vatNumber ? (
+      {isReal(entity.vatNumber) ? (
         <p className={muted}>
           {t('footer.vatNumber')}: <bdi className="num">{entity.vatNumber}</bdi>
         </p>
       ) : null}
-      {entity.address ? <address className={`not-italic ${muted}`}>{entity.address}</address> : null}
+      {isReal(entity.address) ? <address className={`not-italic ${muted}`}>{entity.address}</address> : null}
     </div>
   )
 }
@@ -60,6 +80,7 @@ export async function Footer({ locale, data }: { locale: Locale; data: ShellData
     ? footer.legalLinks
     : LEGAL_LINKS.map((l) => ({ label: t(`legalLinks.${l.key}`), href: l.href }))
   const year = new Date().getFullYear()
+  const entities = settings.legalEntities.filter((e) => isReal(e.legalName))
 
   return (
     <footer className="bg-ink-950 text-sand-50" data-tone="dark">
@@ -111,7 +132,7 @@ export async function Footer({ locale, data }: { locale: Locale; data: ShellData
                     message={t('whatsapp.defaultMessage')}
                     placement="footer"
                     label={t('cta.whatsappShort')}
-                    className="min-h-10 font-normal text-sand-300 hover:text-sand-50"
+                    className="min-h-11 font-normal text-sand-300 hover:text-sand-50"
                   />
                 </li>
                 {settings.contactEmail ? (
@@ -135,7 +156,7 @@ export async function Footer({ locale, data }: { locale: Locale; data: ShellData
                     {footer.social.map((s) => (
                       <li key={s.url}>
                         <a href={s.url} target="_blank" rel="noopener noreferrer me" className={linkClass}>
-                          <bdi>{s.platform}</bdi>
+                          <bdi>{socialName(s.platform, locale)}</bdi>
                           <span className="sr-only"> {t('a11y.opensNewTab')}</span>
                         </a>
                       </li>
@@ -147,13 +168,13 @@ export async function Footer({ locale, data }: { locale: Locale; data: ShellData
           </nav>
         </div>
 
-        {settings.legalEntities.length ? (
+        {entities.length ? (
           <section aria-labelledby="footer-entities" className="mt-14 border-t border-ink-800 pt-8">
             <h2 id="footer-entities" className="font-display text-sm font-semibold">
               {t('footer.entities')}
             </h2>
             <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {settings.legalEntities.map((e, i) => (
+              {entities.map((e, i) => (
                 <EntityDetails key={`${e.legalName}-${i}`} entity={e} locale={locale} />
               ))}
             </div>

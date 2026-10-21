@@ -9,22 +9,26 @@ import { useRouter } from '@/i18n/navigation'
 import { Button } from '@/components/ui/button'
 import { Field, Input, Textarea } from '@/components/ui/form'
 import { getAttribution } from '@/lib/attribution'
+import { hasConsent } from '@/lib/consent'
+import { whatsappLink } from '@/lib/whatsapp'
 import { contactSchema, DEFAULT_DIAL_CODE, HONEYPOT_FIELD, type ContactData, type ContactInput } from '@/lib/validation'
 import { submitContact, type ActionError } from '@/actions/leads'
-import { ConsentFields, EmailField, FormAlert, NameField, PhoneField, applyServerErrors } from './fields'
+import { ConsentFields, EmailField, FormAlert, NameField, PhoneField, applyServerErrors, trackFormErrors } from './fields'
 import { Honeypot } from './Honeypot'
 import { useTurnstile } from './Turnstile'
 import { createEventId, queueEvents } from './pending-event'
 
-export function ContactFormClient({ locale, turnstileSiteKey }: { locale: 'ar' | 'en'; turnstileSiteKey: string | null }) {
+export function ContactFormClient({ locale, turnstileSiteKey, whatsappNumber }: { locale: 'ar' | 'en'; turnstileSiteKey: string | null; whatsappNumber?: string | null }) {
   const t = useTranslations('forms')
   const router = useRouter()
   const [formError, setFormError] = useState<ActionError | null>(null)
   const [honeypot, setHoneypot] = useState('')
-  const { ref: turnstileRef, token: turnstileToken, reset: resetTurnstile } = useTurnstile(turnstileSiteKey, locale)
+  const [verifying, setVerifying] = useState(false)
+  const { ref: turnstileRef, reset: resetTurnstile, waitForToken, enabled: turnstileOn } = useTurnstile(turnstileSiteKey, locale)
 
   const {
     register,
+    control,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
@@ -34,24 +38,45 @@ export function ContactFormClient({ locale, turnstileSiteKey }: { locale: 'ar' |
     mode: 'onTouched',
   })
 
-  const onSubmit = handleSubmit(async (data) => {
-    setFormError(null)
-    const eventId = createEventId()
-    const res = await submitContact({ locale, data, turnstileToken, [HONEYPOT_FIELD]: honeypot, attribution: getAttribution(), eventId })
-    if (!res.ok) {
-      applyServerErrors(res.fieldErrors, setError as never)
-      setFormError(res.error === 'invalid' && res.fieldErrors ? 'invalid' : res.error)
-      resetTurnstile()
-      return
-    }
-    queueEvents([{ name: 'generate_lead', params: { source: 'contact', event_id: eventId } }])
-    router.push('/thank-you/contact')
-  })
+  const onSubmit = handleSubmit(
+    async (data) => {
+      setFormError(null)
+      setVerifying(true)
+      const turnstileToken = await waitForToken()
+      setVerifying(false)
+      if (turnstileOn && !turnstileToken) {
+        trackFormErrors('contact', { _form: 'turnstile_timeout' })
+        setFormError('spam')
+        resetTurnstile()
+        return
+      }
+      const eventId = createEventId()
+      const res = await submitContact({
+        locale,
+        data: { ...data, adConsent: hasConsent('marketing') },
+        turnstileToken,
+        [HONEYPOT_FIELD]: honeypot,
+        attribution: getAttribution(),
+        eventId,
+      })
+      if (!res.ok) {
+        // Entered values stay in the form; only the error is shown.
+        trackFormErrors('contact', res.fieldErrors ? Object.fromEntries(Object.keys(res.fieldErrors).map((k) => [k, `server_${res.error}`])) : { _form: res.error })
+        applyServerErrors(res.fieldErrors, setError as never)
+        setFormError(res.error === 'invalid' && res.fieldErrors ? 'invalid' : res.error)
+        resetTurnstile()
+        return
+      }
+      queueEvents([{ name: 'generate_lead', params: { source: 'contact', event_id: eventId } }])
+      router.push('/thank-you/contact')
+    },
+    (invalid) => trackFormErrors('contact', invalid),
+  )
 
   return (
     <form onSubmit={onSubmit} noValidate className="relative flex flex-col gap-5" aria-busy={isSubmitting}>
       <NameField register={register} errors={errors} />
-      <PhoneField register={register} errors={errors} />
+      <PhoneField register={register} errors={errors} control={control} />
       <EmailField register={register} errors={errors} optional />
       <Field label={t('fields.company')} error={errors.company?.message}>
         <Input autoComplete="organization" dir="auto" {...register('company')} />
@@ -62,11 +87,14 @@ export function ContactFormClient({ locale, turnstileSiteKey }: { locale: 'ar' |
       <ConsentFields register={register} errors={errors} />
       <Honeypot label={t('fields.honeypot')} value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
       <div ref={turnstileRef} />
-      <FormAlert error={formError} />
+      <FormAlert
+        error={formError}
+        whatsapp={whatsappNumber ? { href: whatsappLink({ number: whatsappNumber, message: t('contact.whatsappMessage'), ref: 'CONTACT' }), label: t('contact.whatsappFallback'), refCode: 'CONTACT', errorKey: 'spamContact' } : null}
+      />
       <div className="flex flex-col gap-2">
         <Button type="submit" size="lg" disabled={isSubmitting} className="sm:self-start">
           <Send className="size-5 rtl:rotate-180" aria-hidden="true" />
-          {isSubmitting ? t('contact.submitting') : t('contact.submit')}
+          {verifying ? t('verifying') : isSubmitting ? t('contact.submitting') : t('contact.submit')}
         </Button>
         <p className="text-sm text-stone-500">{t('contact.note')}</p>
       </div>

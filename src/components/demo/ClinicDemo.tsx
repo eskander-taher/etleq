@@ -5,7 +5,11 @@ import { useLocale, useTranslations } from 'next-intl'
 import { ArrowLeft, Bell, CalendarCheck, Check, CreditCard, MessageCircle, Receipt, Stethoscope } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatSAR } from '@/lib/format'
-import { Button } from '@/components/ui/button'
+import { trackEvent } from '@/lib/analytics'
+import { whatsappLink } from '@/lib/whatsapp'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { WhatsAppIcon } from '@/components/ui/icons'
+import { TrackedAnchor, TrackedLink } from '@/components/ui/tracked-link'
 
 /** Fictional clinic for the outreach demo (/demo/clinic). Nothing here talks to a server. */
 
@@ -125,7 +129,26 @@ function workingDays(today: string) {
 const isTaken = (dayIdx: number, doctor: Doctor, slot: number) =>
   (dayIdx * 7 + (doctor === 'sara' ? 3 : 5) + slot / 30) % 3 === 0
 
-export function ClinicDemo() {
+/** Analytics never blocks the demo; trackEvent itself respects cookie consent. */
+function safeTrack(name: string, params: Record<string, unknown>) {
+  try {
+    trackEvent(name, { page: window.location.pathname, demo: 'clinic', ...params })
+  } catch {
+    /* ignore */
+  }
+}
+
+export function ClinicDemo({
+  scorecardHref = '/scorecard?from=%2Fdemo%2Fclinic',
+  whatsappNumber,
+  whatsappMessage,
+  refCode = 'DEMO-CLINIC',
+}: {
+  scorecardHref?: string
+  whatsappNumber?: string | null
+  whatsappMessage?: string
+  refCode?: string
+} = {}) {
   const locale = useLocale() as L
   const t = useTranslations('demo')
   const todayKey = useSyncExternalStore(noSubscribe, riyadhToday, () => null)
@@ -147,6 +170,16 @@ export function ClinicDemo() {
   const [fresh, setFresh] = useState<string | null>(null)
   const dashboardRef = useRef<HTMLDivElement>(null)
   const timers = useRef<number[]>([])
+  const started = useRef(false)
+
+  /** First step forward = the visitor is actually trying the demo (fires once per page view). */
+  function start() {
+    if (!started.current) {
+      started.current = true
+      safeTrack('demo_start', {})
+    }
+    setStep(2)
+  }
 
   useEffect(() => {
     const pending = timers.current
@@ -185,6 +218,7 @@ export function ClinicDemo() {
         }
         setPaying(false)
         setStep(5)
+        safeTrack('demo_complete', { service })
         setAppts((a) => [...a, appt])
         setFresh(id)
         setInvoice({ number, service })
@@ -213,6 +247,10 @@ export function ClinicDemo() {
   const later = appts.filter((a) => a.day && (filter === 'all' || a.branch === filter))
   const depositsToday = today.filter((a) => a.deposit).length * DEPOSIT
   const lastNew = [...appts].reverse().find((a) => a.typed)
+  const waDigits = (whatsappNumber || '').replace(/[^\d]/g, '')
+  const waHref = waDigits
+    ? whatsappLink({ number: waDigits, message: whatsappMessage || t('cta.whatsapp'), ref: refCode })
+    : null
 
   return (
     <div className="grid items-start gap-10 lg:grid-cols-[380px_1fr] lg:gap-12">
@@ -265,7 +303,7 @@ export function ClinicDemo() {
                     ))}
                   </div>
                 </fieldset>
-                <Button block onClick={() => setStep(2)}>
+                <Button block onClick={start}>
                   {t('booking.next')}
                 </Button>
               </div>
@@ -299,7 +337,7 @@ export function ClinicDemo() {
                 <fieldset>
                   <legend className="mb-1 font-bold">{t('booking.day')}</legend>
                   <p className="mb-3 text-xs text-ink-600">{t('booking.closedFriday')}</p>
-                  <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+                  <div className="relative -mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
                     {days.map((d, i) => (
                       <Choice
                         key={d.toISOString()}
@@ -453,6 +491,15 @@ export function ClinicDemo() {
                 >
                   {t('booking.seeClinic')}
                 </Button>
+                <DemoCta
+                  title={t('endCta.patient')}
+                  placement="demo_confirmation"
+                  scorecardHref={scorecardHref}
+                  scorecardLabel={t('endCta.scorecard')}
+                  whatsappHref={waHref}
+                  whatsappLabel={t('endCta.whatsapp')}
+                  refCode={refCode}
+                />
                 <Button block variant="ghost" onClick={reset}>
                   {t('booking.again')}
                 </Button>
@@ -558,7 +605,70 @@ export function ClinicDemo() {
           </div>
         </div>
       </div>
+      {/* After the dashboard: the same next step, framed for the clinic owner. */}
+      <div className="lg:col-start-2">
+        <DemoCta
+          title={t('endCta.clinic')}
+          placement="demo_dashboard"
+          scorecardHref={scorecardHref}
+          scorecardLabel={t('endCta.scorecard')}
+          whatsappHref={waHref}
+          whatsappLabel={t('endCta.whatsapp')}
+          refCode={refCode}
+          wide
+        />
+      </div>
       <style>{'@keyframes demo-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}'}</style>
+    </div>
+  )
+}
+
+/** Scorecard (primary) + WhatsApp (secondary), shown where the demo has made its point. */
+function DemoCta({
+  title,
+  placement,
+  scorecardHref,
+  scorecardLabel,
+  whatsappHref,
+  whatsappLabel,
+  refCode,
+  wide = false,
+}: {
+  title: string
+  placement: string
+  scorecardHref: string
+  scorecardLabel: string
+  whatsappHref: string | null
+  whatsappLabel: string
+  refCode: string
+  wide?: boolean
+}) {
+  return (
+    <div className={cn('rounded-card bg-ink-950 text-sand-50', wide ? 'p-6 lg:p-8' : 'p-5')} data-tone="dark">
+      <p className={cn('font-bold', wide ? 'text-xl' : 'text-base')}>{title}</p>
+      <div className={cn('mt-4 flex flex-col gap-2', wide && 'sm:flex-row')}>
+        <TrackedLink
+          href={scorecardHref}
+          event="cta_click"
+          params={{ cta_id: 'demo_scorecard', location: placement, ref_code: refCode }}
+          className={buttonVariants({ variant: 'primary', block: !wide })}
+        >
+          {scorecardLabel}
+        </TrackedLink>
+        {whatsappHref ? (
+          <TrackedAnchor
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            event="whatsapp_click"
+            params={{ location: placement, ref_code: refCode }}
+            className={buttonVariants({ variant: 'secondary-dark', block: !wide })}
+          >
+            <WhatsAppIcon />
+            {whatsappLabel}
+          </TrackedAnchor>
+        ) : null}
+      </div>
     </div>
   )
 }

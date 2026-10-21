@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_SCORECARD, maxScore, scoreScorecard } from '@/lib/scoring'
+import { DEFAULT_SCORECARD, maxScore, resolveScorecardSettings, scoreScorecard } from '@/lib/scoring'
 
 // A clean, non-disqualified baseline that scores 0 on every scored question.
 const zero: Record<string, string> = {
@@ -38,7 +38,7 @@ describe('scoreScorecard — points per question', () => {
     audience: { none: 0, lt500: 4, '500to5k': 7, gt5k: 10 },
     country: { ksa_uae: 5, gcc: 3, other: 1 },
     timeline: { month: 10, '1to3': 7, '3to6': 3, later: 0 },
-    decisionMaker: { yes: 10, no: 0 },
+    decisionMaker: { yes: 10, partner: 6, no: 0 },
     soldOnline: { yes: 5, no: 0 },
     hours: { lt3: 0, '3to8': 3, gt8: 5 },
     commercialReg: { yes: 5, no: 0 },
@@ -67,6 +67,26 @@ describe('scoreScorecard — points per question', () => {
     expect(scoreScorecard({ budget: 'a-million' }).score).toBe(0)
   })
 
+  it('asks easy questions first and money last (owner decision 2026-10-22)', () => {
+    expect(DEFAULT_SCORECARD.questions.map((q) => q.key)).toEqual([
+      'model',
+      'timeline',
+      'country',
+      'business',
+      'audience',
+      'marketer',
+      'soldOnline',
+      'hours',
+      'commercialReg',
+      'decisionMaker',
+      'budget',
+    ])
+  })
+
+  it('no longer asks the free-text success question', () => {
+    expect(DEFAULT_SCORECARD.questions.map((q) => q.key)).not.toContain('success')
+  })
+
   it('maximum is 100 and reaches ready', () => {
     expect(maxScore()).toBe(100)
     expect(scoreScorecard(best)).toEqual({ score: 100, tier: 'ready', disqualifiers: [], canBook: true })
@@ -91,6 +111,19 @@ describe('scoreScorecard — disqualifiers', () => {
       expect(r.tier).toBe('almost')
     })
   }
+
+  it('deciding with a partner is not a disqualifier', () => {
+    const r = scoreScorecard({ ...best, decisionMaker: 'partner' })
+    expect(r).toEqual({ score: 96, tier: 'ready', disqualifiers: [], canBook: true })
+  })
+
+  it('a partner answer near the boundary can drop to almost on points alone', () => {
+    // 15 + 10 + 6 + 10 + 7 + 5 + 3 = 56
+    const r = scoreScorecard({ budget: '5to10k', marketer: 'me', decisionMaker: 'partner', timeline: 'month', audience: '500to5k', country: 'ksa_uae', hours: '3to8' })
+    expect(r.score).toBe(56)
+    expect(r.disqualifiers).toEqual([])
+    expect(r.tier).toBe('almost')
+  })
 
   it('a disqualified low scorer is explore', () => {
     const r = scoreScorecard({ ...zero, budget: 'lt2k' })
@@ -146,6 +179,22 @@ describe('scoreScorecard — CMS settings', () => {
 
   it('falls back to the default when the global is empty', () => {
     expect(scoreScorecard(best, { questions: [], thresholds: null, disqualifiers: [] }).score).toBe(100)
+  })
+
+  it('drops the retired success question from an older CMS global', () => {
+    const settings = {
+      questions: [
+        { key: 'q', type: 'single' as const, options: [{ value: 'a', points: 10 }] },
+        { key: 'success', type: 'text' as const, options: [] },
+      ],
+    }
+    expect(resolveScorecardSettings(settings).questions.map((q) => q.key)).toEqual(['q'])
+  })
+
+  it('falls back to the default when the CMS global only has retired questions', () => {
+    const r = resolveScorecardSettings({ questions: [{ key: 'success', type: 'text' }] })
+    expect(r.fromCms).toBe(false)
+    expect(r.questions).toHaveLength(DEFAULT_SCORECARD.questions.length)
   })
 
   it('caps at 100', () => {

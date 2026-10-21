@@ -247,37 +247,92 @@ async function seed() {
   )
 
   /* FAQs ------------------------------------------------------------ */
-  const faqRows: [string, [string, string], [string, string]][] = [
+  // Real FAQs (isSample: false) come first and carry the lowest `order`, so the home page shows them
+  // first. They answer the objections from the CRO pass (owner decisions, 2026-10-22). No answer
+  // hardcodes a price: prices live in the offer global and render in the offer section.
+  type FaqRow = [category: string, ar: [string, string], en: [string, string]]
+  const realFaqRows: FaqRow[] = [
     [
-      'price',
+      'general',
       [
-        'كم يكلّف بناء منصّتي؟',
-        'تبدأ باقة Core من 5,900 دولار (22,125 ر.س) دون ضريبة القيمة المضافة. نحدّد السعر النهائي الثابت في جلسة المخطّط خلال 48 ساعة.',
+        'هل تسوّقون المنصّة لي؟',
+        'لا. نبني المنصّة ونطلقها، ثم نعمل معك على دفعة مركّزة للوصول إلى أول 10 عملاء. التسويق المستمر بعد ذلك مسؤوليتك أو مسؤولية فريقك.',
       ],
       [
-        'How much does my product cost?',
-        'Launch 30 Core starts at $5,900 excluding VAT. You get a fixed final quote within 48 hours of the Blueprint session.',
+        'Do you market the product for me?',
+        'No. We build and launch it, then run a first-10-customers sprint with you. Ongoing marketing after that is yours.',
+      ],
+    ],
+    [
+      'process',
+      [
+        'هل مكالمة التعارف مجانية؟',
+        'نعم، 15 دقيقة مجانًا ودون أي التزام. أما جلسة التخطيط فمدفوعة، وعليها ضمان استرداد كامل، وتُخصم رسومها من قيمة البناء إن تابعنا معًا.',
+      ],
+      [
+        'Is the fit call free?',
+        'Yes: 15 minutes, free, with no commitment. The Blueprint is a paid session with a money-back guarantee, and its fee is credited to your build if you go ahead.',
+      ],
+    ],
+    [
+      'general',
+      [
+        'أنتم جدد، فلماذا أثق بكم؟',
+        'لأن المخاطرة علينا لا عليك: السعر ثابت في العقد، وموعد الإطلاق مضمون بردّ 10% من قيمة البناء عن كل أسبوع تأخير، ورسوم جلسة التخطيط تُستردّ كاملةً إن رأيت أنها لا تستحقها، والشيفرة ملكك. ويمكنك أن ترى تطبيقات أطلقناها في صفحة المشاريع.',
+      ],
+      [
+        'You’re new. Why should I trust you?',
+        'Because the risk sits with us: the price is fixed in the contract, the launch date is guaranteed with 10% of the build fee back for every late week, the Blueprint fee is refunded in full if it wasn’t worth it to you, and you own the code. You can also see apps we’ve already shipped on our projects page.',
       ],
     ],
     [
       'ownership',
+      ['من يملك الشيفرة؟', 'أنت. الشيفرة والبيانات ملكك بالكامل.'],
+      ['Who owns the code?', 'You do. The code and the data are yours.'],
+    ],
+    [
+      'timeline',
       [
-        'من يملك الكود والبيانات؟',
-        'أنت تملك بيانات منصّتك وعلامتك التجارية. تفاصيل ترخيص Etleq Core مكتوبة في العقد بوضوح.',
+        'ماذا يحدث إذا تغيّر النطاق؟',
+        'نسعّر أي تغيير ونتّفق عليه معك قبل أن نبدأ العمل عليه. مدّة الثلاثين يوم عمل تغطّي النطاق الموقّع.',
       ],
       [
-        'Who owns the code and the data?',
-        'You own your product’s data and brand. The licence terms for Etleq Core are written plainly in the contract.',
+        'What happens if the scope changes?',
+        'We quote any change and agree it with you before work starts. The 30-working-day clock covers the signed scope.',
+      ],
+    ],
+    [
+      'refunds',
+      [
+        'هل يمكن استرداد رسوم جلسة التخطيط؟',
+        'نعم. إن رأيت بعد الجلسة واستلام النطاق المكتوب والسعر الثابت أنها لا تستحق رسومها، أخبرنا خلال 7 أيام ونعيد لك المبلغ كاملًا، ويبقى مستند النطاق لك. وإن بدأت البناء معنا، تُخصم الرسوم من قيمته. تجد الرسوم الحالية في قسم العرض.',
+      ],
+      [
+        'Can I get the Blueprint fee back?',
+        'Yes. If, after the session and receiving the written scope and fixed quote, you feel it wasn’t worth the fee, tell us within 7 days and we refund it in full. You keep the scope document. If you go ahead with the build, the fee is credited to it. The current fee is in the offer section.',
+      ],
+    ],
+  ]
+  const sampleFaqRows: FaqRow[] = [
+    [
+      'price',
+      [
+        'كم يكلّف بناء منصّتي؟',
+        'تجد الأسعار الحالية لكل باقة في قسم العرض وفي صفحة اطلق 30، وهي لا تشمل ضريبة القيمة المضافة. نحدّد السعر النهائي الثابت خلال 48 ساعة من جلسة التخطيط.',
+      ],
+      [
+        'How much does my product cost?',
+        'Current prices for each tier are in the offer section and on the Launch 30 page, excluding VAT. You get a fixed final quote within 48 hours of the Blueprint session.',
       ],
     ],
     [
       'timeline',
       [
-        'ماذا لو تأخّرتم عن 30 يومًا؟',
+        'ماذا لو تأخّرتم عن 30 يوم عمل؟',
         'نردّ 10% من قيمة البناء عن كل أسبوع تأخير ونواصل العمل مجانًا. تتوقّف المدّة إذا تأخّرت مدخلاتك.',
       ],
       [
-        'What if you miss the 30 days?',
+        'What if you miss the 30 working days?',
         'We refund 10% of the build fee for each late week and keep building for free. The clock pauses while your inputs are overdue.',
       ],
     ],
@@ -320,25 +375,14 @@ async function seed() {
       ['Do you take equity?', 'No. We work for a fixed price and never ask for equity.'],
     ],
     [
-      'refunds',
-      [
-        'هل يمكن استرداد رسوم المخطّط؟',
-        'تُخصم رسوم المخطّط (390 دولارًا) من قيمة البناء إذا تابعنا معًا. شروط الاسترداد مكتوبة في صفحة العرض.',
-      ],
-      [
-        'Can I get the Blueprint fee back?',
-        'The $390 Blueprint fee is credited to your build if we go ahead. Refund terms are on the offer page.',
-      ],
-    ],
-    [
       'process',
       [
         'كيف تسير العملية؟',
-        'التقييم، ثم مكالمة توافق قصيرة، ثم المخطّط المدفوع، ثم بناء 30 يومًا مع عرض في اليوم العاشر، ثم الإطلاق والرعاية.',
+        'التقييم، ثم مكالمة تعارف قصيرة، ثم جلسة التخطيط المدفوعة، ثم البناء خلال 30 يوم عمل مع عرض في اليوم العاشر، ثم الإطلاق والرعاية.',
       ],
       [
         'How does the process work?',
-        'Scorecard, a short fit call, the paid Blueprint, a 30-day build with a demo on day 10, then launch and Care.',
+        'Scorecard, a short fit call, the paid Blueprint, a build of 30 working days with a demo on day 10, then launch and Care.',
       ],
     ],
     [
@@ -348,10 +392,12 @@ async function seed() {
     ],
   ]
   const faqIds: string[] = []
-  for (const [i, [category, [qa, aa], [qe, ae]]] of faqRows.entries()) {
+  const faqRows = [...realFaqRows.map((row) => ({ row, real: true })), ...sampleFaqRows.map((row) => ({ row, real: false }))]
+  for (const [i, { row, real }] of faqRows.entries()) {
+    const [category, [qa, aa], [qe, ae]] = row
     const f = await create(
       'faqs',
-      { category, order: i + 1 },
+      { category, order: i + 1, isSample: !real },
       { ar: { question: qa, answer: aa }, en: { question: qe, answer: ae } },
     )
     faqIds.push(f.id)
@@ -434,7 +480,7 @@ async function seed() {
           ],
           steps: [
             { title: 'المخطّط', description: 'جلسة 90 دقيقة نحدّد فيها النطاق والسعر.' },
-            { title: 'البناء', description: '30 يومًا مع عرض تجريبي في اليوم العاشر.' },
+            { title: 'البناء', description: '30 يوم عمل مع عرض تجريبي في اليوم العاشر.' },
             { title: 'الإطلاق', description: 'منصّتك تعمل وتستقبل المدفوعات.' },
           ],
         },
@@ -448,7 +494,7 @@ async function seed() {
           ],
           steps: [
             { title: 'Blueprint', description: 'A 90-minute session to fix scope and price.' },
-            { title: 'Build', description: '30 days with a demo on day 10.' },
+            { title: 'Build', description: '30 working days with a demo on day 10.' },
             { title: 'Launch', description: 'Your product is live and taking payments.' },
           ],
         },
@@ -562,7 +608,7 @@ async function seed() {
       {
         ar: {
           title: m.ar.title,
-          answerBox: `[عينة] ${m.ar.what} يمكن إطلاق نسخة خليجية منه خلال 30 يومًا بسعر يبدأ من ${Math.round(m.priceFrom * 3.75).toLocaleString('en-US')} ر.س، مع الدفع عبر مدى وفواتير ZATCA.`,
+          answerBox: `[عينة] ${m.ar.what} يمكن إطلاق نسخة خليجية منه خلال 30 يوم عمل بسعر يبدأ من ${Math.round(m.priceFrom * 3.75).toLocaleString('en-US')} ر.س، مع الدفع عبر مدى وفواتير ZATCA.`,
           whatItDoes: m.ar.what,
           whoPays: m.ar.pays,
           pricingModel: '[عينة] اشتراك شهري مع خصم للدفع السنوي.',
@@ -590,7 +636,7 @@ async function seed() {
         },
         en: {
           title: m.en.title,
-          answerBox: `[SAMPLE] ${m.en.what} A Gulf version can go live in 30 days from $${m.priceFrom.toLocaleString('en-US')}, with mada payments and ZATCA invoicing.`,
+          answerBox: `[SAMPLE] ${m.en.what} A Gulf version can go live in 30 working days from $${m.priceFrom.toLocaleString('en-US')}, with mada payments and ZATCA invoicing.`,
           whatItDoes: m.en.what,
           whoPays: m.en.pays,
           pricingModel: '[SAMPLE] Monthly subscription with an annual discount.',
@@ -805,14 +851,14 @@ async function seed() {
         title: 'كم تكلفة تطبيق حجز للعيادات في السعودية؟',
         excerpt: 'مقارنة تكاليف البناء والتشغيل بين الوكالة والمستقل وEtleq.',
         answerBox:
-          '[عينة] تتراوح تكلفة بناء نظام حجز للعيادات في السعودية بين 35 و65 ألف ريال لدى الوكالات. باقة Etleq Vertical تبدأ من 45,000 ر.س بسعر ثابت وتنطلق خلال 30 يومًا.',
+          '[عينة] تتراوح تكلفة بناء نظام حجز للعيادات في السعودية بين 35 و65 ألف ريال لدى الوكالات. باقة Etleq Vertical تبدأ من 45,000 ر.س بسعر ثابت وتنطلق خلال 30 يوم عمل.',
         keyTakeaways: [{ text: '[عينة] السعر الثابت يحميك من تجاوز الميزانية.' }],
         content: toMarkdown('## التكلفة باختصار', '[عينة] نص توضيحي لدليل التكلفة.'),
         comparisonTable: {
           columns: [{ label: 'الخيار' }, { label: 'السعر' }, { label: 'المدة' }],
           rows: [
             { label: 'وكالة', cells: [{ value: 'وكالة' }, { value: '35–65 ألف ر.س' }, { value: '4–8 أسابيع' }] },
-            { label: 'Etleq', cells: [{ value: 'Etleq Vertical' }, { value: 'من 45,000 ر.س' }, { value: '30 يومًا' }] },
+            { label: 'Etleq', cells: [{ value: 'Etleq Vertical' }, { value: 'من 45,000 ر.س' }, { value: '30 يوم عمل' }] },
           ],
         },
       },
@@ -820,7 +866,7 @@ async function seed() {
         title: 'How much does a clinic booking app cost in Saudi Arabia?',
         excerpt: 'Build and running costs compared: agency, freelancer and Etleq.',
         answerBox:
-          '[SAMPLE] Agencies in Saudi Arabia quote SAR 35k–65k for a clinic booking system. Etleq Vertical starts at $12,000 at a fixed price and goes live in 30 days.',
+          '[SAMPLE] Agencies in Saudi Arabia quote SAR 35k–65k for a clinic booking system. Etleq Vertical starts at $12,000 at a fixed price and goes live in 30 working days.',
         keyTakeaways: [{ text: '[SAMPLE] A fixed price protects you from budget overruns.' }],
         content: toMarkdown('## The cost in short', '[SAMPLE] Placeholder text for the cost guide.'),
         comparisonTable: {
@@ -837,7 +883,7 @@ async function seed() {
                 { value: '4–8 weeks' },
               ],
             },
-            { label: 'Etleq', cells: [{ value: 'Etleq Vertical' }, { value: 'from $12,000' }, { value: '30 days' }] },
+            { label: 'Etleq', cells: [{ value: 'Etleq Vertical' }, { value: 'from $12,000' }, { value: '30 working days' }] },
           ],
         },
       },
@@ -860,7 +906,7 @@ async function seed() {
         title: 'Etleq أم أدوات بناء التطبيقات بالذكاء الاصطناعي؟',
         excerpt: 'متى تكفيك أداة بالذكاء الاصطناعي، ومتى تحتاج منصّة تستقبل المدفوعات.',
         answerBox:
-          '[عينة] أدوات الذكاء الاصطناعي تبدأ من 25 دولارًا شهريًا وتناسب النماذج الأولية، لكنها تتعثّر عند الدفع بمدى والفوترة والاستضافة. Etleq يسلّمك منصّة تعمل وتستقبل المدفوعات خلال 30 يومًا.',
+          '[عينة] أدوات الذكاء الاصطناعي تبدأ من 25 دولارًا شهريًا وتناسب النماذج الأولية، لكنها تتعثّر عند الدفع بمدى والفوترة والاستضافة. Etleq يسلّمك منصّة تعمل وتستقبل المدفوعات خلال 30 يوم عمل.',
         content: toMarkdown('## المقارنة باختصار', '[عينة] نص توضيحي لصفحة المقارنة.'),
         comparisonTable: {
           columns: [{ label: 'المعيار' }, { label: 'أداة ذكاء اصطناعي' }, { label: 'Etleq' }],
@@ -876,7 +922,7 @@ async function seed() {
         title: 'Etleq vs AI app builders',
         excerpt: 'When an AI builder is enough, and when you need a product that takes payments.',
         answerBox:
-          '[SAMPLE] AI app builders start from $25 a month and suit prototypes, but they stall at mada payments, invoicing and hosting. Etleq delivers a live product that takes payments in 30 days.',
+          '[SAMPLE] AI app builders start from $25 a month and suit prototypes, but they stall at mada payments, invoicing and hosting. Etleq delivers a live product that takes payments in 30 working days.',
         content: toMarkdown('## The comparison in short', '[SAMPLE] Placeholder text for the comparison page.'),
         comparisonTable: {
           columns: [{ label: 'Criterion' }, { label: 'AI builder' }, { label: 'Etleq' }],
@@ -973,12 +1019,12 @@ async function seed() {
         layout: [
           {
             blockType: 'hero',
-            heading: 'فكرة مجرّبة، ومنصّتك جاهزة تستقبل المدفوعات خلال 30 يومًا',
+            heading: 'فكرة مجرّبة، ومنصّتك جاهزة تستقبل المدفوعات خلال 30 يوم عمل',
             subheading:
               'نبني لك منصّة SaaS متكاملة بالعربية: دفع عبر مدى وApple Pay، فوترة متوافقة مع ZATCA، استضافة وصيانة، بسعر ثابت يبدأ من 22,125 ر.س. أنت تركّز على عملائك، ونحن نتولّى التقنية.',
             primaryLabel: 'ابدأ التقييم (دقيقتان)',
             secondaryLabel: 'شاهد كيف نعمل في 60 ثانية',
-            microcopy: '12 سؤالًا، نتيجة فورية، دون أي التزام.',
+            microcopy: 'أسئلة قصيرة، نتيجة فورية، دون أي التزام.',
             trustItems: [{ text: 'مدى' }, { text: 'Apple Pay' }, { text: 'البطاقات' }],
           },
           {
@@ -1010,12 +1056,12 @@ async function seed() {
         layout: [
           {
             blockType: 'hero',
-            heading: 'A proven idea, live and taking payments in 30 days.',
+            heading: 'A proven idea, live and taking payments in 30 working days.',
             subheading:
               'We build your complete software product, Arabic-first, with mada and Apple Pay, ZATCA-ready invoicing, hosting and maintenance, at a fixed price from $5,900. You run the business. We run the tech.',
             primaryLabel: 'Take the 2-minute scorecard',
             secondaryLabel: 'See how it works in 60 seconds',
-            microcopy: '12 questions. Instant result. No commitment.',
+            microcopy: 'Short questions. Instant result. No commitment.',
             trustItems: [{ text: 'mada' }, { text: 'Apple Pay' }, { text: 'Cards' }],
           },
           {
@@ -1249,7 +1295,7 @@ async function seedGlobals(global: (slug: GlobalSlug, common: Data, loc: Loc) =>
           price: 390,
           name: 'مخطّط SaaS',
           description:
-            'جلسة تحديد نطاق مدفوعة مدتها 90 دقيقة، وعرض سعر ثابت خلال 48 ساعة. تُخصم الرسوم من قيمة البناء.',
+            'جلسة تحديد نطاق مدفوعة مدتها 90 دقيقة، وعرض سعر ثابت خلال 48 ساعة. بضمان استرداد، وتُخصم الرسوم من قيمة البناء.',
         },
         tiers: tiers.map((t) => ({
           key: t.key,
@@ -1271,7 +1317,7 @@ async function seedGlobals(global: (slug: GlobalSlug, common: Data, loc: Loc) =>
           price: 390,
           name: 'SaaS Blueprint',
           description:
-            'A paid 90-minute scoping session and a fixed quote within 48 hours. The fee is credited to your build.',
+            'A paid 90-minute scoping session and a fixed quote within 48 hours. Money-back guarantee; the fee is credited to your build.',
         },
         tiers: tiers.map((t) => ({
           key: t.key,
@@ -1296,7 +1342,8 @@ async function seedGlobals(global: (slug: GlobalSlug, common: Data, loc: Loc) =>
     },
   )
 
-  // Scorecard: exact points from brief section 9.
+  // Scorecard: exact points from brief section 9, in the order decided on 2026-10-22 (easy questions first,
+  // money last). The free-text `success` question is no longer asked; the Cal.com booking form asks it.
   type Q = {
     key: string
     type: 'single' | 'text' | 'model'
@@ -1305,6 +1352,36 @@ async function seedGlobals(global: (slug: GlobalSlug, common: Data, loc: Loc) =>
     options: [string, number, string, string][]
   }
   const questions: Q[] = [
+    {
+      key: 'model',
+      type: 'model',
+      ar: 'أيّ نموذج أو فكرة تهمّك؟',
+      en: 'Which model or idea interests you?',
+      options: [],
+    },
+    {
+      key: 'timeline',
+      type: 'single',
+      ar: 'متى تريد الإطلاق؟',
+      en: 'When do you want to launch?',
+      options: [
+        ['month', 10, 'خلال شهر', 'Within a month'],
+        ['1to3', 7, 'خلال 1–3 أشهر', 'In 1–3 months'],
+        ['3to6', 3, 'خلال 3–6 أشهر', 'In 3–6 months'],
+        ['later', 0, 'لاحقًا', 'Later'],
+      ],
+    },
+    {
+      key: 'country',
+      type: 'single',
+      ar: 'في أيّ بلد تعمل؟',
+      en: 'Which country are you in?',
+      options: [
+        ['ksa_uae', 5, 'السعودية أو الإمارات', 'Saudi Arabia or UAE'],
+        ['gcc', 3, 'دولة خليجية أخرى', 'Another GCC country'],
+        ['other', 1, 'بلد آخر', 'Elsewhere'],
+      ],
+    },
     {
       key: 'business',
       type: 'single',
@@ -1315,28 +1392,6 @@ async function seedGlobals(global: (slug: GlobalSlug, common: Data, loc: Loc) =>
         ['lt1m', 10, 'نعم، إيراداته أقل من مليون ريال', 'Yes, under SAR 1M revenue'],
         ['1to5m', 15, 'نعم، من 1 إلى 5 ملايين ريال', 'Yes, SAR 1–5M'],
         ['gt5m', 20, 'نعم، أكثر من 5 ملايين ريال', 'Yes, over SAR 5M'],
-      ],
-    },
-    {
-      key: 'budget',
-      type: 'single',
-      ar: 'ما الميزانية المتاحة خلال الـ60 يومًا القادمة؟',
-      en: 'What budget is available in the next 60 days?',
-      options: [
-        ['lt2k', 0, 'أقل من 2,000 دولار', 'Under $2k'],
-        ['2to5k', 5, 'من 2,000 إلى 5,000 دولار', '$2k–5k'],
-        ['5to10k', 15, 'من 5,000 إلى 10,000 دولار', '$5k–10k'],
-        ['gt10k', 20, 'أكثر من 10,000 دولار', '$10k+'],
-      ],
-    },
-    {
-      key: 'marketer',
-      type: 'single',
-      ar: 'من سيسوّق المنصّة؟',
-      en: 'Who will market the product?',
-      options: [
-        ['me', 10, 'أنا أو فريقي', 'Me or my team'],
-        ['etleq', 0, 'أتمنّى أن تتولّى Etleq ذلك', 'I hope Etleq will'],
       ],
     },
     {
@@ -1352,43 +1407,13 @@ async function seedGlobals(global: (slug: GlobalSlug, common: Data, loc: Loc) =>
       ],
     },
     {
-      key: 'model',
-      type: 'model',
-      ar: 'أيّ نموذج أو فكرة تهمّك؟',
-      en: 'Which model or idea interests you?',
-      options: [],
-    },
-    {
-      key: 'country',
+      key: 'marketer',
       type: 'single',
-      ar: 'في أيّ بلد تعمل؟',
-      en: 'Which country are you in?',
+      ar: 'من سيسوّق المنصّة؟',
+      en: 'Who will market the product?',
       options: [
-        ['ksa_uae', 5, 'السعودية أو الإمارات', 'Saudi Arabia or UAE'],
-        ['gcc', 3, 'دولة خليجية أخرى', 'Another GCC country'],
-        ['other', 1, 'بلد آخر', 'Elsewhere'],
-      ],
-    },
-    {
-      key: 'timeline',
-      type: 'single',
-      ar: 'متى تريد الإطلاق؟',
-      en: 'When do you want to launch?',
-      options: [
-        ['month', 10, 'خلال شهر', 'Within a month'],
-        ['1to3', 7, 'خلال 1–3 أشهر', 'In 1–3 months'],
-        ['3to6', 3, 'خلال 3–6 أشهر', 'In 3–6 months'],
-        ['later', 0, 'لاحقًا', 'Later'],
-      ],
-    },
-    {
-      key: 'decisionMaker',
-      type: 'single',
-      ar: 'هل أنت صاحب القرار النهائي؟',
-      en: 'Are you the final decision-maker?',
-      options: [
-        ['yes', 10, 'نعم', 'Yes'],
-        ['no', 0, 'لا', 'No'],
+        ['me', 10, 'أنا أو فريقي', 'Me or my team'],
+        ['etleq', 0, 'أتمنّى أن تتولّى Etleq ذلك', 'I hope Etleq will'],
       ],
     },
     {
@@ -1423,17 +1448,33 @@ async function seedGlobals(global: (slug: GlobalSlug, common: Data, loc: Loc) =>
       ],
     },
     {
-      key: 'success',
-      type: 'text',
-      ar: 'كيف يبدو النجاح بعد 6 أشهر؟',
-      en: 'What would success in 6 months look like?',
-      options: [],
+      key: 'decisionMaker',
+      type: 'single',
+      ar: 'هل أنت صاحب القرار النهائي؟',
+      en: 'Are you the final decision-maker?',
+      options: [
+        ['yes', 10, 'نعم', 'Yes'],
+        ['partner', 6, 'أقرّر مع شريك', 'I decide with a partner'],
+        ['no', 0, 'لا، يقرّر شخص آخر', 'No, someone else decides'],
+      ],
+    },
+    {
+      key: 'budget',
+      type: 'single',
+      ar: 'ما الميزانية المتاحة خلال الـ60 يومًا القادمة؟',
+      en: 'What budget is available in the next 60 days?',
+      options: [
+        ['lt2k', 0, 'أقل من 2,000 دولار', 'Under $2k'],
+        ['2to5k', 5, 'من 2,000 إلى 5,000 دولار', '$2k–5k'],
+        ['5to10k', 15, 'من 5,000 إلى 10,000 دولار', '$5k–10k'],
+        ['gt10k', 20, 'أكثر من 10,000 دولار', '$10k+'],
+      ],
     },
   ]
   const disq: [string, string, string, string][] = [
     ['budget', 'lt2k', 'الميزانية أقل من 5,000 دولار', 'Budget under $5k'],
     ['budget', '2to5k', 'الميزانية أقل من 5,000 دولار', 'Budget under $5k'],
-    ['decisionMaker', 'no', 'لست صاحب القرار النهائي', 'Not the final decision-maker'],
+    ['decisionMaker', 'no', 'شخص آخر يتّخذ القرار', 'Someone else makes the decision'],
     ['timeline', 'later', 'الإطلاق بعد أكثر من 6 أشهر', 'Launch later than 6 months'],
     ['marketer', 'etleq', 'التسويق يحتاج إلى أن يتولّاه صاحب المشروع', 'The owner needs to market the product'],
   ]
@@ -1475,14 +1516,14 @@ async function seedGlobals(global: (slug: GlobalSlug, common: Data, loc: Loc) =>
       ar: {
         titleTemplate: '%s — اطلق',
         defaultDescription:
-          'اطلق استوديو يبني منصّتك البرمجية بالعربية ويطلقها خلال 30 يومًا بسعر ثابت، مع الدفع عبر مدى وفواتير ZATCA والاستضافة.',
-        oneLiner: 'نطلق منصّتك البرمجية خلال 30 يومًا بسعر ثابت.',
+          'اطلق استوديو يبني منصّتك البرمجية بالعربية ويطلقها خلال 30 يوم عمل بسعر ثابت، مع الدفع عبر مدى وفواتير ZATCA والاستضافة.',
+        oneLiner: 'نطلق منصّتك البرمجية خلال 30 يوم عمل بسعر ثابت، والشيفرة ملكك.',
       },
       en: {
         titleTemplate: '%s — Etleq',
         defaultDescription:
-          'Etleq is a SaaS launch studio that takes a proven software model live in 30 days at a fixed price, with mada payments, ZATCA invoicing and hosting.',
-        oneLiner: 'We take your software product live in 30 days at a fixed price.',
+          'Etleq is a SaaS launch studio that takes a proven software model live in 30 working days at a fixed price, with mada payments, ZATCA invoicing and hosting.',
+        oneLiner: 'We take your software product live in 30 working days at a fixed price, and you own the code.',
       },
     },
   )

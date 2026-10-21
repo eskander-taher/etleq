@@ -11,6 +11,8 @@ import { Faq, FinalCta } from '@/components/sections/home/sections'
 import { Bonuses, BlueprintCard, FallbackNote, TierCards } from '@/components/sections/offer/OfferStack'
 import { CarePlansTable, Guarantee, NotIncluded, PaymentTerms, SlotCounter } from '@/components/sections/offer/OfferDetails'
 import { resolveOffer } from '@/components/sections/offer/resolve-offer'
+import { ScorecardCta } from '@/components/sections/offer/ScorecardCta'
+import { formatPrice } from '@/lib/format'
 import { getFaqs, getOffer, getSiteSettings, whatsappNumberFor } from '@/components/sections/offer/data'
 
 export const revalidate = 3600
@@ -65,7 +67,12 @@ export default async function Launch30Page({ params }: Props) {
         lead={t('launch30.lead')}
         breadcrumbs={<Breadcrumbs items={[{ label: t('launch30.eyebrow'), href: '/launch-30' }]} />}
       >
-        <div className="max-w-md">
+        <ScorecardCta locale={locale} location="launch30_header" long>
+          <p className="text-sm font-medium text-ink-950">
+            {t.rich('hero.priceChip', { price: formatPrice(offer.priceFrom, locale), num: (chunks) => <bdi className="num">{chunks}</bdi> })}
+          </p>
+        </ScorecardCta>
+        <div className="mt-8 max-w-md">
           <SlotCounter locale={locale} settings={settings} />
         </div>
       </PageHeader>
@@ -81,7 +88,8 @@ export default async function Launch30Page({ params }: Props) {
             <BlueprintCard locale={locale} offer={offer} />
           </div>
           <Bonuses locale={locale} offer={offer} />
-          <p className="mt-6 text-sm text-ink-600">
+          <p className="mt-6 font-semibold">{t('launch30.ownership')}</p>
+          <p className="mt-2 text-sm text-ink-600">
             {t('offer.vat')} {locale === 'ar' ? t('offer.sarNote') : null}
           </p>
         </div>

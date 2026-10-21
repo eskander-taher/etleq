@@ -67,3 +67,51 @@ export function Trajectory({
     </svg>
   )
 }
+
+/**
+ * Day 1 → Day 30 as a clean three-step line. Dots and labels share one 3-column grid (each label is
+ * centred under its own dot), so they line up at every width and in both directions. The progress
+ * line grows in the reading direction once; static under prefers-reduced-motion.
+ */
+export function TrajectorySteps({ steps, className }: { steps: { title: string; text: string }[]; className?: string }) {
+  const last = steps.length - 1
+  return (
+    <ol className={cn('relative grid', className)} style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
+      <style>{`
+        .etq-line { transform-origin: 0 50%; }
+        [dir='rtl'] .etq-line { transform-origin: 100% 50%; }
+        @media (prefers-reduced-motion: no-preference) {
+          .etq-line { transform: scaleX(0); animation: etq-grow 1.4s cubic-bezier(.22,.61,.36,1) .3s forwards; }
+          .etq-step-dot { opacity: 0; animation: etq-fade .3s ease-out forwards; }
+        }
+        @keyframes etq-grow { to { transform: scaleX(1); } }
+        @keyframes etq-fade { to { opacity: 1; } }
+      `}</style>
+      {/* Track and progress run from the first dot's centre to the last one's. */}
+      <span
+        aria-hidden="true"
+        className="absolute top-2 h-0.5 -translate-y-1/2 rounded-full bg-sand-300"
+        style={{ insetInline: `${50 / steps.length}%` }}
+      />
+      <span
+        aria-hidden="true"
+        className="etq-line absolute top-2 h-0.5 -translate-y-1/2 rounded-full bg-ignition-500"
+        style={{ insetInline: `${50 / steps.length}%` }}
+      />
+      {steps.map((s, i) => (
+        <li key={s.title} className="relative flex flex-col items-center px-1 text-center">
+          <span
+            aria-hidden="true"
+            className={cn(
+              'etq-step-dot relative z-10 block rounded-full ring-4 ring-sand-50',
+              i === 0 || i === last ? 'size-4 bg-ignition-500' : 'my-0.5 size-3 bg-ink-950',
+            )}
+            style={{ animationDelay: `${0.3 + (1.4 * i) / Math.max(1, last)}s` }}
+          />
+          <span className="mt-2 block font-display font-bold">{s.title}</span>
+          <span className="text-ink-600">{s.text}</span>
+        </li>
+      ))}
+    </ol>
+  )
+}

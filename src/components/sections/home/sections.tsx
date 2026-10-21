@@ -6,7 +6,6 @@ import { formatMoney, formatPrice } from '@/lib/format'
 import { cn, localePath } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { Accordion, AccordionItem } from '@/components/ui/accordion'
-import { Badge } from '@/components/ui/badge'
 import { BentoGrid, BentoItem } from '@/components/ui/bento'
 import { Card } from '@/components/ui/card'
 import { Section, SectionHeading } from '@/components/ui/section'
@@ -15,18 +14,49 @@ import { Stepper } from '@/components/ui/stepper'
 import { Table, TBody, TD, TH, THead, TR } from '@/components/ui/table'
 import { TrackedAnchor } from '@/components/ui/tracked-link'
 import { WhatsAppButton } from '@/components/ui/whatsapp-button'
+import { mrrShowable } from '@/components/content/lib'
+import { ProjectCard as ProjectTile, type ProjectCardData } from '@/components/content/ProjectCard'
+import { isOwnProject, isShowableProject } from '@/components/content/project-links'
+import { ScorecardCta } from '@/components/sections/offer/ScorecardCta'
 import { mediaUrl, type AuthorCard, type FaqItemData, type ModelCard, type ProjectCard, type SiteSettingsData, type TestimonialData } from '@/components/sections/offer/data'
 import type { ResolvedOffer } from '@/components/sections/offer/resolve-offer'
 import { SOURCES } from './sources'
 
 type L = 'ar' | 'en'
 
+/** Hostname of a CMS-entered URL, or null when it isn't a valid http(s) URL (bad CMS text must not crash the page). */
+function safeHost(url: string | null | undefined): string | null {
+  if (!url) return null
+  try {
+    const u = new URL(url)
+    return u.protocol === 'http:' || u.protocol === 'https:' ? u.hostname.replace(/^www\./, '') : null
+  } catch {
+    return null
+  }
+}
+
+/** Up to two initials for an avatar without a photo ("Eskander Taher" → "ET"). */
+function initials(name: string, locale: L) {
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  const words = parts.length > 1 ? [parts[0], parts[parts.length - 1]] : parts
+  const letters = words.map((w) => Array.from(w)[0])
+  return locale === 'ar' ? letters.join(' ') : letters.join('').toUpperCase()
+}
+
 /* 3. Proof strip: true facts only. With no live launches yet it renders nothing. */
-export async function ProofStrip({ locale, projects }: { locale: L; projects: ProjectCard[] }) {
+export async function ProofStrip({ locale, projects: all }: { locale: L; projects: ProjectCard[] }) {
+  // Only real, consented projects; our own products are counted apart from client launches.
+  const projects = (all as (ProjectCard & { kind?: string | null; consentGiven?: boolean | null })[]).filter(isShowableProject)
   if (!projects.length) return null
-  const t = await getTranslations({ locale, namespace: 'home' })
+  const [t, tp] = await Promise.all([getTranslations({ locale, namespace: 'home' }), getTranslations({ locale, namespace: 'projects' })])
+  const own = projects.filter(isOwnProject).length
+  const client = projects.length - own
   const onTime = projects.filter((p) => p.plannedDays && p.actualDays && p.actualDays <= p.plannedDays).length
-  const facts = [{ n: projects.length, label: t('proof.launches') }, ...(onTime ? [{ n: onTime, label: t('proof.onTime') }] : [])]
+  const facts = [
+    ...(client ? [{ n: client, label: t('proof.launches') }] : []),
+    ...(own ? [{ n: own, label: tp('ownProducts') }] : []),
+    ...(onTime ? [{ n: onTime, label: t('proof.onTime') }] : []),
+  ]
   return (
     <section aria-label={t('proof.title')} className="border-y border-sand-300 bg-sand-100 py-8">
       <ul className="mx-auto flex max-w-[1200px] flex-wrap justify-center gap-x-12 gap-y-4 px-4">
@@ -59,7 +89,7 @@ export async function Problem({ locale }: { locale: L }) {
           <Card key={key} className="flex flex-col gap-3">
             <Icon className="size-7 text-ink-600" aria-hidden="true" />
             <h3 className="font-display text-xl font-semibold">{t(`problem.${key}.title`)}</h3>
-            <p className="num text-2xl font-medium" dir="auto">
+            <p className={cn('text-2xl font-medium', key !== 'freelancer' && 'num')} dir="auto">
               {t(`problem.${key}.figure`)}
             </p>
             <p className="text-ink-600">{t(`problem.${key}.body`)}</p>
@@ -115,7 +145,8 @@ export async function ModelsTeaser({ locale, models, fallbackPrice }: { locale: 
       <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {models.slice(0, 6).map((m) => {
           const img = mediaUrl(m.heroImage, 'card')
-          const mrr = m.mrr?.amount && m.mrr.sourceUrl ? m.mrr : null
+          // MRR rule: amount, source link and reported date all present, and a usable source URL.
+          const mrr = mrrShowable(m.mrr) && safeHost(m.mrr.sourceUrl) ? m.mrr : null
           return (
             <li key={m.id}>
               <Card interactive className="relative flex h-full flex-col gap-3 p-0 sm:p-0">
@@ -136,11 +167,12 @@ export async function ModelsTeaser({ locale, models, fallbackPrice }: { locale: 
                         <bdi>{formatMoney(mrr.amount!, mrr.currency || 'USD', locale)}</bdi>
                       </p>
                       {/* Citation sits above the card link so it stays clickable. */}
-                      <SourceCite label={mrr.sourceName || new URL(mrr.sourceUrl!).hostname} url={mrr.sourceUrl} date={mrr.reportedAt} locale={locale} className="relative z-10" />
+                      <SourceCite label={mrr.sourceName || safeHost(mrr.sourceUrl) || ''} url={mrr.sourceUrl} date={mrr.reportedAt} locale={locale} className="relative z-10" />
                     </div>
                   ) : null}
-                  <p className="font-semibold text-ink-950">
-                    {t('models.gulf', { price: formatPrice(m.priceFrom || fallbackPrice, locale), days: m.buildDays || 30 })}
+                  <p className={cn('flex items-center justify-between gap-3 font-semibold text-ink-950', !mrr && 'mt-auto')}>
+                    <span>{t('models.gulf', { price: formatPrice(m.priceFrom || fallbackPrice, locale), days: m.buildDays || 30 })}</span>
+                    <ArrowRight className="size-5 shrink-0 text-ignition-700 rtl:rotate-180" aria-hidden="true" />
                   </p>
                 </div>
               </Card>
@@ -156,7 +188,6 @@ export async function ModelsTeaser({ locale, models, fallbackPrice }: { locale: 
 /* 8. How it works */
 export async function HowItWorks({ locale }: { locale: L }) {
   const t = await getTranslations({ locale, namespace: 'home' })
-  const tc = await getTranslations({ locale, namespace: 'common' })
   const steps = t.raw('how.steps') as { title: string; body: string }[]
   return (
     <Section aria-labelledby="how-title">
@@ -164,15 +195,16 @@ export async function HowItWorks({ locale }: { locale: L }) {
         <SectionHeading title={t('how.title')} lead={t('how.lead')} />
       </div>
       <Stepper className="mt-10" locale={locale} layout="grid" steps={steps.map((s) => ({ title: s.title, description: s.body }))} />
-      <Link href="/how-it-works" className={cn(buttonVariants({ variant: 'secondary' }), 'mt-10')}>
-        {tc('cta.readMore')}
-        <ArrowRight className="size-5 rtl:rotate-180" aria-hidden="true" />
-      </Link>
+      <ScorecardCta locale={locale} location="how_it_works" long className="mt-10" />
     </Section>
   )
 }
 
-/* 10. Comparison table: sourced figures cite their source; other cells are qualitative. */
+/*
+ * 10. Comparison table: sourced figures cite their source; other cells are qualitative.
+ * We don't compete on raw speed (30 working days is about six weeks). The rows lead with what is fixed
+ * for the client: price, a contracted launch date, mada/ZATCA/Arabic built in, code ownership, support.
+ */
 export async function Comparison({ locale, offer }: { locale: L; offer: ResolvedOffer }) {
   const t = await getTranslations({ locale, namespace: 'home' })
   const c = (k: string, v?: Record<string, string>) => t(`comparison.cells.${k}`, v)
@@ -208,21 +240,12 @@ export async function Comparison({ locale, offer }: { locale: L; offer: Resolved
         </>
       ),
     },
-    {
-      key: 'time',
-      etleq: c('etleqTime'),
-      agency: (
-        <>
-          {c('agencyTime')}
-          {cite(SOURCES.sendan)}
-        </>
-      ),
-      freelancer: c('freelancerTime'),
-      ai: c('aiTime'),
-    },
+    // No source states whether other options guarantee a date, so their cells stay neutral.
+    { key: 'launchDate', etleq: yes(c('etleqLaunchDate')), agency: c('byAgreement'), freelancer: c('byAgreement'), ai: c('byAgreement') },
     { key: 'mada', etleq: yes(c('included')), agency: c('extraCost'), freelancer: c('depends'), ai: no(c('notBuiltIn')) },
     { key: 'zatca', etleq: yes(c('included')), agency: c('extraCost'), freelancer: c('depends'), ai: no(c('notBuiltIn')) },
-    { key: 'ownership', etleq: c('etleqOwnership'), agency: c('depends'), freelancer: c('depends'), ai: c('depends') },
+    { key: 'arabic', etleq: yes(c('included')), agency: c('depends'), freelancer: c('depends'), ai: c('depends') },
+    { key: 'ownership', etleq: yes(c('etleqOwnership')), agency: c('depends'), freelancer: c('depends'), ai: c('depends') },
     {
       key: 'support',
       etleq: offer.careFrom ? c('etleqSupport', { price: formatPrice(offer.careFrom, locale) }) : yes(c('included')),
@@ -238,7 +261,13 @@ export async function Comparison({ locale, offer }: { locale: L; offer: Resolved
       <div id="comparison-title">
         <SectionHeading title={t('comparison.title')} lead={t('comparison.lead')} />
       </div>
-      <div className="mt-10">
+      <p className="mt-8 flex items-center gap-2 text-sm text-ink-600 md:hidden" aria-hidden="true">
+        {t('comparison.swipe')}
+        <ArrowRight className="size-4 rtl:rotate-180" />
+      </p>
+      <div className="relative mt-3 md:mt-10">
+        {/* Fade at the reading end hints that the table scrolls sideways on phones. */}
+        <div className="pointer-events-none absolute inset-y-0 -end-4 z-20 w-10 bg-linear-to-l from-sand-100 to-transparent md:hidden rtl:bg-linear-to-r" aria-hidden="true" />
         <Table label={t('comparison.caption')} tone="alt">
           <caption className="sr-only">{t('comparison.caption')}</caption>
           <THead>
@@ -256,7 +285,7 @@ export async function Comparison({ locale, offer }: { locale: L; offer: Resolved
           <TBody>
             {rows.map((r) => (
               <TR key={r.key}>
-                <TH scope="row" sticky className="font-medium">
+                <TH scope="row" sticky className="align-top font-medium">
                   {t(`comparison.rows.${r.key}`)}
                 </TH>
                 {cols.map((col) => (
@@ -287,14 +316,18 @@ export async function Founders({ locale, authors }: { locale: L; authors: Author
         <ul className="mt-10 grid gap-6 sm:grid-cols-2">
           {authors.slice(0, 2).map((a) => {
             const photo = mediaUrl(a.photo, 'card')
+            const links = (a.sameAs ?? []).flatMap((x) => {
+              const host = safeHost(x.url)
+              return host ? [{ url: x.url!, host }] : []
+            })
             return (
               <li key={a.id}>
                 <Card className="flex h-full gap-5">
                   {photo ? (
                     <Image src={photo} alt={a.name} width={96} height={96} className="size-24 shrink-0 rounded-full object-cover" />
                   ) : (
-                    <span className="inline-flex size-24 shrink-0 items-center justify-center rounded-full bg-sand-100" aria-hidden="true">
-                      <Users className="size-8 text-stone-500" />
+                    <span className="inline-flex size-24 shrink-0 items-center justify-center rounded-full bg-ink-950 font-display text-2xl font-bold text-sand-50" aria-hidden="true">
+                      {initials(a.name, locale)}
                     </span>
                   )}
                   <div>
@@ -304,18 +337,16 @@ export async function Founders({ locale, authors }: { locale: L; authors: Author
                       </Link>
                     </h3>
                     {a.role ? <p className="text-sm font-semibold text-ignition-700">{a.role}</p> : null}
-                    {a.bio ? <p className="mt-2 line-clamp-2 text-ink-600">{a.bio}</p> : null}
-                    {a.sameAs?.length ? (
+                    {a.bio ? <p className="mt-2 line-clamp-3 text-ink-600">{a.bio}</p> : null}
+                    {links.length ? (
                       <ul className="mt-3 flex flex-wrap gap-3 text-sm">
-                        {a.sameAs
-                          .filter((s) => s.url)
-                          .map((s) => (
-                            <li key={s.url!}>
-                              <a href={s.url!} target="_blank" rel="noopener noreferrer me" className="underline underline-offset-2" dir="ltr">
-                                {new URL(s.url!).hostname.replace(/^www\./, '')}
-                              </a>
-                            </li>
-                          ))}
+                        {links.map((l) => (
+                          <li key={l.url}>
+                            <a href={l.url} target="_blank" rel="noopener noreferrer me" className="inline-flex min-h-11 items-center underline underline-offset-2" dir="ltr">
+                              {l.host}
+                            </a>
+                          </li>
+                        ))}
                       </ul>
                     ) : null}
                   </div>
@@ -329,12 +360,11 @@ export async function Founders({ locale, authors }: { locale: L; authors: Author
           {t('founders.placeholder')}
         </p>
       )}
-      <div className="mt-6 flex flex-col gap-3 rounded-card border border-sand-300 bg-sand-100 p-6 sm:flex-row sm:items-center sm:justify-between">
-        <p className="max-w-2xl text-ink-600">{t('founders.team')}</p>
-        <Link href="/careers" className="font-semibold text-ignition-700 underline underline-offset-4">
-          {t('founders.joinTeam')}
-        </Link>
-      </div>
+      {/* The wider team, stated plainly; careers stays in the footer, not as an exit from the sales page. */}
+      <p className="mt-6 flex items-center gap-3 rounded-card border border-sand-300 bg-sand-100 p-6 text-ink-600">
+        <Users className="size-6 shrink-0" aria-hidden="true" />
+        {t('founders.team')}
+      </p>
     </Section>
   )
 }
@@ -342,7 +372,7 @@ export async function Founders({ locale, authors }: { locale: L; authors: Author
 /* 12. Projects and testimonials, or the founding-client offer until they exist. */
 export async function ProjectsProof({
   locale,
-  projects,
+  projects: allProjects,
   testimonials,
   settings,
   whatsappNumber,
@@ -354,33 +384,20 @@ export async function ProjectsProof({
   whatsappNumber: string
 }) {
   const t = await getTranslations({ locale, namespace: 'home' })
+  const tp = await getTranslations({ locale, namespace: 'projects' })
+  // Real, published projects only: our own products, or client projects with recorded consent.
+  const projects = (allProjects as (ProjectCard & ProjectCardData & { consentGiven?: boolean | null })[]).filter(isShowableProject)
   if (projects.length || testimonials.length) {
     return (
       <Section tone="alt" aria-labelledby="projects-title">
         <div id="projects-title">
-          <SectionHeading title={t('projects.title')} lead={t('projects.lead')} />
+          <SectionHeading title={t('projects.title')} lead={projects.length ? tp('homeLead') : t('projects.lead')} />
         </div>
         {projects.length ? (
-          <ul className="mt-10 grid gap-4 md:grid-cols-3">
+          <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {projects.map((p) => (
               <li key={p.id}>
-                <Card interactive className="relative flex h-full flex-col gap-2">
-                  <Badge variant="verified" className="self-start">
-                    {t('projects.verified')}
-                  </Badge>
-                  <h3 className="font-display text-xl font-semibold">
-                    <Link href={`/projects/${p.slug}`} className="after:absolute after:inset-0 after:content-['']">
-                      {p.title}
-                    </Link>
-                  </h3>
-                  {p.clientName ? <p className="text-sm font-semibold">{p.clientName}</p> : null}
-                  {p.context ? <p className="line-clamp-3 text-ink-600">{p.context}</p> : null}
-                  {p.plannedDays && p.actualDays ? (
-                    <p className="mt-auto text-sm text-ink-600">
-                      {t('projects.planned', { days: p.plannedDays })} · {t('projects.actual', { days: p.actualDays })}
-                    </p>
-                  ) : null}
-                </Card>
+                <ProjectTile locale={locale} project={p} placement="home_projects" />
               </li>
             ))}
           </ul>
@@ -418,7 +435,20 @@ export async function ProjectsProof({
           </h2>
           <p className="mt-3 text-lg text-ink-600">{t('projects.foundingBody', { price: formatPrice(foundingPrice, locale), slots: foundingSlots })}</p>
         </div>
-        <WhatsAppButton number={whatsappNumber} message={t('projects.foundingCta')} refCode="FOUNDING" placement="home_founding" label={t('projects.foundingCta')} className="shrink-0" />
+        <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
+          {whatsappNumber ? (
+            <WhatsAppButton number={whatsappNumber} message={t('projects.foundingCta')} refCode="FOUNDING" placement="home_founding" label={t('projects.foundingCta')} />
+          ) : null}
+          <TrackedAnchor
+            href={localePath(locale, '/scorecard')}
+            event="cta_click"
+            params={{ cta_id: 'scorecard', location: 'home_founding' }}
+            className={buttonVariants({ variant: whatsappNumber ? 'secondary' : 'primary' })}
+          >
+            {t('projects.foundingScorecard')}
+            <ArrowRight className="size-5 rtl:rotate-180" aria-hidden="true" />
+          </TrackedAnchor>
+        </div>
       </Card>
     </Section>
   )
@@ -464,7 +494,7 @@ export async function FinalCta({ locale, whatsappNumber, title, location = 'fina
         {title ?? t('finalCta.title')}
       </h2>
       <p className="mt-4 text-lg text-sand-300">{t('finalCta.lead')}</p>
-      <div className="mt-10 grid gap-4 md:grid-cols-3">
+      <div className={cn('mt-10 grid gap-4', whatsappNumber ? 'md:grid-cols-3' : 'md:grid-cols-2')}>
         <div className="flex flex-col gap-3 rounded-card border border-ignition-500 bg-ink-800/60 p-6">
           <h3 className="font-display text-xl font-semibold">{t('finalCta.scorecardTitle')}</h3>
           <p className="text-sand-300">{t('finalCta.scorecardBody')}</p>
@@ -480,11 +510,13 @@ export async function FinalCta({ locale, whatsappNumber, title, location = 'fina
             {tc('cta.bookFitCall')}
           </TrackedAnchor>
         </div>
-        <div className="flex flex-col gap-3 rounded-card border border-ink-800 bg-ink-800/60 p-6">
-          <h3 className="font-display text-xl font-semibold">{t('finalCta.whatsappTitle')}</h3>
-          <p className="text-sand-300">{t('finalCta.whatsappBody')}</p>
-          <WhatsAppButton number={whatsappNumber} message={t('finalCta.whatsappMessage')} refCode="HOME" placement={location} label={tc('cta.whatsapp')} className="mt-auto" />
-        </div>
+        {whatsappNumber ? (
+          <div className="flex flex-col gap-3 rounded-card border border-ink-800 bg-ink-800/60 p-6">
+            <h3 className="font-display text-xl font-semibold">{t('finalCta.whatsappTitle')}</h3>
+            <p className="text-sand-300">{t('finalCta.whatsappBody')}</p>
+            <WhatsAppButton number={whatsappNumber} message={t('finalCta.whatsappMessage')} refCode="HOME" placement={location} label={tc('cta.whatsapp')} className="mt-auto" />
+          </div>
+        ) : null}
       </div>
     </Section>
   )

@@ -7,7 +7,7 @@ import { graph, organizationNode, type SchemaNode } from '@/lib/schema'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { ContactForm } from '@/components/forms/ContactForm'
 import { getShellData } from '@/components/layout/shell-data'
-import { countryName } from '@/components/layout/Footer'
+import { countryName, isReal } from '@/components/layout/Footer'
 import { Breadcrumbs } from '@/components/ui/breadcrumbs'
 import { Card } from '@/components/ui/card'
 import { Container } from '@/components/ui/container'
@@ -38,7 +38,7 @@ export default async function ContactPage({ params }: Props) {
   setRequestLocale(locale)
   const [t, data] = await Promise.all([getTranslations({ locale, namespace: 'common' }), getShellData(locale)])
   const { whatsappNumber, contactEmail, responseTimePromise, legalEntities } = data.settings
-  const withAddress = legalEntities.filter((e) => e.address)
+  const withAddress = legalEntities.filter((e) => isReal(e.legalName) && isReal(e.address))
 
   const jsonLd = graph(
     organizationNode({

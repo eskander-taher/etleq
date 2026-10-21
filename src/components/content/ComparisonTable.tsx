@@ -26,7 +26,7 @@ export function ComparisonTable({
   const labelHeader = maxCells < columns.length ? columns[0] : null
   const dataColumns = labelHeader ? columns.slice(1) : columns
   return (
-    <div className={cn('overflow-x-auto rounded-[var(--radius-card)] border border-sand-300', className)}>
+    <div className={cn('relative overflow-x-auto rounded-[var(--radius-card)] border border-sand-300', className)}>
       <table className="w-full min-w-[560px] border-collapse text-start text-sm">
         {caption && <caption className="p-4 text-start font-semibold">{caption}</caption>}
         <thead className="bg-sand-100">

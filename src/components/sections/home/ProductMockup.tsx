@@ -1,11 +1,11 @@
 import { getTranslations } from 'next-intl/server'
 import { CalendarCheck, CheckCircle2, CreditCard, FileText } from 'lucide-react'
-import { Trajectory } from '@/components/ui/trajectory'
+import { TrajectorySteps } from '@/components/ui/trajectory'
 
 /**
  * Decorative product illustration built with HTML/CSS: neutral UI shapes and labels, no figures
  * (nothing that could read as a real metric). Animates transform/opacity only; static under
- * reduced motion. The Day 1 → Day 30 trajectory sits underneath.
+ * reduced motion. The Day 1 → Day 30 steps sit underneath.
  */
 export async function ProductMockup({ locale }: { locale: 'ar' | 'en' }) {
   const t = await getTranslations({ locale, namespace: 'home' })
@@ -93,15 +93,10 @@ export async function ProductMockup({ locale }: { locale: 'ar' | 'en' }) {
         {/* Day 1 → Day 30 */}
         <figcaption className="mt-6">
           <p className="sr-only">{t('hero.trajectory.label')}</p>
-          <Trajectory className="h-20" />
-          <ol className="mt-2 grid grid-cols-3 gap-2 text-xs sm:text-sm">
-            {(['day1', 'day10', 'day30'] as const).map((d, i) => (
-              <li key={d} className={i === 1 ? 'text-center' : i === 2 ? 'text-end' : 'text-start'}>
-                <span className="block font-display font-bold">{t(`hero.trajectory.${d}`)}</span>
-                <span className="text-ink-600">{t(`hero.trajectory.${d}Text`)}</span>
-              </li>
-            ))}
-          </ol>
+          <TrajectorySteps
+            className="text-xs sm:text-sm"
+            steps={(['day1', 'day10', 'day30'] as const).map((d) => ({ title: t(`hero.trajectory.${d}`), text: t(`hero.trajectory.${d}Text`) }))}
+          />
         </figcaption>
       </figure>
     </div>

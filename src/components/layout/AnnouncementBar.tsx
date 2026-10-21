@@ -4,11 +4,13 @@ import { ArrowRight } from 'lucide-react'
 import type { Locale } from '@/i18n/routing'
 import { formatNumber } from '@/lib/format'
 import { SmartLink } from '@/components/ui/smart-link'
+import { getSiteSettings, slotsAreCurrent } from '@/components/sections/offer/data'
 import type { ShellData } from './shell-data'
 
 /**
  * Row 0 (brief section 7): real scarcity only. The counter comes from SiteSettings; if the text
  * needs {n}/{total} and either number is missing, the bar is hidden rather than inventing one.
+ * Slot numbers entered for a past month (site-settings slotsMonth) hide the slot message too.
  */
 export async function AnnouncementBar({ locale, data }: { locale: Locale; data: ShellData }) {
   const { announcement, settings } = data
@@ -21,6 +23,11 @@ export async function AnnouncementBar({ locale, data }: { locale: Locale; data: 
   const needsNumbers = tokens.some((p) => p === '{n}' || p === '{total}')
   const { slotsLeft, slotsTotal } = settings
   if (needsNumbers && (slotsLeft == null || slotsTotal == null)) return null
+  // The shell data doesn't carry slotsMonth, so read it here; only slot messages depend on it.
+  if (needsNumbers || !announcement.text) {
+    const { slotsMonth } = await getSiteSettings(locale)
+    if (!slotsAreCurrent(slotsMonth)) return null
+  }
 
   const value = (p: string) => (p === '{n}' ? slotsLeft : p === '{total}' ? slotsTotal : null)
   const href = announcement.link || '/launch-30'

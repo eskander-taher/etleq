@@ -1,11 +1,10 @@
 import { getTranslations } from 'next-intl/server'
 import { ArrowRight } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
-import { cn } from '@/lib/utils'
-import { buttonVariants } from '@/components/ui/button'
 import { Section, SectionHeading } from '@/components/ui/section'
 import { Bonuses, BlueprintCard, CarePlanCards, FallbackNote, TierCards } from './OfferStack'
 import { Guarantee } from './OfferDetails'
+import { ScorecardCta } from './ScorecardCta'
 import type { ResolvedOffer } from './resolve-offer'
 
 /* Home 7: offer stack. */
@@ -28,10 +27,13 @@ export async function OfferSection({ locale, offer }: { locale: 'ar' | 'en'; off
         <p className="mt-6 text-sm text-ink-600">
           {t('offer.vat')} {locale === 'ar' ? t('offer.sarNote') : null}
         </p>
-        <Link href="/launch-30" className={cn(buttonVariants({ variant: 'secondary' }), 'mt-8')}>
-          {t('offer.fullOffer')}
-          <ArrowRight className="size-5 rtl:rotate-180" aria-hidden="true" />
-        </Link>
+        <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+          <ScorecardCta locale={locale} location="offer" long />
+          <Link href="/launch-30" className="inline-flex min-h-11 items-center gap-2 font-semibold text-ignition-700 underline underline-offset-4 hover:no-underline">
+            {t('offer.fullOffer')}
+            <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
+          </Link>
+        </div>
       </div>
     </Section>
   )
@@ -46,6 +48,7 @@ export async function GuaranteeSection({ locale, offer }: { locale: 'ar' | 'en';
         {t('guarantee.title')}
       </h2>
       <Guarantee locale={locale} offer={offer} />
+      <ScorecardCta locale={locale} location="guarantee" tone="dark" className="mt-10 lg:ps-20" />
     </Section>
   )
 }

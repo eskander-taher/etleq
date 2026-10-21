@@ -127,9 +127,15 @@
     },
     "note": "This example shows the idea. Your system is built around your clinic and goes live within 30 working days at a fixed price."
   },
+  "endCta": {
+    "patient": "This is what your patients would see. Want it for your clinic?",
+    "clinic": "And this is how your clinic dashboard would look. Want it for your clinic?",
+    "scorecard": "Take the scorecard",
+    "whatsapp": "Chat on WhatsApp"
+  },
   "cta": {
     "title": "Want this for your clinic?",
-    "text": "A free 15-minute call is enough to understand what you need and give you a fixed price.",
+    "text": "Answer the 2-minute scorecard. If your clinic is a fit, we book a free 15-minute call to learn what you need and give you a price range. Your fixed quote follows within 48 hours of the Blueprint session.",
     "whatsapp": "Hi, I saw the clinic booking example and would like to know more."
   }
 }

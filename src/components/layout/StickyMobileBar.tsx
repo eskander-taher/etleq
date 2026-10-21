@@ -6,7 +6,9 @@ import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { WhatsAppIcon } from '@/components/ui/icons'
 import { TrackedAnchor, TrackedLink } from '@/components/ui/tracked-link'
+import { whatsappLink } from '@/lib/whatsapp'
 import { NO_STICKY_BAR } from './nav-config'
+import { usePageCta } from './page-cta'
 
 const FALLBACK_OFFSET = 600
 
@@ -17,14 +19,23 @@ const FALLBACK_OFFSET = 600
  */
 export function StickyMobileBar({
   scorecardLabel,
-  whatsappHref,
+  whatsappNumber,
+  whatsappMessage,
   whatsappLabel,
 }: {
   scorecardLabel: string
-  whatsappHref?: string | null
+  whatsappNumber?: string | null
+  /** Default message; a page can replace it (and the ref code) with <SetPageCta>. */
+  whatsappMessage: string
   whatsappLabel: string
 }) {
   const pathname = usePathname() || '/'
+  const cta = usePageCta()
+  const scorecardHref = cta?.scorecardHref || '/scorecard'
+  const refCode = cta?.refCode || 'STICKY'
+  const whatsappHref = whatsappNumber
+    ? whatsappLink({ number: whatsappNumber, message: cta?.waMessage || whatsappMessage, ref: refCode })
+    : null
   const hidden = NO_STICKY_BAR.some((p) => pathname === p || pathname.startsWith(`${p}/`))
   const [visible, setVisible] = useState(false)
 
@@ -75,9 +86,9 @@ export function StickyMobileBar({
     >
       <div className="mx-auto flex max-w-md gap-2">
         <TrackedLink
-          href="/scorecard"
+          href={scorecardHref}
           event="cta_click"
-          params={{ cta_id: 'scorecard', location: 'sticky_bar' }}
+          params={{ cta_id: 'scorecard', location: 'sticky_bar', ref_code: cta?.refCode }}
           className={cn(buttonVariants({ variant: 'primary' }), 'flex-1')}
         >
           {scorecardLabel}
@@ -88,7 +99,7 @@ export function StickyMobileBar({
             target="_blank"
             rel="noopener noreferrer"
             event="whatsapp_click"
-            params={{ location: 'sticky_bar' }}
+            params={{ location: 'sticky_bar', ref_code: refCode }}
             aria-label={whatsappLabel}
             className={cn(buttonVariants({ variant: 'whatsapp' }), 'w-14 px-0')}
           >

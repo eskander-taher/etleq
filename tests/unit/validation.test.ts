@@ -1,5 +1,18 @@
 import { describe, expect, it } from 'vitest'
-import { contactSchema, fieldErrors, leadContactSchema, messages, subscribeSchema, toE164, checkE164, westernDigits } from '@/lib/validation'
+import {
+  answersSchema,
+  contactSchema,
+  dialCodeForCountryAnswer,
+  fieldErrors,
+  flagEmoji,
+  leadContactSchema,
+  messages,
+  mobileExample,
+  subscribeSchema,
+  toE164,
+  checkE164,
+  westernDigits,
+} from '@/lib/validation'
 
 const good = { name: 'سارة', phoneCountry: '966', phone: '0551234567', email: 'Sara@Example.com', consent: true }
 
@@ -50,7 +63,7 @@ describe('leadContactSchema', () => {
     const r = leadContactSchema('ar').safeParse({ ...good, name: '', phone: '' })
     const e = fieldErrors(r.error!)
     expect(e.name).toBe(messages.ar.nameRequired)
-    expect(e.phone).toBe(messages.ar.phoneRequired)
+    expect(e.phone).toBe(messages.ar.phoneRequiredResult)
   })
   it('requires consent and a valid email', () => {
     const r = leadContactSchema('en').safeParse({ ...good, consent: false, email: 'nope' })
@@ -81,9 +94,54 @@ describe('subscribeSchema', () => {
   })
 })
 
+describe('phone picker helpers', () => {
+  it('derives the example number from the dial code', () => {
+    expect(mobileExample('966')).toBe('5X XXX XXXX')
+    expect(mobileExample('965')).toBe('XXXX XXXX')
+    expect(mobileExample(undefined)).toBe('5X XXX XXXX')
+    expect(mobileExample('999')).toBe('XXX XXX XXXX')
+  })
+  it('pre-selects a dial code only for an unambiguous country answer', () => {
+    expect(dialCodeForCountryAnswer('ksa_uae')).toBeNull()
+    expect(dialCodeForCountryAnswer('gcc')).toBeNull()
+    expect(dialCodeForCountryAnswer('other')).toBeNull()
+    expect(dialCodeForCountryAnswer('ksa')).toBe('966')
+    expect(dialCodeForCountryAnswer('ae')).toBe('971')
+  })
+  it('builds flag emoji from ISO codes', () => {
+    expect(flagEmoji('SA')).toBe('\u{1F1F8}\u{1F1E6}')
+  })
+})
+
+describe('phone required wording', () => {
+  it('ties the scorecard message to the result and keeps the contact form neutral', () => {
+    expect(fieldErrors(leadContactSchema('en').safeParse({ ...good, phone: '' }).error!).phone).toBe(messages.en.phoneRequiredResult)
+    const r = contactSchema('en').safeParse({ ...good, phone: '', message: 'I want a booking platform' })
+    expect(fieldErrors(r.error!).phone).toBe(messages.en.phoneRequired)
+  })
+  it('defaults ad consent to false', () => {
+    expect(leadContactSchema('ar').parse(good).adConsent).toBe(false)
+    expect(leadContactSchema('ar').parse({ ...good, adConsent: true }).adConsent).toBe(true)
+  })
+})
+
 describe('messages', () => {
   it('has the same keys in both languages and no empty strings', () => {
     expect(Object.keys(messages.ar).sort()).toEqual(Object.keys(messages.en).sort())
     for (const l of ['ar', 'en'] as const) for (const v of Object.values(messages[l])) expect(v.length).toBeGreaterThan(5)
+  })
+})
+
+describe('answersSchema', () => {
+  it('accepts the new decision-maker answer and keeps legacy free text readable', () => {
+    const r = answersSchema('en').safeParse({ decisionMaker: 'partner', budget: '5to10k', success: '50 paying customers' })
+    expect(r.success).toBe(true)
+  })
+
+  it('rejects malformed keys and over-long text with a localized message', () => {
+    expect(answersSchema('en').safeParse({ 'bad key!': 'x' }).success).toBe(false)
+    const r = answersSchema('ar').safeParse({ note: 'x'.repeat(1001) })
+    expect(r.success).toBe(false)
+    if (!r.success) expect(r.error.issues[0].message).toBe(messages.ar.textTooLong)
   })
 })

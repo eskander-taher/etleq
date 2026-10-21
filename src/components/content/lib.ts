@@ -142,7 +142,12 @@ export function instagramEmbed(url: string): string | null {
 /** Player URL for structured data and a fallback thumbnail. */
 export function videoMeta(url: string): { embedUrl: string | null; thumbnail: string | null; vertical: boolean } {
   const yt = youtubeId(url)
-  if (yt) return { embedUrl: `https://www.youtube.com/embed/${yt}`, thumbnail: `https://i.ytimg.com/vi/${yt}/hqdefault.jpg`, vertical: /\/shorts\//.test(url) }
+  if (yt)
+    return {
+      embedUrl: `https://www.youtube.com/embed/${yt}`,
+      thumbnail: `https://i.ytimg.com/vi/${yt}/hqdefault.jpg`,
+      vertical: /\/shorts\//.test(url),
+    }
   const ig = instagramEmbed(url)
   return { embedUrl: ig, thumbnail: null, vertical: !!ig }
 }
@@ -171,3 +176,9 @@ export type ShowableMrr = MrrData & { amount: number; sourceUrl: string; reporte
 
 export const mrrShowable = (mrr: MrrData | null | undefined): mrr is ShowableMrr =>
   !!(mrr && typeof mrr.amount === 'number' && mrr.sourceUrl && mrr.reportedAt)
+
+/** Scorecard link that tells the scorecard (and the lead record) which page the visitor came from. */
+export const scorecardFrom = (path: string) => `/scorecard?from=${encodeURIComponent(path)}`
+
+/** Scorecard link with the model question answered in advance. */
+export const scorecardForModel = (slug: string) => `/scorecard?model=${encodeURIComponent(slug)}`

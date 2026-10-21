@@ -1,15 +1,15 @@
 {
   "meta": {
-    "title": "Etleq | Your SaaS live and taking payments in 30 days",
+    "title": "Etleq | Your SaaS live and taking payments in 30 working days",
     "description": "We build your complete software product, Arabic-first, with mada and Apple Pay, ZATCA-ready invoicing, hosting and maintenance, at a fixed price in 30 working days."
   },
   "hero": {
-    "eyebrow": "SaaS launch studio",
-    "h1": "A proven idea, live and taking payments in 30 days.",
-    "sub": "We build your complete software product, Arabic-first, with mada and Apple Pay, ZATCA-ready invoicing, hosting and maintenance, at a fixed price from <num>{price}</num>. You run the business. We run the tech.",
+    "eyebrow": "We build booking and subscription platforms for business owners",
+    "h1": "A proven idea, live and taking payments in 30 working days.",
+    "sub": "We build your product in Arabic with mada and Apple Pay, e-invoicing that meets ZATCA rules, hosting and upkeep. You run the business; we run the tech.",
     "cta": "Take the 2-minute scorecard",
-    "secondary": "See how it works in 60 seconds",
-    "microcopy": "12 questions. Instant result. No commitment.",
+    "secondary": "Try a live example: a clinic booking system",
+    "microcopy": "Short questions. Instant result. No commitment.",
     "trustLabel": "Payments your product accepts",
     "payments": {
       "mada": "mada",
@@ -32,14 +32,15 @@
       "status": "Live"
     },
     "trajectory": {
-      "label": "Launch timeline",
+      "label": "Launch timeline in working days",
       "day1": "Day 1",
       "day1Text": "Scope signed",
       "day10": "Day 10",
       "day10Text": "First working demo",
       "day30": "Day 30",
       "day30Text": "Live and taking payments"
-    }
+    },
+    "priceChip": "Fixed price from <num>{price}</num> · excl. VAT"
   },
   "proof": {
     "title": "Facts, not claims",
@@ -48,18 +49,18 @@
   },
   "problem": {
     "title": "Three common ways to build a SaaS, and where each one stalls",
-    "lead": "Every route has a cost. This is what most business owners run into before they find us.",
+    "lead": "This is what many business owners run into when they build.",
     "agency": {
       "title": "Development agencies",
       "figure": "SAR 35,000–65,000",
-      "body": "for a mid-size app in Saudi Arabia, with delivery taking 4–8 weeks.",
+      "body": "for a mid-size app in Saudi Arabia (≈ $9,300–17,300 at the 3.75 peg).",
       "sourceName": "Sendan",
       "sourceUrl": "https://www.sendantech.com/en-SA/mobile-app-development-cost-saudi-arabia"
     },
     "freelancer": {
       "title": "Freelancers",
       "figure": "Lower price, higher risk",
-      "body": "Many disappear after launch, leaving you alone with bugs, updates and hosting."
+      "body": "Some disappear after launch, leaving you alone with bugs, updates and hosting."
     },
     "ai": {
       "title": "AI app builders",
@@ -110,26 +111,25 @@
     "lead": "Each one is a real company with publicly reported revenue. Pick the one closest to your business.",
     "mrr": "Reported monthly revenue",
     "mrrSource": "Source: {source}, {date}",
-    "gulf": "Gulf version from {price} in {days} days",
+    "gulf": "Gulf version from {price} in {days} working days",
     "viewAll": "Browse all models",
     "disclaimer": "Figures belong to the companies named, as they reported them. They are not a forecast of your revenue.",
     "empty": "Models are coming soon."
   },
   "offer": {
     "title": "What you get with Launch 30",
-    "lead": "One fixed price covers the build, the launch and the support. No open-ended hours, no surprises.",
+    "lead": "One fixed price covers the build, the launch and the support, and you own the code. No open-ended hours, no surprises.",
     "tiersTitle": "Choose your tier",
     "from": "From",
     "vat": "Prices exclude VAT.",
     "sarNote": "SAR prices use the fixed 3.75 peg.",
     "bonusesTitle": "Bonuses with every build",
-    "statedValue": "Worth {value}",
-    "totalValue": "Total value",
-    "yourPrice": "You pay from",
+    "statedValue": "Included at no extra cost, stated value {value}",
     "careTitle": "Care plans after launch",
     "perMonth": "per month",
     "blueprintTitle": "Start here: the SaaS Blueprint",
     "blueprintCredited": "Credited to your build.",
+    "blueprintGuarantee": "Money-back guarantee: if it wasn't worth {price} to you, tell us within 7 days for a full refund.",
     "fallbackNote": "Fallback prices from the offer brief. Update the Offer global in the admin.",
     "fullOffer": "See the full offer",
     "fallback": {
@@ -160,7 +160,8 @@
         "Security updates",
         "Monthly change hours"
       ]
-    }
+    },
+    "includedFree": "Included at no extra cost"
   },
   "how": {
     "title": "How it works, in seven clear steps",
@@ -168,7 +169,7 @@
     "steps": [
       {
         "title": "Scorecard",
-        "body": "12 questions, two minutes, an honest read on whether your idea is ready."
+        "body": "Two minutes of short questions, and an honest read on whether your idea is ready."
       },
       {
         "title": "Fit call",
@@ -176,10 +177,10 @@
       },
       {
         "title": "Blueprint",
-        "body": "A 90-minute scoping session, then a fixed quote within 48 hours."
+        "body": "A 90-minute scoping session, then a fixed quote within 48 hours, with a money-back guarantee."
       },
       {
-        "title": "30-day build",
+        "title": "Build in 30 working days",
         "body": "We build your product. You see a working demo on day 10."
       },
       {
@@ -200,7 +201,9 @@
     "title": "The launch-date guarantee",
     "body": "If we're late, we pay: 10% of the build fee back for every late week, and we keep building for free.",
     "honest": "We don't promise you profit. We promise a working product, a launch date and support after launch.",
-    "terms": "The clock starts when the scope is signed and pauses while inputs we need from you are overdue."
+    "terms": "The clock starts when the scope is signed and pauses while inputs we need from you are overdue.",
+    "blueprintTitle": "The Blueprint guarantee",
+    "blueprint": "If, after the session and receiving the written scope and fixed quote, you feel it wasn't worth {price}, tell us within 7 days and we refund it in full. You keep the scope document. If you go ahead with the build, the session fee is credited to it."
   },
   "comparison": {
     "title": "Etleq compared with your other options",
@@ -215,47 +218,47 @@
     },
     "rows": {
       "price": "Price",
-      "time": "Time to launch",
+      "launchDate": "Launch date",
       "mada": "mada payments",
       "zatca": "ZATCA invoicing",
+      "arabic": "Arabic right-to-left interface",
       "ownership": "Code ownership",
       "support": "Support after launch"
     },
     "cells": {
       "etleqPrice": "Fixed, from {price}",
-      "etleqTime": "30 working days, guaranteed",
+      "etleqLaunchDate": "Launch date guaranteed in the contract (30 working days)",
       "included": "Included",
-      "etleqOwnership": "Set out in your contract",
+      "etleqOwnership": "Yours: the code and the data",
       "etleqSupport": "Care plans from {price}/month",
       "agencyPrice": "SAR 35,000–65,000",
-      "agencyTime": "4–8 weeks",
+      "byAgreement": "Depends on the agreement",
       "depends": "Depends on who you hire",
       "extraCost": "Often extra",
       "freelancerPrice": "Varies widely",
-      "freelancerTime": "Not guaranteed",
       "freelancerSupport": "May disappear after launch",
       "aiPrice": "From $25/month",
-      "aiTime": "Fast prototype",
       "notBuiltIn": "Not built in",
       "selfServe": "You're on your own"
-    }
+    },
+    "swipe": "Swipe sideways to see every option"
   },
   "founders": {
     "title": "Led by engineers, built by an engineering team, not salespeople",
     "lead": "You talk to the engineers who build your product, from the fit call to launch day.",
     "placeholder": "Placeholder: add the founders' author profiles in the admin (shown outside production only).",
-    "team": "Behind the founders is a team of engineers and specialists working on every launch.",
-    "joinTeam": "Join the team"
+    "team": "Behind the founders is a team of engineers and specialists working on every launch."
   },
   "projects": {
     "title": "Products we've launched",
-    "lead": "Real case studies, published with our clients' consent.",
+    "lead": "Products we've built and launched. Client stories are published only with the client's consent.",
     "planned": "Planned: {days} days",
     "actual": "Actual: {days} days",
     "verified": "Verified",
-    "foundingTitle": "Become a founding client",
-    "foundingBody": "We're offering a special price of {price} to {slots} clients, in exchange for filming and publishing the story of their launch.",
-    "foundingCta": "Ask about the founding-client offer"
+    "foundingTitle": "The founding-client offer",
+    "foundingBody": "We're building our first published client case studies. {slots} clients get a special price of {price} in exchange for letting us film and publish the story of their launch.",
+    "foundingCta": "Ask about the founding-client offer",
+    "foundingScorecard": "Take the scorecard first"
   },
   "faq": {
     "title": "Questions before you start",
@@ -265,7 +268,7 @@
     "title": "Find out in two minutes whether your idea is ready to launch",
     "lead": "Pick whichever suits you.",
     "scorecardTitle": "Scorecard",
-    "scorecardBody": "12 questions, instant result.",
+    "scorecardBody": "Two minutes, instant result.",
     "bookTitle": "Fit call",
     "bookBody": "15 free minutes with one of the founders.",
     "whatsappTitle": "WhatsApp",
@@ -274,14 +277,15 @@
   },
   "launch30": {
     "meta": {
-      "title": "Launch 30: your SaaS live in 30 days at a fixed price",
-      "description": "The Launch 30 offer in full: tiers and prices, Care plans, payment terms, the launch-date guarantee and what isn't included."
+      "title": "Launch 30: your SaaS live in 30 working days at a fixed price",
+      "description": "The Launch 30 offer in full: tiers and prices, Care plans, payment terms, the launch-date guarantee, the Blueprint money-back guarantee and what isn't included."
     },
     "eyebrow": "Launch 30",
     "h1": "Your product live and taking payments in 30 working days",
     "lead": "Everything about the offer on one page: what you get, what you pay and when, and what we guarantee.",
     "slots": "{n} of {total} launch slots left this month",
     "slotsNote": "We take a limited number of builds each month so we can keep our dates.",
+    "ownership": "You own your product: the code and the data are yours.",
     "careTable": {
       "caption": "Care plans compared",
       "plan": "Plan",
@@ -314,12 +318,14 @@
     ],
     "processTitle": "How the project runs",
     "faqTitle": "Questions about the offer",
-    "ctaTitle": "Take the scorecard to see if Launch 30 fits you"
+    "ctaTitle": "Take the scorecard to see if Launch 30 fits you",
+    "slotsOpen": "Open: {n}",
+    "slotsTaken": "Taken: {n}"
   },
   "howItWorks": {
     "meta": {
       "title": "How it works: from scorecard to launch in seven steps",
-      "description": "Working with Etleq step by step: scorecard, fit call, Blueprint, 30-day build, launch, first 10 customers and Care."
+      "description": "Working with Etleq step by step: scorecard, fit call, Blueprint, a build of 30 working days, launch, first 10 customers and Care."
     },
     "h1": "How it works: from idea to a working product",
     "lead": "Seven clear steps, each with a known duration and outcome.",
@@ -334,7 +340,7 @@
       },
       {
         "duration": "90 minutes",
-        "outcome": "A written scope and a fixed quote within 48 hours. The fee is credited to your build."
+        "outcome": "A written scope and a fixed quote within 48 hours. Money-back guarantee, and the fee is credited to your build."
       },
       {
         "duration": "30 working days",

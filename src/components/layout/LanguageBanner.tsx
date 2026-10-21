@@ -1,19 +1,40 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { X } from 'lucide-react'
 import type { Locale } from '@/i18n/routing'
 import { trackEvent } from '@/lib/analytics'
+import { CONSENT_CHANGE_EVENT, readConsent } from '@/lib/consent'
 import { useAlternatePath } from './alternate'
 import { swapLocalePath } from './locale-paths'
 
 const KEY = 'etleq:lang-banner-dismissed'
+const VIEWS_KEY = 'etleq:page-views'
+
+/** Page views this session, counted per path change. Storage blocked → 0 (the banner stays hidden). */
+function countPageView(): number {
+  try {
+    const n = (Number(window.sessionStorage.getItem(VIEWS_KEY)) || 0) + 1
+    window.sessionStorage.setItem(VIEWS_KEY, String(n))
+    return n
+  } catch {
+    return 0
+  }
+}
+
+const hasChosenConsent = () => Boolean(readConsent())
+function subscribeConsent(cb: () => void) {
+  window.addEventListener(CONSENT_CHANGE_EVENT, cb)
+  return () => window.removeEventListener(CONSENT_CHANGE_EVENT, cb)
+}
 
 /**
  * Suggests the other language when the browser prefers it (brief section 5).
  * Never redirects. Its text is written in the suggested language so the visitor can read it.
+ * It waits for the second page view of the session and never shows while the cookie banner is open,
+ * so a first-time visitor on a phone sees one overlay at most.
  */
 export function LanguageBanner() {
   const locale = useLocale() as Locale
@@ -21,9 +42,11 @@ export function LanguageBanner() {
   const pathname = usePathname() || '/'
   const override = useAlternatePath()
   const [show, setShow] = useState(false)
+  const consentChosen = useSyncExternalStore(subscribeConsent, hasChosenConsent, () => false)
   const target: Locale = locale === 'ar' ? 'en' : 'ar'
 
   useEffect(() => {
+    if (countPageView() < 2) return
     try {
       if (window.localStorage.getItem(KEY) === '1') return
     } catch {
@@ -34,9 +57,9 @@ export function LanguageBanner() {
     if (first !== target) return
     const timer = window.setTimeout(() => setShow(true), 800)
     return () => window.clearTimeout(timer)
-  }, [target])
+  }, [target, pathname])
 
-  if (!show) return null
+  if (!show || !consentChosen) return null
 
   const dismiss = () => {
     setShow(false)

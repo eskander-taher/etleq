@@ -17,15 +17,19 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react'
+import { Link } from '@/i18n/navigation'
 import { buttonVariants } from '@/components/ui/button'
 import { TrackedLink } from '@/components/ui/tracked-link'
+import { WhatsAppButton } from '@/components/ui/whatsapp-button'
+import { SetPageCta } from '@/components/layout/page-cta'
+import { getSiteSettings } from '@/components/content/globals'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { AutoBdi } from '@/components/content/Bdi'
 import { FaqList } from '@/components/content/FaqList'
 import { VideoFacade } from '@/components/content/VideoFacade'
 import { CtaPanel } from '@/components/content/CtaPanel'
-import { Alternates, ContentCard, ContentSection, PageHero, PriceFrom } from '@/components/content/parts'
-import { mediaOf, publicRelations, videoMeta, type Loc } from '@/components/content/lib'
+import { Alternates, ContentCard, ContentSection, ForwardArrow, PageHero, PriceFrom } from '@/components/content/parts'
+import { mediaOf, publicRelations, scorecardFrom, videoMeta, type Loc } from '@/components/content/lib'
 import { getSolution, solutionSlugs } from '@/lib/queries/solutions'
 import { absoluteUrl, buildMetadata } from '@/lib/seo'
 import { faqPageNode, graph, serviceNode } from '@/lib/schema'
@@ -77,10 +81,23 @@ export default async function SolutionPage({ params }: Props) {
   setRequestLocale(locale)
   const s = await getSolution(slug, locale)
   if (!s) notFound()
-  const t = await getTranslations({ locale, namespace: 'content' })
+  const [t, settings] = await Promise.all([getTranslations({ locale, namespace: 'content' }), getSiteSettings(locale)])
 
   const title = s.title ?? ''
   const path = `/solutions/${slug}`
+  const scorecardHref = scorecardFrom(path)
+  const refCode = `S-${slug}`
+  const waMessage = t('solutions.whatsappMessage', { name: title })
+  const vertical = s.vertical ?? undefined
+  const offerLink = (
+    <Link
+      href="/launch-30"
+      className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-ignition-700 underline underline-offset-4"
+    >
+      {t('common.offerLink')}
+      <ForwardArrow />
+    </Link>
+  )
   const pageUrl = absoluteUrl(locale, path)
   const faqs = publicRelations<Faq>(s.faqs as (string | Faq)[], locale).filter((f) => f.question && f.answer)
   const cases = publicRelations<Project>(s.caseStudies as (string | Project)[], locale).filter((p) => p.consentGiven)
@@ -99,12 +116,18 @@ export default async function SolutionPage({ params }: Props) {
           serviceType: t(`solutions.verticals.${s.vertical ?? 'other'}`),
         })
       : null,
-    faqs.length ? faqPageNode(faqs.map((f) => ({ question: f.question!, answer: f.answer! })), { url: pageUrl, locale }) : null,
+    faqs.length
+      ? faqPageNode(
+          faqs.map((f) => ({ question: f.question!, answer: f.answer! })),
+          { url: pageUrl, locale },
+        )
+      : null,
   )
 
   return (
     <>
       <Alternates path={path} indexPath="/solutions" available={s.translated} />
+      <SetPageCta scorecardHref={scorecardHref} waMessage={waMessage} refCode={refCode} />
       <JsonLd data={jsonLd} />
       <PageHero
         crumbs={[
@@ -115,17 +138,32 @@ export default async function SolutionPage({ params }: Props) {
         title={<AutoBdi text={title} locale={locale} />}
         lead={s.summary}
       >
-        <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center">
+        {typeof s.priceFrom === 'number' && (
+          <p className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1">
+            <PriceFrom usd={s.priceFrom} locale={locale} />
+            {offerLink}
+          </p>
+        )}
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
           <TrackedLink
-            href="/scorecard"
+            href={scorecardHref}
             event="cta_click"
-            params={{ cta_id: 'solution_demo', location: 'solution_hero', vertical: s.vertical ?? undefined }}
+            params={{ cta_id: 'solution_scorecard', location: 'solution_hero', vertical, ref_code: refCode }}
             className={buttonVariants({ size: 'lg' })}
           >
-            {t('solutions.cta')}
+            {t('cta.scorecard')}
           </TrackedLink>
-          <PriceFrom usd={s.priceFrom} locale={locale} />
+          <WhatsAppButton
+            message={waMessage}
+            refCode={refCode}
+            placement="solution_hero"
+            number={settings?.whatsappNumber}
+            label={t('cta.whatsapp')}
+            variant="secondary"
+            size="lg"
+          />
         </div>
+        <p className="mt-3 max-w-2xl text-sm text-ink-600">{t('solutions.ctaMicro')}</p>
       </PageHero>
 
       {!!s.buyerProblems?.length && (
@@ -196,6 +234,7 @@ export default async function SolutionPage({ params }: Props) {
             <PriceFrom usd={s.priceFrom} locale={locale} />
           </p>
           <p className="mt-2 max-w-2xl text-ink-600">{t('solutions.priceNote')}</p>
+          <div className="mt-2">{offerLink}</div>
         </ContentSection>
       )}
 
@@ -219,7 +258,14 @@ export default async function SolutionPage({ params }: Props) {
         <ContentSection id="case-studies" title={t('solutions.caseStudies')}>
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {cases.map((p) => (
-              <ContentCard key={p.id} locale={locale} href={`/projects/${p.slug}`} title={p.title ?? ''} excerpt={p.context} meta={p.clientName} />
+              <ContentCard
+                key={p.id}
+                locale={locale}
+                href={`/projects/${p.slug}`}
+                title={p.title ?? ''}
+                excerpt={p.context}
+                meta={p.clientName}
+              />
             ))}
           </div>
         </ContentSection>
@@ -236,12 +282,13 @@ export default async function SolutionPage({ params }: Props) {
       <CtaPanel
         locale={locale}
         title={t('solutions.ctaTitle', { name: title })}
-        body={t('solutions.ctaBody')}
-        label={t('solutions.cta')}
-        ctaId="solution_demo"
-        whatsappMessage={t('solutions.whatsappMessage', { name: title })}
-        refCode={`S-${slug}`}
+        body={t('solutions.ctaMicro')}
+        href={scorecardHref}
+        ctaId="solution_scorecard"
+        whatsappMessage={waMessage}
+        refCode={refCode}
         placement="solution_footer"
+        trackParams={{ vertical }}
       />
     </>
   )

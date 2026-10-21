@@ -21,6 +21,8 @@ export async function CtaBand({
   refCode,
   ctaLabel,
   ctaHref = '/scorecard',
+  ctaId,
+  micro,
   className,
 }: {
   locale: 'ar' | 'en'
@@ -33,12 +35,23 @@ export async function CtaBand({
   refCode?: string
   ctaLabel?: string
   ctaHref?: string
+  /** `cta_id` of the cta_click event; defaults to 'scorecard' for the scorecard, else derived from the href. */
+  ctaId?: string
+  /**
+   * Line under the buttons. Defaults to the scorecard micro-copy ("Short questions…"), shown only when
+   * the button goes to the scorecard. Pass `false` to hide it (e.g. when `text` already says it).
+   */
+  micro?: string | false
   className?: string
 }) {
   const t = await getTranslations({ locale, namespace: 'common' })
+  const toScorecard = ctaHref === '/scorecard' || ctaHref.startsWith('/scorecard?')
+  const microText = micro === false ? null : (micro ?? (toScorecard ? t('cta.scorecardMicro') : null))
+  const id =
+    ctaId ?? (toScorecard ? 'scorecard' : ctaHref.replace(/^\//, '').split(/[?#]/)[0].replace(/\W+/g, '_') || 'cta')
   return (
     <section data-tone="dark" className={cn('relative overflow-hidden bg-ink-950 text-sand-50', className)}>
-      <div className="pointer-events-none absolute -top-10 end-0 w-[34rem] max-w-full opacity-50" aria-hidden="true">
+      <div className="pointer-events-none absolute -top-10 end-0 hidden w-[34rem] max-w-full opacity-50 md:block" aria-hidden="true">
         <Trajectory tone="dark" milestones={false} />
       </div>
       <Container className="relative py-16 lg:py-24">
@@ -48,7 +61,7 @@ export async function CtaBand({
           <TrackedLink
             href={ctaHref}
             event="cta_click"
-            params={{ cta_id: 'scorecard', location: placement }}
+            params={{ cta_id: id, location: placement }}
             className={buttonVariants({ variant: 'primary', size: 'lg' })}
           >
             {ctaLabel || t('cta.scorecard')}
@@ -64,7 +77,7 @@ export async function CtaBand({
             size="lg"
           />
         </div>
-        <p className="mt-4 text-sm text-sand-300">{t('cta.scorecardMicro')}</p>
+        {microText ? <p className="mt-4 text-sm text-sand-300">{microText}</p> : null}
       </Container>
     </section>
   )

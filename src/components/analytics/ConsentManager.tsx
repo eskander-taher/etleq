@@ -4,6 +4,7 @@ import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore }
 import { useTranslations } from 'next-intl'
 import { usePathname } from 'next/navigation'
 import { Link } from '@/i18n/navigation'
+import { cn } from '@/lib/utils'
 import { captureAttribution, persistAttributionCookie } from '@/lib/attribution'
 import {
   CONSENT_CHANGE_EVENT,
@@ -41,7 +42,9 @@ const btn =
 
 /**
  * Cookie banner + tag loader. Render once in the frontend layout, inside NextIntlClientProvider (no props).
- * Bottom sheet, not modal: the page stays usable while it is open.
+ * Bottom sheet, not modal: the page stays usable while it is open. On phones the first-visit banner is
+ * a slim bar (one short line, then Accept / Reject / Settings with equal weight, about 86px) so it
+ * never covers the hero CTA; the full text and per-category controls are one tap away in Settings.
  */
 export function ConsentManager() {
   const t = useTranslations('consent')
@@ -102,6 +105,8 @@ export function ConsentManager() {
     if (e.key === 'Escape' && stored) setSettingsOpen(false)
   }
 
+  const slim = view === 'banner'
+
   return (
     <div
       ref={panelRef}
@@ -112,19 +117,21 @@ export function ConsentManager() {
       tabIndex={-1}
       onKeyDown={onKeyDown}
       data-testid="consent-banner"
-      className="fixed inset-x-0 bottom-0 z-50 max-h-[80dvh] overflow-y-auto border-t border-sand-300 bg-sand-50 text-ink-950 shadow-[0_-8px_30px_rgba(11,15,20,0.12)] focus:outline-none sm:inset-x-4 sm:bottom-4 sm:mx-auto sm:max-w-3xl sm:rounded-[20px] sm:border"
+      className="fixed inset-x-0 bottom-0 z-50 max-h-[80dvh] overflow-y-auto border-t border-sand-300 bg-sand-50 text-ink-950 shadow-[0_-8px_30px_rgba(11,15,20,0.12)] focus:outline-none sm:inset-x-4 sm:bottom-4 sm:mx-auto sm:max-w-3xl sm:rounded-[20px] sm:border lg:inset-x-auto lg:end-4 lg:mx-0 lg:max-w-md"
     >
-      <div className="p-4 sm:p-6">
-        <h2 id={titleId} className="text-lg font-semibold">
+      <div className={slim ? 'px-3 py-2 sm:p-6' : 'p-4 sm:p-6'}>
+        <h2 id={titleId} className={cn('text-lg font-semibold', slim && 'sr-only sm:not-sr-only')}>
           {view === 'settings' ? t('settingsTitle') : t('title')}
         </h2>
-        <p id={descId} className="mt-2 text-sm text-ink-800">
-          {t('body')}{' '}
-          <Link href="/cookies" className="font-semibold underline underline-offset-4">
-            {t('policyLink')}
-          </Link>
+        <p id={descId} className={cn('text-ink-800', slim ? 'text-sm leading-snug sm:mt-2' : 'mt-2 text-sm')}>
+          {slim ? <span className="sm:hidden">{t('short')} </span> : null}
+          <span className={slim ? 'hidden sm:inline' : undefined}>
+            {t('body')}{' '}
+            <Link href="/cookies" className="font-semibold underline underline-offset-4">
+              {t('policyLink')}
+            </Link>
+          </span>
         </p>
-
         {view === 'settings' && (
           <fieldset className="mt-4 space-y-3">
             <legend className="sr-only">{t('settingsTitle')}</legend>
@@ -159,12 +166,25 @@ export function ConsentManager() {
           </fieldset>
         )}
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          <button type="button" className={btn} onClick={() => commit({ analytics: true, marketing: true })}>
-            {t('acceptAll')}
+        <div className={slim ? 'mt-1.5 flex gap-2 sm:mt-4 sm:flex-wrap' : 'mt-4 flex flex-wrap gap-2'}>
+          {/* Short visible label on phones; the accessible name stays the full one (it contains the visible text). */}
+          <button
+            type="button"
+            className={btn}
+            aria-label={t('acceptAll')}
+            onClick={() => commit({ analytics: true, marketing: true })}
+          >
+            <span className="sm:hidden">{t('acceptShort')}</span>
+            <span className="hidden sm:inline">{t('acceptAll')}</span>
           </button>
-          <button type="button" className={btn} onClick={() => commit({ analytics: false, marketing: false })}>
-            {t('rejectAll')}
+          <button
+            type="button"
+            className={btn}
+            aria-label={t('rejectAll')}
+            onClick={() => commit({ analytics: false, marketing: false })}
+          >
+            <span className="sm:hidden">{t('rejectShort')}</span>
+            <span className="hidden sm:inline">{t('rejectAll')}</span>
           </button>
           {view === 'settings' ? (
             <button type="button" className={btn} onClick={() => commit(draft)}>

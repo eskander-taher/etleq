@@ -21,6 +21,7 @@ export async function CtaPanel({
   whatsappMessage,
   refCode,
   placement,
+  trackParams,
 }: {
   locale: Loc
   title: string
@@ -31,6 +32,8 @@ export async function CtaPanel({
   whatsappMessage?: string
   refCode?: string
   placement: string
+  /** Extra cta_click params, e.g. { model_slug } or { vertical }. */
+  trackParams?: Record<string, string | undefined>
 }) {
   const [t, settings] = await Promise.all([getTranslations({ locale, namespace: 'content' }), getSiteSettings(locale)])
   return (
@@ -42,7 +45,7 @@ export async function CtaPanel({
           <TrackedLink
             href={href}
             event="cta_click"
-            params={{ cta_id: ctaId, location: placement }}
+            params={{ ...trackParams, cta_id: ctaId, location: placement, ref_code: refCode }}
             className={cn(buttonVariants({ size: 'lg' }))}
           >
             {label ?? t('cta.scorecard')}
