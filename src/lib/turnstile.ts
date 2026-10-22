@@ -1,17 +1,15 @@
 const VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
 
 /**
- * Verifies a Cloudflare Turnstile token. When TURNSTILE_SECRET_KEY is unset (local dev),
- * it passes outside production and fails closed in production.
+ * Verifies a Cloudflare Turnstile token. When TURNSTILE_SECRET_KEY is unset, verification is skipped
+ * (the honeypot and per-IP rate limit still apply): rejecting every lead is worse than some spam.
+ * Once the key is set, a missing or invalid token fails.
  */
 export async function verifyTurnstile(token: string | null | undefined, ip?: string | null): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY
   if (!secret) {
-    if (process.env.SITE_ENV === 'production') {
-      console.error('[turnstile] TURNSTILE_SECRET_KEY is not set in production; rejecting submission')
-      return false
-    }
-    console.warn('[turnstile] TURNSTILE_SECRET_KEY not set; skipping verification (dev)')
+    const level = process.env.SITE_ENV === 'production' ? 'error' : 'warn'
+    console[level]('[turnstile] TURNSTILE_SECRET_KEY not set; skipping verification (honeypot and rate limit only)')
     return true
   }
   if (!token) return false

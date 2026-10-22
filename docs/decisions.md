@@ -188,3 +188,7 @@ The owner found the admin too complicated to add the apps Etleq has already ship
 - **Order**: `RESEND_API_KEY` → Resend; else `SMTP_HOST` → SMTP; else log only.
 - **Replies**: `mail.etleq.com` has no inbox, so `EMAIL_REPLY_TO` must be a real inbox.
 - The welcome / OTP / password-reset / receipt templates are typed in `src/lib/email/templates.ts` for future client-app flows; the site has no sign-up, login or payment flow to wire them into.
+
+## Turnstile not configured: accept forms (2026-10-22)
+
+Production ran without `TURNSTILE_SECRET_KEY`, and the "fail closed in production" rule rejected every scorecard and contact submission. Supersedes the anti-spam line in "Conversion (workstream C)": with no secret key, verification is skipped in every environment (logged as an error in production); the honeypot and per-IP rate limit still apply. With the key set, a missing or invalid token still fails. Add Turnstile keys if spam appears.
