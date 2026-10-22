@@ -1,6 +1,14 @@
 import nodemailer, { type Transporter } from 'nodemailer'
 
-export type EmailMessage = { to: string | string[]; subject: string; text?: string; html?: string; replyTo?: string }
+export type EmailMessage = {
+  to: string | string[]
+  subject: string
+  text?: string
+  html?: string
+  replyTo?: string
+  /** Resend only: a repeat send with the same key within 24h is dropped. */
+  idempotencyKey?: string
+}
 
 let transporter: Transporter | null | undefined
 
@@ -21,8 +29,18 @@ function transport(): Transporter | null {
 /** "sara@example.com" → "s***@example.com". Logs never carry full addresses. */
 export const redactEmail = (address: string) => address.replace(/^([^@])[^@]*@/, '$1***@')
 
-/** Send an email through SMTP. Without SMTP_HOST the message is logged (development), with recipients redacted. */
-export async function sendEmail(message: EmailMessage): Promise<void> {
+/**
+ * Send an email: through Resend when RESEND_API_KEY is set, else SMTP. With neither, the message is
+ * logged (development), with recipients redacted.
+ */
+export async function sendEmail({ idempotencyKey, ...message }: EmailMessage): Promise<void> {
+  if (process.env.RESEND_API_KEY) {
+    // Loaded lazily: the Resend client is server-only and unused in scripts and tests.
+    const { sendRawEmail } = await import('@/lib/email/send')
+    const res = await sendRawEmail(message, idempotencyKey ?? crypto.randomUUID())
+    if (!res.ok) throw new Error(`email not sent: ${res.error}`)
+    return
+  }
   const t = transport()
   if (!t) {
     // Founder alert subjects end with the lead's name after a colon; keep only the part before it.

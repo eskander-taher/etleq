@@ -71,3 +71,19 @@ describe('email logging', () => {
     expect(redactEmail('sara@example.com')).toBe('s***@example.com')
   })
 })
+
+describe('auto-reply button', () => {
+  const lead = { id: 'lead1' }
+  const consent = { given: true, at: '', policyVersion: '', marketing: false }
+
+  it('sends ready scorecard leads to their result page to book', () => {
+    const { cta } = autoReplyContent({ lead, input: { source: 'scorecard', tier: 'ready', score: 80, locale: 'ar', consent }, resultToken: 'tok' })
+    expect(cta.label).toBe('اعرض نتيجتك واحجز مكالمتك')
+    expect(cta.url).toContain('/scorecard/result?t=tok')
+  })
+
+  it('falls back to WhatsApp, then the models page, for other leads', () => {
+    expect(autoReplyContent({ lead, input: { source: 'contact', locale: 'en', consent }, whatsappNumber: '+966 55 123 4567' }).cta.url).toBe('https://wa.me/966551234567')
+    expect(autoReplyContent({ lead, input: { source: 'contact', locale: 'en', consent } }).cta.url).toMatch(/\/en\/models$/)
+  })
+})

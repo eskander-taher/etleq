@@ -25,7 +25,9 @@ Environment variables (Production, and Preview if you use it with a separate dat
 | `NEXT_PUBLIC_SITE_URL` | `https://etleq.com` |
 | `SITE_ENV` | `production` (indexable, samples forbidden). Use `staging` for preview deployments |
 | `CRON_SECRET` | Random string; Vercel Cron sends it to `/api/cron/retention` |
-| `SMTP_*`, `LEAD_ALERT_EMAILS`, `LEAD_ALERT_WEBHOOK` | Email and lead alerts (emails are logged when `SMTP_HOST` is empty) |
+| `RESEND_API_KEY`, `RESEND_FROM`, `EMAIL_REPLY_TO` | Email through Resend (domain `mail.etleq.com`, region eu-west-1). Visitor emails use the `notification-ar/en` templates; `EMAIL_REPLY_TO` must be a real inbox |
+| `LEAD_ALERT_EMAILS`, `LEAD_ALERT_WEBHOOK` | Founder lead alerts (comma-separated emails; replies go to the lead) |
+| `SMTP_*` | Fallback only when `RESEND_API_KEY` is empty; with neither, emails are logged |
 | `TURNSTILE_*`, `CAL_*`, `WHATSAPP_NUMBER`, analytics ids, `INDEXNOW_KEY`, `GOOGLE_INDEXING_SA_JSON` | As in `.env.example` |
 
 With `SITE_ENV=production` the build fails if the database is unreachable or a published sample exists (`scripts/check-samples.ts`).

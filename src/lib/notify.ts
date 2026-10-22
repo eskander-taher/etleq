@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { getCms } from '@/lib/cms'
 import { siteUrl, localePath } from '@/lib/utils'
 import type { LeadInput, StoredLead } from '@/lib/leads'
@@ -121,6 +122,9 @@ async function alertFoundersByEmail(ctx: NotifyContext) {
   const tierTag = ctx.input.tier ? ` [${ctx.input.tier.toUpperCase()} ${ctx.input.score}]` : ''
   await cms.sendEmail({
     to,
+    // Founders can answer the lead straight from the alert.
+    replyTo: ctx.input.email || undefined,
+    idempotencyKey: `alert/${ctx.lead.id}`,
     subject: `New ${ctx.input.source} lead${tierTag}: ${ctx.input.name || ctx.input.email || ctx.lead.id}`,
     text: lines.map(([k, v]) => `${k}: ${v}`).join('\n'),
     html: `<table cellpadding="6">${lines
@@ -209,22 +213,38 @@ const replies: Record<L, (ctx: NotifyContext) => Reply> = {
   },
 }
 
-/** Subject, paragraphs and links of the lead's auto-reply (pure; exported for tests). */
-export function autoReplyContent(ctx: NotifyContext): Reply & { links: string[] } {
+type Cta = { label: string; url: string }
+type ReplyContent = Reply & { links: string[]; cta: Cta }
+
+const CTA_LABELS = {
+  ar: { ready: 'اعرض نتيجتك واحجز مكالمتك', result: 'اعرض نتيجتك', whatsapp: 'راسلنا على واتساب', models: 'تصفّح النماذج' },
+  en: { ready: 'See your result and book your call', result: 'See your result', whatsapp: 'Message us on WhatsApp', models: 'Browse the models' },
+}
+
+/** Subject, paragraphs, links and the main button of the lead's auto-reply (pure; exported for tests). */
+export function autoReplyContent(ctx: NotifyContext): ReplyContent {
   const locale = ctx.input.locale
+  const labels = CTA_LABELS[locale]
   const { subject, paragraphs } = replies[locale](ctx)
   const links: string[] = []
   // For ready leads the result page carries the booking calendar, pre-filled, so it replaces /book.
   if (ctx.input.source === 'scorecard') links.push(ctx.resultToken ? resultUrl(locale, ctx.resultToken) : `${siteUrl()}${localePath(locale, '/book')}`)
-  if (ctx.whatsappNumber) links.push(`https://wa.me/${ctx.whatsappNumber.replace(/\D/g, '')}`)
-  return { subject, paragraphs, links }
+  const wa = ctx.whatsappNumber ? `https://wa.me/${ctx.whatsappNumber.replace(/\D/g, '')}` : null
+  if (wa) links.push(wa)
+  const cta: Cta =
+    ctx.input.source === 'scorecard'
+      ? { label: ctx.input.tier === 'ready' ? labels.ready : labels.result, url: links[0] }
+      : wa
+        ? { label: labels.whatsapp, url: wa }
+        : { label: labels.models, url: `${siteUrl()}${localePath(locale, '/models')}` }
+  return { subject, paragraphs, links, cta }
 }
 
 async function autoReply(ctx: NotifyContext) {
   const to = ctx.input.email
   // Cal.com already confirms bookings; a booking-only lead gets no second email.
   if (!to || ctx.input.source === 'booking') return
-  await sendReply(to, ctx.input.locale, autoReplyContent(ctx))
+  await sendReply(to, ctx.input.locale, autoReplyContent(ctx), `reply/${ctx.lead.id}`)
 }
 
 /**
@@ -233,15 +253,38 @@ async function autoReply(ctx: NotifyContext) {
  */
 export async function notifySubscribed({ email, name, locale, source }: { email: string; name?: string | null; locale: L; source: 'newsletter' | 'playbook' }) {
   const { subject, paragraphs } = replies[locale]({ lead: { id: '' }, input: { source, name: name || undefined, email, locale, consent: { given: true, at: '', policyVersion: '', marketing: true } } })
-  await sendReply(email, locale, { subject, paragraphs, links: [] })
+  const cta = { label: CTA_LABELS[locale].models, url: `${siteUrl()}${localePath(locale, '/models')}` }
+  const key = createHash('sha256').update(`${source}:${email.toLowerCase()}`).digest('hex').slice(0, 32)
+  await sendReply(email, locale, { subject, paragraphs, links: [], cta }, `subscribed/${key}`)
 }
 
-async function sendReply(to: string, locale: L, { subject, paragraphs, links }: Reply & { links: string[] }) {
+/**
+ * The lead's email. With Resend it uses the branded `notification-<locale>` template (title, message,
+ * one button); if that send fails, or without Resend, a plain HTML version goes out instead.
+ */
+async function sendReply(to: string, locale: L, { subject, paragraphs, links, cta }: ReplyContent, idempotencyKey: string) {
+  const replyTo = process.env.EMAIL_REPLY_TO || undefined
+  if (process.env.RESEND_API_KEY) {
+    const { sendTemplateEmail } = await import('@/lib/email/send')
+    const res = await sendTemplateEmail({
+      template: 'notification',
+      locale,
+      to,
+      subject,
+      replyTo,
+      variables: { TITLE: subject, MESSAGE: paragraphs.join('\n\n'), CTA_LABEL: cta.label, CTA_URL: cta.url },
+      idempotencyKey,
+    })
+    if (res.ok) return
+  }
   const signature = locale === 'ar' ? 'فريق اطلق' : 'The Etleq team'
   const dir = locale === 'ar' ? 'rtl' : 'ltr'
   const cms = await getCms()
   await cms.sendEmail({
     to,
+    replyTo,
+    // A different key: the template attempt may have reserved the first one.
+    idempotencyKey: `${idempotencyKey}/html`,
     subject,
     text: [...paragraphs, ...links, signature].join('\n\n'),
     html: `<div dir="${dir}" lang="${locale}" style="font-family:sans-serif;line-height:1.7">${paragraphs.map((p) => `<p>${esc(p)}</p>`).join('')}${links

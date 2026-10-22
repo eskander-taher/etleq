@@ -179,3 +179,12 @@ The owner found the admin too complicated to add the apps Etleq has already ship
 - **Schema-only field props**: `section`, `showIf`, `placeholder`, `ui`, `rowLabel`, collection/global `description`. Every visible field has a plain-English label and help text (unit test enforces it).
 - **Behaviour**: publish needs at least one language ticked; the publish date is stamped on first publish; new admin documents start with both languages ticked; plain-language publish errors with links to the field; unsaved-changes guard; task-grouped sidebar; dashboard quick actions and one-step launch-slots update.
 - **Left**: page-section block labels and UTM sub-fields are still technical.
+
+## Email through Resend (owner, 2026-10-22)
+
+- **Provider**: Resend, domain `mail.etleq.com` (region eu-west-1), sender `Etleq <hello@mail.etleq.com>`. DNS at Hostinger. Sending-only key `etleq-app-sending`, kept only in env (`RESEND_API_KEY`), never in the repo.
+- **What the site sends**: the visitor's auto-reply (scorecard result with its signed result link, contact, newsletter/playbook sign-up) through the published `notification-ar` / `notification-en` templates: TITLE = subject, MESSAGE = the reply paragraphs, one button (ready → "see your result and book your call"; other scorecard bands → "see your result"; contact → WhatsApp, else the models page). If the template send fails, a plain HTML version goes out. Founder alerts are plain HTML with reply-to set to the lead.
+- **Idempotency keys**: `reply/<leadId>`, `alert/<leadId>`, `subscribed/<sha256(source:email)>` (no raw email in keys). Retries with backoff on 429/5xx/network errors.
+- **Order**: `RESEND_API_KEY` → Resend; else `SMTP_HOST` → SMTP; else log only.
+- **Replies**: `mail.etleq.com` has no inbox, so `EMAIL_REPLY_TO` must be a real inbox.
+- The welcome / OTP / password-reset / receipt templates are typed in `src/lib/email/templates.ts` for future client-app flows; the site has no sign-up, login or payment flow to wire them into.
