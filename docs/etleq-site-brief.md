@@ -48,7 +48,7 @@ You are the lead engineer, product designer, conversion strategist and technical
 
 **Positioning statement (use it, don't print it verbatim):** For Gulf business owners and creators who want their own software product without hiring a tech team, Etleq is the SaaS launch studio that takes a proven model live in 30 working days at a fixed price, and the client owns the code. Unlike agencies, we charge for outcomes, not hours; unlike AI app builders, we deliver a business that takes payments, not a demo.
 
-**The offer ("Etleq Launch 30" / «إطلاق ٣٠»):**
+**The offer ("Etleq Launch 30" / «اطلق ٣٠»):**
 
 | Product | Price (USD) | What it is |
 | --- | --- | --- |
@@ -247,7 +247,7 @@ Typography rules:
 
 ### Logo (temporary)
 
-Create a typographic wordmark for Stage 1: «إطلاق» in Alexandria Bold paired with "Etleq" in the same face. Explore one simple mark: the rising stroke of the alef/hamza drawn as a launch trajectory arc. It must read at 16px (favicon) and in one colour. Deliver SVG lockups (Arabic, English, stacked) and a favicon set. The founders will commission a final logo later; keep the logo swappable from one component.
+Create a typographic wordmark for Stage 1: «اطلق» in Alexandria Bold paired with "Etleq" in the same face. Explore one simple mark: the rising stroke of the alef/hamza drawn as a launch trajectory arc. It must read at 16px (favicon) and in one colour. Deliver SVG lockups (Arabic, English, stacked) and a favicon set. The founders will commission a final logo later; keep the logo swappable from one component.
 
 ### Imagery
 
@@ -583,7 +583,7 @@ Goal: rank in Arabic for what buyers search before they spend money (how much a 
 | Language URLs | One URL per language, no cookie- or IP-based switching and no automatic redirects, as Google recommends ([Google](https://developers.google.com/search/docs/specialty/international/managing-multi-regional-sites)). |
 | Canonical | Self-referencing canonical per locale, stripped of UTM and click-ID parameters. Paginated lists canonicalise to themselves, not to page 1. `/go/` short links answer with 302 so their targets can change. |
 | hreflang | Set `alternates.languages` in `generateMetadata`: `ar`, `en`, and `x-default` pointing to the Arabic URL ([Google on x-default](https://developers.google.com/search/blog/2013/04/x-default-hreflang-for-international-pages)). Emit it only when both locales are published, always in both directions. A page that exists in one language gets none. |
-| Titles and descriptions | Unique per page and locale, written natively in each language, never machine-translated. Pattern from `SeoDefaults`, e.g. `تكلفة نظام حجز لعيادة في السعودية — إطلاق`. |
+| Titles and descriptions | Unique per page and locale, written natively in each language, never machine-translated. Pattern from `SeoDefaults`, e.g. `تكلفة نظام حجز لعيادة في السعودية — اطلق`. |
 | Sitemaps | `sitemap.ts` with `generateSitemaps`: one sitemap per collection, each URL with `lastModified` and its language alternates. Exclude drafts, samples, noindex pages, thank-you pages and scorecard results. |
 | robots.txt | `robots.ts` disallows `/admin`, `/api`, `/scorecard/result`, `/thank-you` and `/design`, and links the sitemaps. AI crawler rules come from `SeoDefaults` (section 12). Staging sends `X-Robots-Tag: noindex` on every response. |
 | Status codes | Real 404 for missing or untranslated pages. Slug changes 301 (section 10). A closed job drops its JobPosting markup and returns 410, with links to open roles. |
@@ -599,7 +599,7 @@ Build JSON-LD in `lib/schema.ts`, typed with `schema-dts`, one `@graph` per page
 
 | Page | Types | Notes |
 | --- | --- | --- |
-| Every page | `Organization`, `WebSite`, `BreadcrumbList` | Full `Organization` on home and about, an `@id` reference elsewhere: `name` Etleq, `alternateName` إطلاق and منصة اطلق, logo, `sameAs`, founders, `contactPoint` with areas served (SA, AE, OM) and languages (ar, en) |
+| Every page | `Organization`, `WebSite`, `BreadcrumbList` | Full `Organization` on home and about, an `@id` reference elsewhere: `name` Etleq, `alternateName` اطلق and منصة اطلق, logo, `sameAs`, founders, `contactPoint` with areas served (SA, AE, OM) and languages (ar, en) |
 | Launch 30, solutions | `Service` with `Offer` and `PriceSpecification` (`minPrice`) | No rich result exists for this; it helps search engines and assistants read the offer correctly |
 | Models, guides | `Article`, plus `VideoObject` for the reel with its transcript | `dateModified` is the last-reviewed date |
 | Blog | `BlogPosting` | `author` points to the author's `Person` `@id` |
@@ -622,7 +622,7 @@ Size each cluster with the keyword tool the founders choose (section 16), then w
 | SaaS ideas and models | Deciding what to build | أفكار مشاريع SaaS، مشروع برمجي مربح، أفكار مشاريع تقنية في السعودية | `/models`, `/models/[slug]` | Scorecard, pre-filled |
 | How-to and compliance | Already building, stuck on a problem | ربط بوابة دفع مدى، الدفع المتكرر عبر مدى، الفوترة الإلكترونية فاتورة، نظام حماية البيانات الشخصية | Blog | Playbook, then scorecard |
 | Comparisons | Choosing how to build | شركة برمجة أم مستقل، منصات بدون كود أم برمجة خاصة | `/compare/[slug]` | Scorecard |
-| Brand | Already knows Etleq | إطلاق، منصة اطلق، Etleq، اطلق 30 | Home, about, Launch 30 | Scorecard |
+| Brand | Already knows Etleq | اطلق، منصة اطلق، Etleq، اطلق 30 | Home, about, Launch 30 | Scorecard |
 
 Arabic search rules:
 
@@ -695,7 +695,7 @@ Sources: [OpenAI](https://developers.openai.com/api/docs/bots), [Anthropic](http
 4. **Visible dates.** Published and last-reviewed dates, both on the page and in the markup.
 5. **Tables for numbers.** Costs, comparisons and feature lists go in HTML tables so assistants can lift the figures cleanly.
 6. **Original data.** Publish assets only Etleq can produce: a yearly Gulf SaaS build-cost index (from Etleq's own quotes and public sources, with methodology) and statistics from the models library. Each gets a permanent URL, a methodology section and a CSV download.
-7. **One consistent entity.** Always the same names (Etleq and «إطلاق»), the same one-line description (stored in `SeoDefaults`), and the same founder names and titles, on and off the site.
+7. **One consistent entity.** Always the same names (Etleq and «اطلق»), the same one-line description (stored in `SeoDefaults`), and the same founder names and titles, on and off the site.
 
 ### Off-site signals (founders' job; the site supports it)
 

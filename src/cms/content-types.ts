@@ -3458,7 +3458,7 @@ export interface ScorecardSettings {
 export interface SeoDefaults {
   id: string
   /**
-   * Use %s for the page title, e.g. "%s — إطلاق".
+   * Use %s for the page title, e.g. "%s — اطلق".
    */
   titleTemplate?: string | null
   defaultDescription?: string | null
