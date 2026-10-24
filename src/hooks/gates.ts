@@ -56,7 +56,7 @@ export type EvidenceKind = 'model' | 'guide'
  * - reviewer and lastReviewedAt set
  * - models also: gulfVersion, whyItWorks, at least one fitCriteria row, and an MRR
  *   figure (when given) must carry its source URL and reported date
- * - guides also: content filled
+ * - guides also: content filled; cost guides: every price range row carries its source URL and checked date
  */
 export function evidenceProblems(doc: Doc, kind: EvidenceKind): GateProblem[] {
   const problems: GateProblem[] = []
@@ -92,6 +92,16 @@ export function evidenceProblems(doc: Doc, kind: EvidenceKind): GateProblem[] {
       `Add at least 3 sources with a URL and an accessed date (currently ${sources.length}).`,
     )
     need(isFilled(doc.content), 'content', 'Write the guide content before publishing.')
+    if (doc.type === 'cost') {
+      ;(doc.costRanges || []).forEach((r: Doc, i: number) => {
+        if (!r || (!isFilled(r.low) && !isFilled(r.high))) return
+        need(
+          isFilled(r.sourceUrl) && isFilled(r.checkedAt),
+          `costRanges.${i}.sourceUrl`,
+          `Price range ${i + 1} needs its source link and the date you checked it.`,
+        )
+      })
+    }
   }
 
   need(isFilled(doc.reviewer), 'reviewer', 'Choose a reviewer before publishing.')

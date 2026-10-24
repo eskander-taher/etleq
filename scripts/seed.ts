@@ -15,6 +15,7 @@ import { ensureIndexes } from '../src/cms/indexes'
 import { cms } from '../src/cms/local'
 import { toMarkdown } from '../src/cms/richtext'
 import type { CollectionSlug, GlobalSlug } from '../src/cms/types'
+import { DEFAULT_ONE_LINER } from '../src/lib/seo'
 
 type Data = Record<string, unknown>
 type Loc = { ar: Data; en: Data }
@@ -832,6 +833,14 @@ async function seed() {
     url: `https://example.com/sample-guide-source-${n}`,
     accessedAt: daysAgo(n * 3),
   }))
+  const agencyRange = {
+    low: 35000,
+    high: 65000,
+    currency: 'SAR',
+    sourceName: 'Sendan Tech',
+    sourceUrl: 'https://www.sendantech.com/en-SA/mobile-app-development-cost-saudi-arabia',
+    checkedAt: daysAgo(2),
+  }
   await create(
     'guides',
     {
@@ -851,14 +860,18 @@ async function seed() {
         title: 'كم تكلفة تطبيق حجز للعيادات في السعودية؟',
         excerpt: 'مقارنة تكاليف البناء والتشغيل بين الوكالة والمستقل وEtleq.',
         answerBox:
-          '[عينة] تتراوح تكلفة بناء نظام حجز للعيادات في السعودية بين 35 و65 ألف ريال لدى الوكالات. باقة Etleq Vertical تبدأ من 45,000 ر.س بسعر ثابت وتنطلق خلال 30 يوم عمل.',
-        keyTakeaways: [{ text: '[عينة] السعر الثابت يحميك من تجاوز الميزانية.' }],
+          '[عينة] تتراوح تكلفة بناء نظام حجز للعيادات في السعودية بين 35 و65 ألف ريال لدى الوكالات، بحسب عدد الفروع والتكاملات المطلوبة.',
+        keyTakeaways: [{ text: '[عينة] حدّد النطاق كتابةً قبل أن تقارن العروض.' }],
+        costRanges: [{ ...agencyRange, option: 'وكالة محلية', note: '[عينة]' }],
+        costFactors: [
+          { factor: '[عينة] الدفع الإلكتروني', effect: 'ربط مدى وApple Pay يضيف وقت تكامل واختبار.' },
+          { factor: '[عينة] عدد الفروع', effect: 'كل فرع يضيف جداول مواعيد وصلاحيات.' },
+        ],
         content: toMarkdown('## التكلفة باختصار', '[عينة] نص توضيحي لدليل التكلفة.'),
         comparisonTable: {
           columns: [{ label: 'الخيار' }, { label: 'السعر' }, { label: 'المدة' }],
           rows: [
             { label: 'وكالة', cells: [{ value: 'وكالة' }, { value: '35–65 ألف ر.س' }, { value: '4–8 أسابيع' }] },
-            { label: 'Etleq', cells: [{ value: 'Etleq Vertical' }, { value: 'من 45,000 ر.س' }, { value: '30 يوم عمل' }] },
           ],
         },
       },
@@ -866,8 +879,13 @@ async function seed() {
         title: 'How much does a clinic booking app cost in Saudi Arabia?',
         excerpt: 'Build and running costs compared: agency, freelancer and Etleq.',
         answerBox:
-          '[SAMPLE] Agencies in Saudi Arabia quote SAR 35k–65k for a clinic booking system. Etleq Vertical starts at $12,000 at a fixed price and goes live in 30 working days.',
-        keyTakeaways: [{ text: '[SAMPLE] A fixed price protects you from budget overruns.' }],
+          '[SAMPLE] Agencies in Saudi Arabia quote SAR 35k–65k for a clinic booking system, depending on the number of branches and integrations.',
+        keyTakeaways: [{ text: '[SAMPLE] Write the scope down before you compare quotes.' }],
+        costRanges: [{ ...agencyRange, option: 'Local agency', note: '[SAMPLE]' }],
+        costFactors: [
+          { factor: '[SAMPLE] Online payments', effect: 'Connecting mada and Apple Pay adds integration and testing time.' },
+          { factor: '[SAMPLE] Number of branches', effect: 'Each branch adds schedules and permissions.' },
+        ],
         content: toMarkdown('## The cost in short', '[SAMPLE] Placeholder text for the cost guide.'),
         comparisonTable: {
           columns: [{ label: 'Option' }, { label: 'Price' }, { label: 'Time' }],
@@ -883,7 +901,6 @@ async function seed() {
                 { value: '4–8 weeks' },
               ],
             },
-            { label: 'Etleq', cells: [{ value: 'Etleq Vertical' }, { value: 'from $12,000' }, { value: '30 working days' }] },
           ],
         },
       },
@@ -1506,24 +1523,20 @@ async function seedGlobals(global: (slug: GlobalSlug, common: Data, loc: Loc) =>
   await global(
     'seo-defaults',
     {
-      sameAs: [
-        { url: 'https://www.instagram.com/example-etleq' },
-        { url: 'https://www.linkedin.com/company/example-etleq' },
-      ],
+      // Real profile URLs only; the founders add them in /admin.
+      sameAs: [],
       aiCrawlers: { allowTraining: true, allowSearch: true, allowUser: true },
     },
     {
       ar: {
         titleTemplate: '%s — اطلق',
-        defaultDescription:
-          'اطلق استوديو يبني منصّتك البرمجية بالعربية ويطلقها خلال 30 يوم عمل بسعر ثابت، مع الدفع عبر مدى وفواتير ZATCA والاستضافة.',
-        oneLiner: 'نطلق منصّتك البرمجية خلال 30 يوم عمل بسعر ثابت، والشيفرة ملكك.',
+        defaultDescription: DEFAULT_ONE_LINER.ar,
+        oneLiner: DEFAULT_ONE_LINER.ar,
       },
       en: {
         titleTemplate: '%s — Etleq',
-        defaultDescription:
-          'Etleq is a SaaS launch studio that takes a proven software model live in 30 working days at a fixed price, with mada payments, ZATCA invoicing and hosting.',
-        oneLiner: 'We take your software product live in 30 working days at a fixed price, and you own the code.',
+        defaultDescription: DEFAULT_ONE_LINER.en,
+        oneLiner: DEFAULT_ONE_LINER.en,
       },
     },
   )

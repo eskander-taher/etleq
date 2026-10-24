@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { absoluteUrl, applyTitleTemplate, buildMetadata, ogImageUrl } from '@/lib/seo'
 
-const SITE = 'https://etleq.com'
+const SITE = 'https://www.etleq.com'
 
 describe('seo', () => {
   const env = { ...process.env }
@@ -83,15 +83,15 @@ describe('consent, attribution and server events (pure parts)', () => {
   it('touchFromUrl captures UTM, click ids, external referrer and ref code', async () => {
     const { touchFromUrl } = await import('@/lib/attribution')
     const r = touchFromUrl(
-      'https://etleq.com/models/x?utm_source=ig&utm_campaign=reel1&fbclid=abc&ScCid=sc1&ref=wa7',
+      'https://www.etleq.com/models/x?utm_source=ig&utm_campaign=reel1&fbclid=abc&ScCid=sc1&ref=wa7',
       'https://instagram.com/',
     )
     expect(r.touch.utm).toEqual({ source: 'ig', campaign: 'reel1' })
     expect(r.touch.clickIds).toEqual({ fbclid: 'abc', ScCid: 'sc1' })
     expect(r.touch.referrer).toBe('https://instagram.com/')
-    expect(r.touch.landingPage).toBe('https://etleq.com/models/x?utm_source=ig&utm_campaign=reel1')
+    expect(r.touch.landingPage).toBe('https://www.etleq.com/models/x?utm_source=ig&utm_campaign=reel1')
     expect(r.refCode).toBe('wa7')
-    expect(touchFromUrl('https://etleq.com/a', 'https://etleq.com/b').meaningful).toBe(false)
+    expect(touchFromUrl('https://www.etleq.com/a', 'https://www.etleq.com/b').meaningful).toBe(false)
   })
 
   it('server events respect env and consent, and hash PII', async () => {

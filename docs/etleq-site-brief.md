@@ -579,7 +579,7 @@ Goal: rank in Arabic for what buyers search before they spend money (how much a 
 | Area | Requirement |
 | --- | --- |
 | Rendering | Every indexable page is static and revalidated on publish (section 4). Text, links and JSON-LD are in the server HTML; nothing indexable depends on client-side JavaScript. |
-| Host | One canonical host, `https://etleq.com`; `www` and `http` redirect to it with 301. Lowercase paths, no trailing slash. |
+| Host | One canonical host, `https://www.etleq.com`; the apex and `http` redirect to it with 301. Lowercase paths, no trailing slash. |
 | Language URLs | One URL per language, no cookie- or IP-based switching and no automatic redirects, as Google recommends ([Google](https://developers.google.com/search/docs/specialty/international/managing-multi-regional-sites)). |
 | Canonical | Self-referencing canonical per locale, stripped of UTM and click-ID parameters. Paginated lists canonicalise to themselves, not to page 1. `/go/` short links answer with 302 so their targets can change. |
 | hreflang | Set `alternates.languages` in `generateMetadata`: `ar`, `en`, and `x-default` pointing to the Arabic URL ([Google on x-default](https://developers.google.com/search/blog/2013/04/x-default-hreflang-for-international-pages)). Emit it only when both locales are published, always in both directions. A page that exists in one language gets none. |

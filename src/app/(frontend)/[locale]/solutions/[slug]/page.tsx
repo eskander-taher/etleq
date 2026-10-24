@@ -105,17 +105,17 @@ export default async function SolutionPage({ params }: Props) {
   const video = videoUrl ? videoMeta(videoUrl) : null
 
   const jsonLd = graph(
-    typeof s.priceFrom === 'number'
-      ? serviceNode({
-          name: title,
-          description: s.summary,
-          priceFrom: s.priceFrom,
-          currency: 'USD',
-          url: path,
-          locale,
-          serviceType: t(`solutions.verticals.${s.vertical ?? 'other'}`),
-        })
-      : null,
+    // Always describe the service; the Offer appears only when the page shows a price.
+    serviceNode({
+      name: title,
+      description: s.summary,
+      priceFrom: s.priceFrom,
+      currency: 'USD',
+      url: path,
+      locale,
+      areaServed: ['SA', 'AE'],
+      serviceType: t(`solutions.verticals.${s.vertical ?? 'other'}`),
+    }),
     faqs.length
       ? faqPageNode(
           faqs.map((f) => ({ question: f.question!, answer: f.answer! })),

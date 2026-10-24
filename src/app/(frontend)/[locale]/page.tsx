@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Locale } from '@/i18n/routing'
-import { buildMetadata } from '@/lib/seo'
+import { buildMetadata, DEFAULT_ONE_LINER } from '@/lib/seo'
 import { faqPageNode, graph, organizationNode, websiteNode } from '@/lib/schema'
 import { absoluteUrl } from '@/lib/seo'
 import { JsonLd } from '@/components/seo/JsonLd'
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props) {
     path: '/',
     title: t('meta.title'),
     absoluteTitle: true,
-    description: seo.defaultDescription || t('meta.description'),
+    description: seo.defaultDescription || DEFAULT_ONE_LINER[locale],
     alternates: { ar: true, en: true },
   })
 }
@@ -60,11 +60,12 @@ export default async function HomePage({ params }: Props) {
   const jsonLd = graph(
     organizationNode({
       full: true,
+      locale,
       settings: { contactEmail: settings.contactEmail, whatsappNumber: settings.whatsappNumber, legalEntities: settings.legalEntities },
       seo: { sameAs: seo.sameAs, oneLiner: seo.oneLiner },
       founders: authors.slice(0, 2).map((a) => ({ name: a.name, jobTitle: a.role, slug: a.slug, sameAs: (a.sameAs ?? []).map((s) => s.url).filter((u): u is string => Boolean(u)) })),
     }),
-    websiteNode(locale, { description: seo.oneLiner }),
+    websiteNode(locale, { description: seo.oneLiner || DEFAULT_ONE_LINER[locale] }),
     faqs.length ? faqPageNode(faqs.map((f) => ({ question: f.question, answer: f.answer })), { url: absoluteUrl(locale, '/'), locale }) : null,
   )
 

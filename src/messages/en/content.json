@@ -191,14 +191,20 @@
   },
   "cost": {
     "indexTitle": "What does software cost to build in the Gulf?",
-    "indexLead": "Straight answers with sourced numbers: market price ranges, what pushes cost up or down, and our fixed price.",
+    "indexLead": "Straight answers with sourced numbers: market price ranges, each with its source and date, and what pushes the cost up or down.",
     "empty": "Cost guides are on their way",
+    "rangesTitle": "Market price ranges",
+    "rangesCaption": "Public market figures. Each row links to its source and shows the date we checked it.",
+    "rangesOption": "Who builds it",
+    "rangesRange": "Typical range",
+    "rangesChecked": "Checked on",
+    "factorsTitle": "What changes the cost",
     "tableTitle": "Cost comparison",
-    "ctaTitle": "Get a fixed quote for your project",
-    "ctaBody": "Take the short scorecard. If it's a fit, we'll book a scoping session that ends with a fixed quote within 48 hours.",
-    "ctaLabel": "Get a fixed quote",
-    "tableCtaTitle": "Want a fixed price for your own project?",
-    "whatsappMessage": "Hi, I read \"{title}\" and want a quote for my project"
+    "ctaTitle": "Is your project ready to build?",
+    "ctaBody": "Take the short scorecard. It tells you in two minutes whether you're ready and what the right next step is.",
+    "ctaLabel": "Take the scorecard",
+    "tableCtaTitle": "Want to know where your own project stands?",
+    "whatsappMessage": "Hi, I read \"{title}\" and have a question about my project"
   },
   "compare": {
     "indexTitle": "Fair comparisons: how should you build your product?",

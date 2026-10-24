@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { AI_TRAINING_BOTS, DISALLOW, buildRobotsPolicy } from '@/components/seo/robots-policy'
 
-const SITE = 'https://etleq.com'
+const SITE = 'https://www.etleq.com'
 type Rule = { userAgent?: string | string[]; allow?: string | string[]; disallow?: string | string[] }
 
 const ruleFor = (rules: Rule[], ua: string) =>

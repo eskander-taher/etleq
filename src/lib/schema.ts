@@ -19,7 +19,7 @@ import type {
   VideoObject,
   WebSite,
 } from 'schema-dts'
-import { absoluteUrl } from './seo'
+import { absoluteUrl, DEFAULT_ONE_LINER } from './seo'
 import { localePath, siteUrl } from './utils'
 
 export type SchemaLocale = 'ar' | 'en'
@@ -141,6 +141,8 @@ export interface OrgFounder {
 export interface OrganizationNodeOptions {
   /** Full object on home and about; an `@id` reference elsewhere. */
   full?: boolean
+  /** Language of the description fallback. Default 'ar'. */
+  locale?: SchemaLocale
   /** SiteSettings global (contactEmail, whatsappNumber, legalEntities). */
   settings?: OrgSettingsInput | null
   /** SeoDefaults global (sameAs, oneLiner). */
@@ -148,12 +150,25 @@ export interface OrganizationNodeOptions {
   founders?: OrgFounder[]
 }
 
+/**
+ * Profile URLs safe to publish in `sameAs`: absolute http(s), deduplicated, and never a
+ * placeholder (anything containing "example", e.g. instagram.com/example-etleq).
+ */
+export function cleanSameAs(list: Array<{ url?: string | null } | string | null | undefined> | null | undefined): string[] {
+  const out: string[] = []
+  for (const item of list || []) {
+    const url = (typeof item === 'string' ? item : item?.url)?.trim()
+    if (!url || !/^https?:\/\/[^\s/]+\.[^\s]+$/i.test(url) || /example/i.test(url)) continue
+    if (!out.includes(url)) out.push(url)
+  }
+  return out
+}
+
 export function organizationNode(opts: OrganizationNodeOptions = {}): Organization | Ref {
   const id = ids.organization()
   if (!opts.full) return { '@id': id }
-  const sameAs = (opts.seo?.sameAs || [])
-    .map((s) => (typeof s === 'string' ? s : s?.url))
-    .filter((u): u is string => Boolean(u))
+  const sameAs = cleanSameAs(opts.seo?.sameAs)
+  const description = opts.seo?.oneLiner || DEFAULT_ONE_LINER[opts.locale || 'ar']
   const phone = opts.settings?.whatsappNumber ? `+${opts.settings.whatsappNumber.replace(/^\+/, '')}` : undefined
   const legal = opts.settings?.legalEntities?.find((e) => e?.legalName)
   return {
@@ -163,18 +178,21 @@ export function organizationNode(opts: OrganizationNodeOptions = {}): Organizati
     alternateName: ORG_ALT_NAMES,
     url: site(),
     logo: { '@type': 'ImageObject', url: `${site()}/logo.png` },
-    ...(opts.seo?.oneLiner ? { description: opts.seo.oneLiner } : {}),
+    description,
     ...(legal?.legalName ? { legalName: legal.legalName } : {}),
     ...(sameAs.length ? { sameAs } : {}),
     ...(opts.founders?.length
       ? {
-          founder: opts.founders.map((f) => ({
-            '@type': 'Person' as const,
-            ...(f.slug ? { '@id': ids.person(f.slug) } : {}),
-            name: f.name,
-            ...(f.jobTitle ? { jobTitle: f.jobTitle } : {}),
-            ...(f.sameAs?.length ? { sameAs: f.sameAs } : {}),
-          })),
+          founder: opts.founders.map((f) => {
+            const links = cleanSameAs(f.sameAs)
+            return {
+              '@type': 'Person' as const,
+              ...(f.slug ? { '@id': ids.person(f.slug) } : {}),
+              name: f.name,
+              ...(f.jobTitle ? { jobTitle: f.jobTitle } : {}),
+              ...(links.length ? { sameAs: links } : {}),
+            }
+          }),
         }
       : {}),
     contactPoint: {
@@ -199,6 +217,11 @@ export function websiteNode(locale: SchemaLocale, opts: { description?: string |
     publisher: { '@id': ids.organization() },
     ...(opts.description ? { description: opts.description } : {}),
   }
+}
+
+/** Site-wide graph rendered by the locale layout on every page: the Organization `@id` reference and the WebSite. */
+export function siteGraph(locale: SchemaLocale): Graph {
+  return graph(organizationNode(), websiteNode(locale, { description: DEFAULT_ONE_LINER[locale] }))
 }
 
 export interface BreadcrumbItem {
@@ -377,10 +400,10 @@ export function newsArticleNode(input: ArticleInput): NewsArticle {
 export interface ServiceInput {
   name: string
   description?: string | null
-  /** Starting price (minPrice). */
-  priceFrom: number
-  /** ISO 4217, e.g. 'USD' or 'SAR'. */
-  currency: string
+  /** Starting price (minPrice). Without it the Service carries no Offer. */
+  priceFrom?: number | null
+  /** ISO 4217, e.g. 'USD' or 'SAR'. Default 'USD'. */
+  currency?: string
   /** Absolute URL, localized path, or locale-less path (resolved with `locale`, default 'ar'). */
   url: string
   locale?: SchemaLocale
@@ -392,6 +415,7 @@ export interface ServiceInput {
 export function serviceNode(input: ServiceInput): Service {
   const url = toAbsolute(input.url, input.locale || 'ar')
   const areas = input.areaServed?.length ? input.areaServed : ['SA', 'AE', 'OM']
+  const currency = input.currency || 'USD'
   return {
     '@type': 'Service',
     '@id': `${url}#service`,
@@ -402,18 +426,22 @@ export function serviceNode(input: ServiceInput): Service {
     ...(input.locale ? { inLanguage: inLang(input.locale) } : {}),
     provider: { '@id': ids.organization() },
     areaServed: areas.map((c) => ({ '@type': 'Country' as const, name: c })),
-    offers: {
-      '@type': 'Offer',
-      url,
-      priceCurrency: input.currency,
-      price: input.priceFrom,
-      availability: 'https://schema.org/InStock',
-      priceSpecification: {
-        '@type': 'PriceSpecification',
-        priceCurrency: input.currency,
-        minPrice: input.priceFrom,
-      },
-    },
+    ...(typeof input.priceFrom === 'number' && input.priceFrom > 0
+      ? {
+          offers: {
+            '@type': 'Offer' as const,
+            url,
+            priceCurrency: currency,
+            price: input.priceFrom,
+            availability: 'https://schema.org/InStock' as const,
+            priceSpecification: {
+              '@type': 'PriceSpecification' as const,
+              priceCurrency: currency,
+              minPrice: input.priceFrom,
+            },
+          },
+        }
+      : {}),
   }
 }
 

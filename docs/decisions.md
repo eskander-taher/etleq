@@ -192,3 +192,13 @@ The owner found the admin too complicated to add the apps Etleq has already ship
 ## Turnstile not configured: accept forms (2026-10-22)
 
 Production ran without `TURNSTILE_SECRET_KEY`, and the "fail closed in production" rule rejected every scorecard and contact submission. Supersedes the anti-spam line in "Conversion (workstream C)": with no secret key, verification is skipped in every environment (logged as an error in production); the honeypot and per-IP rate limit still apply. With the key set, a missing or invalid token still fails. Add Turnstile keys if spam appears.
+
+## SEO week 1 (2026-10-24)
+
+- **Canonical host is `https://www.etleq.com`** (supersedes the apex in brief §11; brief updated). Every absolute URL (canonicals, hreflang, sitemaps, robots, OG, RSS, JSON-LD, llms.txt, IndexNow) comes from `siteUrl()` in `src/lib/site-url.ts`: `NEXT_PUBLIC_SITE_URL`, default `https://www.etleq.com`; a configured `etleq.com` / `http://www.etleq.com` is upgraded to the www host.
+- **One-liner** (no price model; the offer is not decided): AR «اطلق استوديو يبني منصّتك البرمجية بالعربية ويطلقها خلال 30 يوم عمل، مع الدفع عبر مدى والاستضافة.», EN "Etleq is a studio that builds your software platform in Arabic and launches it in 30 working days, with mada payments and hosting." It is the code default (`DEFAULT_ONE_LINER` in `src/lib/seo.ts`) for the home meta description, the Organization/WebSite description and llms.txt; `seo-defaults.oneLiner` / `defaultDescription` still override it.
+- **`sameAs` guard**: `cleanSameAs()` drops any URL containing "example" and non-http(s) URLs (Organization and founders). The seed no longer writes placeholder profiles.
+- **JSON-LD**: the locale layout renders the Organization `@id` reference and the WebSite node on every page. Solution pages always emit `Service` (name, serviceType, provider @id, areaServed SA + AE); the `Offer` appears only when the page shows `priceFrom`.
+- **IndexNow**: key from `INDEXNOW_KEY` (validated, 8–128 `[a-zA-Z0-9-]`), served at `/indexnow-key.txt` (pings send it as `keyLocation`) and at `/<key>.txt` via a build-time rewrite. Pings only carry URLs on the canonical host and run through `after()` so Vercel does not cut them off. Live only when `SITE_ENV=production`.
+- **Cost guides** get `costRanges` (each row shown only with source URL + checked date; the publish gate enforces both for priced rows) and `costFactors`. Order: answer box, dates incl. last reviewed, market ranges table, what changes the cost, the rest. Cost guides never show an Etleq price or the offer link; the CTA is the scorecard.
+

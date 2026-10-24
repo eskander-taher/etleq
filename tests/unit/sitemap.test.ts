@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { buildSitemapEntries, sectionPath, STATIC_PATHS } from '@/components/seo/sitemap-entries'
 import { buildRss } from '@/components/seo/rss'
 
-const SITE = 'https://etleq.com'
+const SITE = 'https://www.etleq.com'
 
 describe('buildSitemapEntries', () => {
   beforeEach(() => {

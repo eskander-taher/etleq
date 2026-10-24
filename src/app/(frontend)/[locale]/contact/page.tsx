@@ -43,6 +43,7 @@ export default async function ContactPage({ params }: Props) {
   const jsonLd = graph(
     organizationNode({
       full: true,
+      locale,
       settings: { contactEmail, whatsappNumber: whatsappNumber ?? undefined, legalEntities },
     }) as SchemaNode,
   )

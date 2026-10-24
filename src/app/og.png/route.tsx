@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og'
+import { siteUrl } from '@/lib/site-url'
 
 /**
  * Dynamic 1200x630 Open Graph card: /og.png?locale=ar&title=...&subtitle=...
@@ -79,7 +80,7 @@ export async function GET(req: Request) {
   const subtitle = (searchParams.get('subtitle') || '').slice(0, 140)
   const brand = rtl ? 'اطلق' : 'Etleq'
   const tagline = rtl ? 'منصتك SaaS جاهزة خلال 30 يوم عمل' : 'Your SaaS, live in 30 working days'
-  const host = (process.env.NEXT_PUBLIC_SITE_URL || 'https://etleq.com').replace(/^https?:\/\//, '').replace(/\/$/, '')
+  const host = new URL(siteUrl()).host
 
   const text = `${title}${subtitle}${brand}${tagline}${host}Etleq0123456789`
   // Arabic must use exactly ONE font: with several fonts, satori's fallback resolver crashes on

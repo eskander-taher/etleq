@@ -5,27 +5,83 @@
  * Outside production both are dry runs that only log.
  */
 
+import { siteUrl } from './site-url'
+
 const isProduction = () => process.env.SITE_ENV === 'production'
+
+/** Public path of the key file (served by src/app/indexnow-key.txt/route.ts). */
+export const INDEXNOW_KEY_PATH = '/indexnow-key.txt'
+
+/** IndexNow keys: 8–128 characters of a-z, A-Z, 0-9 and dashes. */
+export function indexNowKey(): string | null {
+  const key = process.env.INDEXNOW_KEY?.trim()
+  return key && /^[a-zA-Z0-9-]{8,128}$/.test(key) ? key : null
+}
+
+export interface IndexNowPayload {
+  host: string
+  key: string
+  keyLocation: string
+  urlList: string[]
+}
+
+/** Request body for api.indexnow.org. Only URLs on the canonical host are sent (IndexNow rejects others). */
+export function buildIndexNowPayload(urls: string[], key: string, base = siteUrl()): IndexNowPayload | null {
+  const host = new URL(base).host
+  const urlList = Array.from(new Set(urls.filter(Boolean))).filter((u) => {
+    try {
+      return new URL(u).host === host
+    } catch {
+      return false
+    }
+  })
+  if (!urlList.length) return null
+  return { host, key, keyLocation: `${base}${INDEXNOW_KEY_PATH}`, urlList }
+}
 
 export async function pingIndexNow(urls: string[]): Promise<void> {
   const list = Array.from(new Set(urls.filter(Boolean)))
   if (!list.length) return
-  const key = process.env.INDEXNOW_KEY
+  const key = indexNowKey()
   if (!isProduction() || !key) {
-    console.log(`[indexnow] dry run (${!key ? 'no INDEXNOW_KEY' : `SITE_ENV=${process.env.SITE_ENV || 'development'}`}):`, list.join(', '))
+    const why = !key
+      ? process.env.INDEXNOW_KEY
+        ? 'invalid INDEXNOW_KEY (8-128 chars, a-z A-Z 0-9 -)'
+        : 'no INDEXNOW_KEY'
+      : `SITE_ENV=${process.env.SITE_ENV || 'development'}`
+    console.log(`[indexnow] dry run (${why}):`, list.join(', '))
+    return
+  }
+  const payload = buildIndexNowPayload(list, key)
+  if (!payload) {
+    console.warn(`[indexnow] skipped: no URL on ${siteUrl()} in`, list.join(', '))
     return
   }
   try {
-    const host = new URL(list[0]).host
     const res = await fetch('https://api.indexnow.org/indexnow', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify({ host, key, keyLocation: `https://${host}/${key}.txt`, urlList: list }),
+      body: JSON.stringify(payload),
       signal: AbortSignal.timeout(5000),
     })
-    if (!res.ok && res.status !== 202) console.warn(`[indexnow] HTTP ${res.status} for ${list.length} URL(s)`)
+    if (res.ok) console.log(`[indexnow] HTTP ${res.status} for ${payload.urlList.length} URL(s)`)
+    else console.warn(`[indexnow] HTTP ${res.status} for ${payload.urlList.length} URL(s)`)
   } catch (error) {
     console.warn('[indexnow] ping failed:', (error as Error).message)
+  }
+}
+
+/**
+ * Run a ping after the response is sent. On Vercel a bare `void promise` can be cut off
+ * when the function returns, so it goes through `after()`; outside a request (seed and
+ * scripts) it just runs.
+ */
+export async function runAfterResponse(task: () => Promise<void>): Promise<void> {
+  try {
+    const { after } = await import('next/server')
+    after(task)
+  } catch {
+    await task()
   }
 }
 
