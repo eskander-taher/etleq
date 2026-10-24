@@ -2,7 +2,7 @@ import { dedupeProblems, evidenceProblems, type GateProblem } from '@/hooks/gate
 import { PUBLIC_LOCALES } from '@/hooks/paths'
 import { computeRetainUntil, DECISIONS, DEFAULT_APPLICATIONS_MONTHS, DEFAULT_LEADS_MONTHS } from '@/hooks/retention'
 import { draftSlug, isDraftSlug, slugify, uniqueSlug } from '@/hooks/slug'
-import { notifyGoogleIndexing, pingIndexNow } from '@/lib/indexnow'
+import { notifyGoogleIndexing, pingIndexNow, runAfterResponse } from '@/lib/indexnow'
 import { revalidateDoc, revalidateGlobal } from '@/lib/revalidate'
 
 import type { Document } from 'mongodb'
@@ -61,18 +61,25 @@ export async function afterChange(config: CollectionConfig, doc: Doc, original: 
   // A draft save of a document that was never live changes nothing public.
   if (doc._status === 'draft' && original?._status !== 'published') return
   const { liveUrls, removedUrls } = revalidateDoc(config.slug, doc, original)
-  void pingIndexNow([...liveUrls, ...removedUrls])
-  if (config.slug === 'jobs') {
-    for (const url of liveUrls) void notifyGoogleIndexing(url, doc.status === 'closed' ? 'URL_DELETED' : 'URL_UPDATED')
-    for (const url of removedUrls) void notifyGoogleIndexing(url, 'URL_DELETED')
-  }
+  await notifySearchEngines(config.slug, liveUrls, removedUrls, doc.status === 'closed')
 }
 
-export function afterDelete(config: CollectionConfig, doc: Doc) {
+export async function afterDelete(config: CollectionConfig, doc: Doc) {
   if (!config.hooks?.revalidate) return
   const { removedUrls } = revalidateDoc(config.slug, null, doc)
-  void pingIndexNow(removedUrls)
-  if (config.slug === 'jobs') for (const url of removedUrls) void notifyGoogleIndexing(url, 'URL_DELETED')
+  await notifySearchEngines(config.slug, [], removedUrls)
+}
+
+/** IndexNow for every changed public URL; Google Indexing for jobs. Runs after the admin response. */
+function notifySearchEngines(collection: string, liveUrls: string[], removedUrls: string[], jobClosed = false) {
+  return runAfterResponse(async () => {
+    const pings = [pingIndexNow([...liveUrls, ...removedUrls])]
+    if (collection === 'jobs') {
+      for (const url of liveUrls) pings.push(notifyGoogleIndexing(url, jobClosed ? 'URL_DELETED' : 'URL_UPDATED'))
+      for (const url of removedUrls) pings.push(notifyGoogleIndexing(url, 'URL_DELETED'))
+    }
+    await Promise.all(pings)
+  })
 }
 
 export function afterGlobalChange(config: GlobalConfig, ctx: WriteContext = {}) {

@@ -736,6 +736,46 @@ const Guides = content({
         : [field],
     ),
     {
+      name: 'costRanges',
+      type: 'array',
+      label: 'Market price ranges',
+      rowLabel: 'range',
+      showIf: { field: 'type', equals: 'cost' },
+      description:
+        'One row per way to build it (agency, freelancer, no-code…). Each row needs its source link and the date you checked it, or it is not shown. Never put an Etleq price here.',
+      fields: [
+        { name: 'option', type: 'text', localized: true, label: 'Who builds it', placeholder: 'e.g. Local agency' },
+        { name: 'low', type: 'number', min: 0, label: 'From' },
+        { name: 'high', type: 'number', min: 0, label: 'To', description: 'Leave empty for "from" only.' },
+        {
+          name: 'currency',
+          type: 'select',
+          defaultValue: 'SAR',
+          label: 'Currency',
+          options: [
+            { label: 'SAR', value: 'SAR' },
+            { label: 'USD', value: 'USD' },
+          ],
+        },
+        { name: 'note', type: 'text', localized: true, label: 'Note', placeholder: 'e.g. MVP, 3–4 months' },
+        { name: 'sourceName', type: 'text', label: 'Source name', placeholder: 'e.g. Clutch' },
+        { name: 'sourceUrl', type: 'text', validate: HTTP_URL, label: 'Source link' },
+        { name: 'checkedAt', type: 'date', label: 'Checked on' },
+      ],
+    },
+    {
+      name: 'costFactors',
+      type: 'array',
+      label: 'What changes the cost',
+      rowLabel: 'factor',
+      showIf: { field: 'type', equals: 'cost' },
+      description: 'The things that push the price up or down, in plain words.',
+      fields: [
+        { name: 'factor', type: 'text', localized: true, label: 'Factor', placeholder: 'e.g. Online payments' },
+        { name: 'effect', type: 'textarea', localized: true, label: 'How it changes the cost' },
+      ],
+    },
+    {
       name: 'comparisonTable',
       type: 'group',
       label: 'Comparison table',

@@ -4,6 +4,7 @@ import type { NextConfig } from 'next'
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
 const isStaging = process.env.SITE_ENV === 'staging'
+const indexNowKey = process.env.INDEXNOW_KEY?.trim()
 
 const nextConfig: NextConfig = {
   trailingSlash: false,
@@ -11,6 +12,12 @@ const nextConfig: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [{ protocol: 'https', hostname: '**' }],
+  },
+  // Also serve the IndexNow key at the conventional /<key>.txt (pings point to /indexnow-key.txt).
+  async rewrites() {
+    return indexNowKey && /^[a-zA-Z0-9-]{8,128}$/.test(indexNowKey)
+      ? [{ source: `/${indexNowKey}.txt`, destination: '/indexnow-key.txt' }]
+      : []
   },
   async headers() {
     const base = [

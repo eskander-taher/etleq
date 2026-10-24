@@ -1,5 +1,7 @@
 // Shared helpers for the content templates (workstream D). Pure functions only, so they are unit-testable.
 
+import { formatMoney, formatNumber } from '@/lib/format'
+
 export type Loc = 'ar' | 'en'
 
 type WithId = { id: string | number }
@@ -182,3 +184,42 @@ export const scorecardFrom = (path: string) => `/scorecard?from=${encodeURICompo
 
 /** Scorecard link with the model question answered in advance. */
 export const scorecardForModel = (slug: string) => `/scorecard?model=${encodeURIComponent(slug)}`
+
+// ---------- Cost guide ranges ----------
+
+export type CostRange = {
+  option?: string | null
+  low?: number | null
+  high?: number | null
+  currency?: string | null
+  note?: string | null
+  sourceName?: string | null
+  sourceUrl?: string | null
+  checkedAt?: string | null
+}
+export type SourcedRange = CostRange & { option: string; sourceUrl: string; checkedAt: string }
+
+const isAmount = (n: unknown): n is number => typeof n === 'number' && Number.isFinite(n) && n >= 0
+
+/** Rows safe to show: a label, at least one figure, an http(s) source link and a checked date (brief §3.3). */
+export function sourcedRanges(rows: CostRange[] | null | undefined): SourcedRange[] {
+  return (rows ?? []).filter(
+    (r): r is SourcedRange =>
+      !!r?.option?.trim() &&
+      (isAmount(r.low) || isAmount(r.high)) &&
+      /^https?:\/\//.test(r.sourceUrl ?? '') &&
+      !!r.checkedAt,
+  )
+}
+
+/** "35,000–65,000 ر.س" / "SAR 35,000–65,000", or one figure when only one end is given. */
+export function formatRange(r: CostRange, locale: Loc): string {
+  const currency = r.currency || 'SAR'
+  const low = isAmount(r.low) ? r.low : null
+  const high = isAmount(r.high) && r.high !== low ? r.high : null
+  if (low === null || high === null) return formatMoney((low ?? high) as number, currency, locale)
+  const [a, b] = [formatNumber(Math.min(low, high), locale), formatNumber(Math.max(low, high), locale)]
+  if (currency === 'USD') return locale === 'ar' ? `${a}–${b} دولار` : `$${a}–$${b}`
+  if (currency === 'SAR') return locale === 'ar' ? `${a}–${b} ر.س` : `SAR ${a}–${b}`
+  return `${a}–${b} ${currency}`
+}

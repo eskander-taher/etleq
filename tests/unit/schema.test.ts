@@ -18,7 +18,7 @@ import {
 } from '@/lib/schema'
 import { serializeJsonLd } from '@/components/seo/JsonLd'
 
-const SITE = 'https://etleq.com'
+const SITE = 'https://www.etleq.com'
 type Obj = Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
 
 const lexical = (text: string) => ({

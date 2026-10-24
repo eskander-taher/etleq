@@ -10,6 +10,7 @@ import { articleNode, faqPageNode, graph, personNode } from '@/lib/schema'
 import type { Faq, Post } from '@/cms/content-types'
 import { AutoBdi } from './Bdi'
 import { ComparisonTable } from './ComparisonTable'
+import { CostFactors, CostRangesTable } from './CostRanges'
 import { CtaPanel } from './CtaPanel'
 import { EmptyCtas } from './EmptyCtas'
 import { InlineCta } from './InlineCta'
@@ -30,7 +31,7 @@ import {
   SourcesList,
   authorList,
 } from './parts'
-import { collectHeadings, mediaOf, publicRelations, scorecardFrom, type Loc } from './lib'
+import { collectHeadings, mediaOf, publicRelations, scorecardFrom, sourcedRanges, type Loc } from './lib'
 
 const BASE: Record<GuideType, '/cost' | '/compare'> = { cost: '/cost', comparison: '/compare' }
 
@@ -67,8 +68,12 @@ export async function GuideView({ type, locale, slug }: { type: GuideType; local
   const refCode = `${type === 'cost' ? 'C' : 'V'}-${slug}`
   const title = g.title ?? ''
   const waMessage = t(`${ns}.whatsappMessage`, { title })
-  // Etleq's own "from" price: the core tier in the offer global (never hard-coded).
-  const etleqFrom = offer?.tiers?.find((x) => x.key === 'core')?.priceFrom ?? null
+  const isCost = type === 'cost'
+  // Comparisons may show Etleq's "from" price (core tier of the offer global). Cost guides never do:
+  // they cite market ranges only and send readers to the scorecard.
+  const etleqFrom = isCost ? null : (offer?.tiers?.find((x) => x.key === 'core')?.priceFrom ?? null)
+  const ranges = isCost ? sourcedRanges(g.costRanges) : []
+  const factors = isCost ? (g.costFactors ?? []).filter((f) => f?.factor?.trim()) : []
   const ctaCommon = { href: scorecardHref, ctaId: `${type}_guide_scorecard`, whatsappMessage: waMessage, refCode }
   const pageUrl = absoluteUrl(locale, path)
   const authors = authorList(g.authors, locale)
@@ -120,7 +125,7 @@ export async function GuideView({ type, locale, slug }: { type: GuideType; local
           label={t(`${ns}.ctaLabel`)}
           placement={`${type}_guide_hero`}
           className="mt-4"
-          offerLink
+          offerLink={!isCost}
           body={
             typeof etleqFrom === 'number' && etleqFrom > 0 ? (
               <p className="text-ink-950">
@@ -137,6 +142,18 @@ export async function GuideView({ type, locale, slug }: { type: GuideType; local
           reviewer={reviewer ? { name: reviewer.name, slug: reviewer.slug } : null}
         />
       </PageHero>
+
+      {ranges.length > 0 && (
+        <ContentSection id="ranges" title={t('cost.rangesTitle')}>
+          <CostRangesTable rows={ranges} locale={locale} />
+        </ContentSection>
+      )}
+
+      {factors.length > 0 && (
+        <ContentSection id="cost-factors" title={t('cost.factorsTitle')} tone="alt">
+          <CostFactors items={factors} locale={locale} />
+        </ContentSection>
+      )}
 
       {!!g.keyTakeaways?.length && (
         <ContentSection>
@@ -159,7 +176,7 @@ export async function GuideView({ type, locale, slug }: { type: GuideType; local
             label={t(`${ns}.ctaLabel`)}
             placement={`${type}_guide_table`}
             className="mt-8"
-            offerLink
+            offerLink={!isCost}
           />
         </ContentSection>
       )}

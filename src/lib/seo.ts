@@ -10,6 +10,16 @@ export const DEFAULT_TITLE_TEMPLATE: Record<SeoLocale, string> = {
 
 export const SITE_NAME: Record<SeoLocale, string> = { ar: 'اطلق', en: 'Etleq' }
 
+/**
+ * Code default for the one-line description (home meta description, Organization
+ * description, llms.txt). SeoDefaults.oneLiner / defaultDescription override it.
+ * The offer model is not decided, so it names no price model.
+ */
+export const DEFAULT_ONE_LINER: Record<SeoLocale, string> = {
+  ar: 'اطلق استوديو يبني منصّتك البرمجية بالعربية ويطلقها خلال 30 يوم عمل، مع الدفع عبر مدى والاستضافة.',
+  en: 'Etleq is a studio that builds your software platform in Arabic and launches it in 30 working days, with mada payments and hosting.',
+}
+
 /** Absolute URL for a locale-less path ('/models/x') in the given locale. */
 export function absoluteUrl(locale: SeoLocale, path = '/'): string {
   const p = path.startsWith('/') ? path : `/${path}`

@@ -57,4 +57,4 @@ export function sectionIndexPath(collection: string, doc?: DocLike | null): stri
   return section ? `/${section}` : null
 }
 
-export const siteUrl = () => (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '')
+export { siteUrl } from '@/lib/site-url'

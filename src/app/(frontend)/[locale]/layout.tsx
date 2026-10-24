@@ -1,10 +1,14 @@
 import type { ReactNode } from 'react'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
 import { Alexandria, IBM_Plex_Sans, IBM_Plex_Sans_Arabic, IBM_Plex_Mono } from 'next/font/google'
 import { routing, dirOf, type Locale } from '@/i18n/routing'
 import { SiteShell } from '@/components/layout/SiteShell'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { siteGraph } from '@/lib/schema'
+import { siteUrl } from '@/lib/site-url'
 import '../globals.css'
 
 const alexandria = Alexandria({ subsets: ['arabic', 'latin'], variable: '--font-alexandria', display: 'swap' })
@@ -29,6 +33,11 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
+// Relative metadata URLs (icons, OG) resolve against the canonical host.
+export function generateMetadata(): Metadata {
+  return { metadataBase: new URL(siteUrl()) }
+}
+
 export default async function LocaleLayout({
   children,
   params,
@@ -47,6 +56,7 @@ export default async function LocaleLayout({
       className={`${alexandria.variable} ${plexArabic.variable} ${plexSans.variable} ${plexMono.variable}`}
     >
       <body className="flex min-h-dvh flex-col bg-sand-50 text-ink-950 antialiased">
+        <JsonLd data={siteGraph(locale as Locale)} />
         <NextIntlClientProvider>
           <SiteShell locale={locale as Locale}>{children}</SiteShell>
         </NextIntlClientProvider>

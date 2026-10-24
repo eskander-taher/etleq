@@ -1391,6 +1391,32 @@ export interface Guide {
   faqs?: (string | Faq)[] | null
   relatedPosts?: (string | Post)[] | null
   /**
+   * Cost guides: market ranges, each with its source link and checked date.
+   */
+  costRanges?:
+    | {
+        option?: string | null
+        low?: number | null
+        high?: number | null
+        currency?: ('SAR' | 'USD') | null
+        note?: string | null
+        sourceName?: string | null
+        sourceUrl?: string | null
+        checkedAt?: string | null
+        id?: string | null
+      }[]
+    | null
+  /**
+   * Cost guides: what pushes the price up or down.
+   */
+  costFactors?:
+    | {
+        factor?: string | null
+        effect?: string | null
+        id?: string | null
+      }[]
+    | null
+  /**
    * Tick a language to publish it. Its required fields become mandatory; unticked languages return 404.
    */
   translated?: {
@@ -2677,6 +2703,26 @@ export interface GuidesSelect<T extends boolean = true> {
         en?: T
       }
   isSample?: T
+  costRanges?:
+    | T
+    | {
+        option?: T
+        low?: T
+        high?: T
+        currency?: T
+        note?: T
+        sourceName?: T
+        sourceUrl?: T
+        checkedAt?: T
+        id?: T
+      }
+  costFactors?:
+    | T
+    | {
+        factor?: T
+        effect?: T
+        id?: T
+      }
   comparisonTable?:
     | T
     | {

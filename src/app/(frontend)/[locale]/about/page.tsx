@@ -77,6 +77,7 @@ export default async function AboutPage({ params }: Props) {
     aboutPageNode({ locale, name: t('about.metaTitle'), description: t('about.metaDescription') }),
     organizationNode({
       full: true,
+      locale,
       settings: { ...data.settings, whatsappNumber: data.settings.whatsappNumber ?? undefined },
       seo: seo as { sameAs?: { url?: string | null }[] | null; oneLiner?: string | null } | null,
       founders: founders.map((f) => ({

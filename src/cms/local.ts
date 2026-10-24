@@ -315,7 +315,7 @@ export const cms = {
     await db.collection(config.slug).deleteOne({ _id: { $in: idCandidates(original.id) } } as Document)
     if (config.upload)
       await db.collection(FILES_COLLECTION).deleteOne({ _id: { $in: idCandidates(original.id) } } as Document)
-    afterDelete(config, original)
+    await afterDelete(config, original)
   },
 
   async findGlobal<S extends GlobalSlug>(args: {
