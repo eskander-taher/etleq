@@ -12,17 +12,18 @@
   --plate-h: clamp(260px, 46svh, 480px);
   --plate-w: calc(var(--plate-h) * 0.56);
   --gap: clamp(12px, 2.5svh, 30px);
+  /* How far flagged layers slide sideways; phones get less so nothing reaches the screen edge. */
+  --slide-scan: 44px;
+  --slide-out: 64px;
   position: relative;
   height: 360svh;
-  /* The landing stamp starts oversized; clip (unlike hidden) keeps the sticky stage working. */
-  overflow-x: clip;
 }
 .scan-sticky {
   position: sticky;
   top: var(--header);
   height: calc(100svh - var(--header));
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
   gap: 48px;
 }
@@ -195,15 +196,16 @@ html[lang='ar'] .scan-caption h2 {
   width: var(--plate-w);
   height: var(--plate-h);
   transform-style: preserve-3d;
-  transform: rotateX(calc(var(--tilt) * 58deg)) rotateZ(calc(var(--tilt) * -38deg))
-    scale(calc(1 - var(--collapse) * 0.12));
+  transform: translateY(calc(var(--explode) * (1 - var(--gather)) * -5.5%)) rotateX(calc(var(--tilt) * 58deg))
+    rotateZ(calc(var(--tilt) * -38deg)) scale(calc(1 - var(--collapse) * 0.12));
   opacity: calc(1 - var(--collapse));
-  /* Never will-change opacity here: it flattens the 3D stack into one plane. */
+  /* Optical centring: perspective makes the spread stack sit low, so lift it while spread.
+     Never will-change opacity here: it flattens the 3D stack into one plane. */
   will-change: transform;
 }
 [dir='rtl'] .scan-stack {
-  transform: rotateX(calc(var(--tilt) * 58deg)) rotateZ(calc(var(--tilt) * 38deg))
-    scale(calc(1 - var(--collapse) * 0.12));
+  transform: translateY(calc(var(--explode) * (1 - var(--gather)) * -5.5%)) rotateX(calc(var(--tilt) * 58deg))
+    rotateZ(calc(var(--tilt) * 38deg)) scale(calc(1 - var(--collapse) * 0.12));
 }
 .scan-layer {
   --s: clamp(0, calc(var(--beam) * 15 - var(--i)), 1);
@@ -211,7 +213,10 @@ html[lang='ar'] .scan-caption h2 {
     (7 - var(--i)) * (0.4px + var(--gap) * var(--explode) * (1 - var(--gather) * (1 - var(--risk)))) + var(--risk) *
       var(--gather) * 12px
   );
-  --pop: calc(var(--risk) * (var(--s) * var(--explode) * 48px + var(--gather) * 72px));
+  /* Flagged layers slide out to opposite sides (warning one way, critical the other) so the stack stays balanced. */
+  --pop: calc(
+    var(--risk) * var(--side, 1) * (var(--s) * var(--explode) * var(--slide-scan) + var(--gather) * var(--slide-out))
+  );
   --tint: var(--pass);
   position: absolute;
   inset: 0;
@@ -574,6 +579,8 @@ html[lang='ar'] .scan-stamp {
     --header: 64px;
     --plate-h: clamp(190px, 30svh, 300px);
     --gap: clamp(12px, 2.7svh, 24px);
+    --slide-scan: 22px;
+    --slide-out: 26px;
     height: 340svh;
   }
   .scan-captions {
@@ -634,12 +641,27 @@ html[lang='ar'] .scan-stamp {
 }
 
 /* Desktop with room: show the live ledger of all 15 layers. */
-@media (min-width: 1024px) and (min-height: 740px) {
+@media (min-width: 1024px) and (min-height: 640px) {
+  /* Two columns (01-08, 09-15) keep the whole copy column inside a laptop screen. */
   .scan-ledger {
-    display: block;
+    display: grid;
+    grid-template-rows: repeat(8, auto);
+    grid-auto-flow: column;
+    column-gap: 28px;
+    max-width: none;
+    font-size: 13px;
+  }
+  .scan-ledger li {
+    min-width: 0;
+    padding-block: 4px;
+  }
+  .scan-ledger li > span:nth-child(2) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .scan-captions {
-    min-height: 168px;
+    min-height: 196px;
   }
   /* The ledger already names the layer being checked. */
   .scan-layer-name {

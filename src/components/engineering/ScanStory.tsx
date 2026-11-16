@@ -252,7 +252,7 @@ export function ScanStory({ locale }: { locale: string }) {
     [t('We take it apart.', 'نفككه طبقة طبقة.'), t('Every app is 15 layers deep.', 'كل تطبيق مكوّن من 15 طبقة.')],
     [t('We test every layer.', 'نفحص كل طبقة.'), ''],
     [
-      t('13 pass. 2 need work.', '13 ناجحة. 2 تحتاج إصلاحًا.'),
+      t('13 pass. 2 need work.', '13 ناجحة. 2 تحتاج إصلاحًا.'),
       t(
         'Most of your app is solid. Two layers would hurt real users.',
         'معظم تطبيقك سليم، لكن طبقتين قد تضران عملاءك.',
@@ -323,7 +323,7 @@ export function ScanStory({ locale }: { locale: string }) {
               <div
                 key={i}
                 className="scan-layer"
-                style={{ '--i': i, '--risk': risk[i] ? 1 : 0 } as CSSProperties}
+                style={{ '--i': i, '--risk': risk[i] ? 1 : 0, '--side': risk[i] === 'warn' ? -1 : 1 } as CSSProperties}
                 data-risk={risk[i] ?? 'pass'}
               >
                 <span className="scan-layer-num">{String(i + 1).padStart(2, '0')}</span>
