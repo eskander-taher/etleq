@@ -12,6 +12,18 @@ import { WhatsAppButton } from '@/components/ui/whatsapp-button'
 import { pick, services } from './content'
 import { Actions } from './interactive'
 
+const platformNames: Record<string, string> = {
+  instagram: 'Instagram',
+  tiktok: 'TikTok',
+  youtube: 'YouTube',
+  linkedin: 'LinkedIn',
+  x: 'X',
+  twitter: 'X',
+  facebook: 'Facebook',
+  snapchat: 'Snapchat',
+  github: 'GitHub',
+}
+
 export async function EngineeringShell({ locale, children }: { locale: Locale; children: ReactNode }) {
   const t = (en: string, ar: string) => pick(locale, [en, ar])
   const { settings, footer } = await getShellData(locale)
@@ -79,6 +91,7 @@ export async function EngineeringShell({ locale, children }: { locale: Locale; c
                 )}
               </div>
               <nav aria-label={t('Services', 'الخدمات')}>
+                <div className="eng-footer-heading">{t('Services', 'الخدمات')}</div>
                 {services.map((s) => (
                   <Link key={s.slug} href={`/${s.slug}`}>
                     {pick(locale, s.name)}
@@ -86,6 +99,7 @@ export async function EngineeringShell({ locale, children }: { locale: Locale; c
                 ))}
               </nav>
               <nav aria-label={t('Company', 'الشركة')}>
+                <div className="eng-footer-heading">{t('Company', 'الشركة')}</div>
                 {[
                   ['method', 'Method', 'المنهجية'],
                   ['pricing', 'Pricing', 'الأسعار'],
@@ -101,7 +115,7 @@ export async function EngineeringShell({ locale, children }: { locale: Locale; c
                 ))}
                 {footer.social.map((s) => (
                   <a key={s.url} href={s.url} rel="noopener noreferrer" target="_blank">
-                    {s.platform}
+                    {platformNames[s.platform.toLowerCase()] ?? s.platform}
                   </a>
                 ))}
               </nav>

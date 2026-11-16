@@ -16,11 +16,8 @@ export function Actions({ locale, compact = false }: { locale: string; compact?:
           locale,
           compact
             ? ['Audit · SAR 750', 'الفحص · 750 ريال']
-            : ['Get the audit — SAR 750', 'اطلب الفحص التقني — 750 ريال'],
+            : ['Get the audit · SAR 750', 'اطلب الفحص التقني · 750 ريال'],
         )}
-        <span aria-hidden="true" className="eng-arrow">
-          ↗
-        </span>
       </Link>
       <Link
         className="eng-button eng-secondary"

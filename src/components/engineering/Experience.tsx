@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useId, useRef, useState } from 'react'
-import { ArrowUpRight, X } from 'lucide-react'
+import { useId, useRef, useState } from 'react'
+import { X } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import { pick } from './content'
 import { AuditIntake } from './AuditIntake'
@@ -31,13 +31,11 @@ export function HomeActions({ locale, turnstileSiteKey }: { locale: 'ar' | 'en';
               trackEvent('cta_click', { location: 'home', destination: 'audit_dialog' })
             }}
           >
-            {t('Get the audit — SAR 750', 'اطلب الفحص — 750 ريال')}
-            <ArrowUpRight size={19} className="eng-arrow" />
+            {t('Get the audit · SAR 750', 'اطلب الفحص · 750 ريال')}
           </button>
         ) : (
           <Link href="/audit#start" className="eng-button eng-primary-action">
-            {t('Get the audit — SAR 750', 'اطلب الفحص — 750 ريال')}
-            <ArrowUpRight size={19} className="eng-arrow" />
+            {t('Get the audit · SAR 750', 'اطلب الفحص · 750 ريال')}
           </Link>
         )}
         <Link
@@ -66,7 +64,7 @@ export function HomeActions({ locale, turnstileSiteKey }: { locale: 'ar' | 'en';
         }}
       >
         <div className="audit-dialog-top">
-          <span className="audit-overline">{t('YOUR NEXT STEP', 'خطوتك التالية')}</span>
+          <span className="audit-overline">{t('Your next step', 'خطوتك التالية')}</span>
           <button
             type="button"
             className="audit-dialog-close"
@@ -90,33 +88,4 @@ export function HomeActions({ locale, turnstileSiteKey }: { locale: 'ar' | 'en';
       </dialog>
     </>
   )
-}
-
-export function HomeMotion() {
-  useEffect(() => {
-    const root = document.querySelector('.eng-home')
-    if (!root || !('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-      return
-    const elements = root.querySelectorAll('.eng-section, .eng-final')
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('eng-revealed')
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      { threshold: 0.08 },
-    )
-    elements.forEach((el) => {
-      el.classList.add('eng-reveal')
-      observer.observe(el)
-    })
-    return () => {
-      observer.disconnect()
-      elements.forEach((el) => el.classList.remove('eng-reveal', 'eng-revealed'))
-    }
-  }, [])
-  return null
 }

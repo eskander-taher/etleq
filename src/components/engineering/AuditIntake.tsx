@@ -315,7 +315,7 @@ export function AuditIntake({ locale, turnstileSiteKey }: { locale: 'ar' | 'en';
         </p>
       )}
       <button className="eng-button" disabled={busy || !ready} type="submit">
-        {busy ? t('Sending…', 'جارٍ الإرسال…') : t('Request the audit — SAR 750', 'اطلب الفحص — 750 ريال')}
+        {busy ? t('Sending…', 'جارٍ الإرسال…') : t('Request the audit · SAR 750', 'اطلب الفحص · 750 ريال')}
       </button>
       <p className="eng-micro">
         {t(

@@ -12,7 +12,7 @@ import { env } from '@/lib/env'
 import { pick, services, layers, rules, faqs, type Copy } from './content'
 import { Actions, PricingTable, PageEvent } from './interactive'
 import { AuditIntake } from './AuditIntake'
-import { HomeActions, HomeMotion } from './Experience'
+import { HomeActions } from './Experience'
 import { AuditStory } from './AuditStory'
 
 const text = (locale: string) => (en: string, ar: string) => pick(locale, [en, ar])
@@ -30,10 +30,12 @@ export function Scorecard({ locale, full = false }: { locale: string; full?: boo
   return (
     <div className="eng-score">
       <div className="eng-score-title">
-        {t('EXAMPLE REPORT · ILLUSTRATIVE, NOT CLIENT RESULTS', 'نموذج توضيحي · ليس نتائج عميل')}
+        <span>{t('EXAMPLE REPORT', 'نموذج تقرير')}</span>
+        <span>{t('Illustrative, not client results', 'توضيحي، ليس نتائج عميل')}</span>
       </div>
       {(full ? layers : layers.slice(0, 5)).map((l, i) => (
         <div className="eng-score-row" key={i}>
+          <span className="eng-score-num">{String(i + 1).padStart(2, '0')}</span>
           <span>{pick(locale, l).split(' · ')[0]}</span>
           <span className={`eng-grade ${i === 3 ? 'critical' : i === 2 ? 'warn' : ''}`}>
             {i === 3 ? t('Critical', 'حرج') : i === 2 ? t('Warning', 'تحذير') : t('Pass', 'ناجح')}
@@ -51,17 +53,34 @@ export function Final({ locale }: { locale: string }) {
     </section>
   )
 }
+const steps: [string, string, string, string][] = [
+  [
+    'Share your app',
+    'شارك تطبيقك',
+    'Tell us what it does. We agree the scope and secure access before the review.',
+    'أخبرنا بما يفعله. نتفق على النطاق والوصول الآمن قبل الفحص.',
+  ],
+  [
+    'Get the facts',
+    'اعرف النتيجة',
+    'Receive a bilingual report with what passes, what is risky and what must be fixed.',
+    'استلم تقريرًا باللغتين يوضح ما ينجح، وما يحتاج تحسينًا، وما يجب إصلاحه.',
+  ],
+  [
+    'Choose what happens next',
+    'اختر الخطوة التالية',
+    'Use the report with your team, or let us fix it in clearly scoped, fixed-price modules.',
+    'نفذ الخطة مع فريقك أو دعنا نصلحها بوحدات محددة النطاق والسعر.',
+  ],
+]
 export function Home({ locale }: { locale: Locale }) {
   const t = text(locale)
   return (
     <div className="eng-wrap eng-home">
-      <HomeMotion />
       <section className="eng-hero eng-hero-experience">
         <div>
-          <div className="eng-kicker">{t('ETLEQ / AUDITED AI ENGINEERING', 'اطلق / هندسة الذكاء الاصطناعي')}</div>
           <h1>
             {t('Built with AI.', 'بنيته بالذكاء الاصطناعي.')}
-            <br />
             <em>{t('Ready for real users?', 'هل هو جاهز لعملائك؟')}</em>
           </h1>
           <p className="eng-lead">
@@ -72,14 +91,12 @@ export function Home({ locale }: { locale: Locale }) {
           </p>
           <HomeActions locale={locale} turnstileSiteKey={env.turnstileSiteKey || null} />
           <div className="hero-delivery">
-            <span>✓ {t('15-layer report', 'تقرير من 15 طبقة')}</span>
-            <span>✓ {t('Fix plan + fixed quote', 'خطة إصلاح + سعر ثابت')}</span>
+            <span>{t('15-layer report', 'تقرير من 15 طبقة')}</span>
+            <span>{t('Fix plan and fixed quote', 'خطة إصلاح وسعر ثابت')}</span>
+            <span>{t('No obligation to build with us', 'دون إلزام بالتنفيذ معنا')}</span>
           </div>
           <p className="eng-micro">
-            {t(
-              'One time · SAR 862.50 incl. VAT · No obligation to build with us.',
-              'مرة واحدة · 862.50 ريال شامل الضريبة · دون إلزام بالتنفيذ معنا.',
-            )}
+            {t('One-time fee. SAR 862.50 including VAT.', 'رسوم لمرة واحدة. 862.50 ريال شامل الضريبة.')}
           </p>
         </div>
         <AuditStory locale={locale} />
@@ -93,44 +110,21 @@ export function Home({ locale }: { locale: Locale }) {
         <div className="eng-section-heading">
           <h2>{t('From uncertainty to a clear next step.', 'من الأسئلة إلى خطوة واضحة.')}</h2>
           <Link className="eng-text-link" href="/method">
-            {t('Our method ↗', 'منهجيتنا ←')}
+            {t('Our method', 'منهجيتنا')}
           </Link>
         </div>
-        <div className="eng-grid">
-          {[
-            [
-              '01',
-              'Share your app',
-              'شارك تطبيقك',
-              'Tell us what it does. We agree the scope and secure access before the review.',
-              'أخبرنا بما يفعله. نتفق على النطاق والوصول الآمن قبل الفحص.',
-            ],
-            [
-              '02',
-              'Get the facts',
-              'اعرف النتيجة',
-              'Receive a bilingual report with what passes, what is risky and what must be fixed.',
-              'استلم تقريرًا باللغتين يوضح ما ينجح، وما يحتاج تحسينًا، وما يجب إصلاحه.',
-            ],
-            [
-              '03',
-              'Choose what happens next',
-              'اختر الخطوة التالية',
-              'Use the report with your team, or let us fix it in clearly scoped, fixed-price modules.',
-              'نفذ الخطة مع فريقك أو دعنا نصلحها بوحدات محددة النطاق والسعر.',
-            ],
-          ].map(([n, en, ar, desc, descAr]) => (
-            <article className="eng-card" key={n}>
-              <span className="eng-card-num">{n}</span>
+        <ol className="eng-steps">
+          {steps.map(([en, ar, desc, descAr], i) => (
+            <li key={en}>
+              <span className="eng-step-num">{String(i + 1).padStart(2, '0')}</span>
               <h3>{t(en, ar)}</h3>
               <p>{t(desc, descAr)}</p>
-            </article>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
       <section className="eng-section eng-proof">
         <div>
-          <div className="eng-kicker">{t('NO GUESSWORK', 'نتائج قابلة للفحص')}</div>
           <h2>{t('A report you can act on.', 'تقرير تعرف بعده ماذا تفعل.')}</h2>
           <p>
             {t(
@@ -139,40 +133,56 @@ export function Home({ locale }: { locale: Locale }) {
             )}
           </p>
           <Link className="eng-text-link" href="/audit/sample">
-            {t('Explore the sample report ↗', 'اطلع على نموذج التقرير ←')}
+            {t('Read the sample report', 'اطلع على نموذج التقرير')}
           </Link>
         </div>
         <Scorecard locale={locale} />
       </section>
-      <section className="eng-section">
-        <div className="eng-section-heading">
-          <div>
-            <div className="eng-kicker">{t('NEED US TO BUILD IT?', 'تحتاج من ينفذ؟')}</div>
-            <h2>{t('One module. One fixed price.', 'وحدة واحدة. سعر ثابت.')}</h2>
-          </div>
-          <div className="eng-price-line">
-            <bdi>SAR 18,000</bdi>
-            <p className="eng-micro">{t('per 40-hour module · before VAT', 'لكل وحدة من 40 ساعة · قبل الضريبة')}</p>
-          </div>
+      <section className="eng-section eng-module">
+        <div>
+          <div className="eng-kicker">{t('Need us to build it?', 'تحتاج من ينفذ؟')}</div>
+          <h2>{t('One module. One fixed price.', 'وحدة واحدة. سعر ثابت.')}</h2>
+          <p>
+            {t(
+              'Senior engineers direct AI, show working software about every 10 hours, and hand over the code. Approve the next module or stop with what you own.',
+              'يوجه مهندسون ذوو خبرة الذكاء الاصطناعي، ويعرضون العمل كل 10 ساعات تقريبًا، ويسلمونك الكود. وافق على الوحدة التالية أو توقف واحتفظ بما تملك.',
+            )}
+          </p>
+          <Link className="eng-text-link" href="/services">
+            {t('See all services', 'استكشف الخدمات')}
+          </Link>
         </div>
-        <p>
-          {t(
-            'Senior engineers direct AI, show working software about every 10 hours, and hand over the code. Approve the next module or stop with what you own.',
-            'يوجه مهندسون ذوو خبرة الذكاء الاصطناعي، ويعرضون العمل كل 10 ساعات تقريبًا، ويسلمونك الكود. وافق على الوحدة التالية أو توقف واحتفظ بما تملك.',
-          )}
-        </p>
-        <Link className="eng-text-link" href="/services">
-          {t('Explore the services ↗', 'استكشف الخدمات ←')}
-        </Link>
+        <div className="eng-quote">
+          <div className="eng-quote-price">
+            <bdi>{t('SAR 18,000', '18,000 ر.س')}</bdi>
+          </div>
+          <div className="eng-quote-note">{t('per module, before VAT', 'لكل وحدة، قبل الضريبة')}</div>
+          <dl>
+            <div>
+              <dt>{t('Engineering time', 'وقت التنفيذ')}</dt>
+              <dd>{t('40 hours', '40 ساعة')}</dd>
+            </div>
+            <div>
+              <dt>{t('Working demo', 'عرض للعمل')}</dt>
+              <dd>{t('About every 10 hours', 'كل 10 ساعات تقريبًا')}</dd>
+            </div>
+            <div>
+              <dt>{t('Code ownership', 'ملكية الكود')}</dt>
+              <dd>{t('Yours', 'لك')}</dd>
+            </div>
+          </dl>
+        </div>
       </section>
-      <section className="eng-section">
+      <section className="eng-section eng-faq-layout">
         <h2>{t('A few things you might be wondering.', 'أسئلة قبل أن تبدأ.')}</h2>
-        {[faqs[2], faqs[3], faqs[7]].map((f, i) => (
-          <details className="eng-faq" key={i}>
-            <summary>{pick(locale, f.q)}</summary>
-            <p>{pick(locale, f.a)}</p>
-          </details>
-        ))}
+        <div>
+          {[faqs[2], faqs[3], faqs[7]].map((f, i) => (
+            <details className="eng-faq" key={i}>
+              <summary>{pick(locale, f.q)}</summary>
+              <p>{pick(locale, f.a)}</p>
+            </details>
+          ))}
+        </div>
       </section>
       <Final locale={locale} />
     </div>
@@ -241,7 +251,7 @@ export async function ServicePage({ locale, slug }: { locale: Locale; slug: stri
           </section>
           <section className="eng-section eng-detail-grid">
             <div>
-              <div className="eng-kicker">{t('START HERE', 'ابدأ هنا')}</div>
+              <div className="eng-kicker">{t('Start here', 'ابدأ هنا')}</div>
               <h2>{t('Request your production audit.', 'اطلب الفحص التقني.')}</h2>
               <p>
                 {t(
@@ -310,7 +320,6 @@ export async function SupportingPage({ locale, slug }: { locale: Locale; slug: s
   return (
     <div className="eng-wrap">
       <header className="eng-page-head">
-        <div className="eng-kicker">{t('ETLEQ / AI ENGINEERING', 'اطلق / هندسة الذكاء الاصطناعي')}</div>
         <h1>{title}</h1>
       </header>
       {slug === 'services' && (
@@ -318,11 +327,11 @@ export async function SupportingPage({ locale, slug }: { locale: Locale; slug: s
           {services.map((s) => (
             <Link className="eng-card" href={`/${s.slug}`} key={s.slug}>
               <span className="eng-card-num">{pick(locale, s.timeline)}</span>
-              <h2 style={{ fontSize: 24 }}>{pick(locale, s.name)}</h2>
+              <h2 style={{ fontSize: 24, marginBottom: 8 }}>{pick(locale, s.name)}</h2>
               <p>{pick(locale, s.description)}</p>
               <span className="eng-text-link">
                 {s.price ? `SAR ${s.price.toLocaleString('en')} · ` : ''}
-                {pick(locale, s.priceNote)} ↗
+                {pick(locale, s.priceNote)}
               </span>
             </Link>
           ))}
@@ -332,7 +341,7 @@ export async function SupportingPage({ locale, slug }: { locale: Locale; slug: s
         <>
           <section className="eng-section">
             <h2>{t('Audit in. Build in modules. Audit out.', 'فحص في البداية، بناء على مراحل، فحص في النهاية')}</h2>
-            <div className="eng-process">
+            <ol className="eng-process">
               {[
                 ['Your code', 'الكود'],
                 ['Entry audit', 'الفحص الأولي'],
@@ -341,11 +350,9 @@ export async function SupportingPage({ locale, slug }: { locale: Locale; slug: s
                 ['Exit audit', 'الفحص النهائي'],
                 ['Live', 'الإطلاق'],
               ].map((v, i) => (
-                <span key={i}>
-                  {i + 1}. {pick(locale, v as Copy)}
-                </span>
+                <li key={i}>{pick(locale, v as Copy)}</li>
               ))}
-            </div>
+            </ol>
             <p>
               {t(
                 'A failed layer returns to remediation and review. No release with unresolved critical findings.',
@@ -423,7 +430,7 @@ export async function SupportingPage({ locale, slug }: { locale: Locale; slug: s
               )}
             </p>
             <Link className="eng-text-link" href="/advisory">
-              {t('Or start with a free leadership session ↗', 'أو ابدأ بجلسة قيادة مجانية ←')}
+              {t('Or start with a free leadership session', 'أو ابدأ بجلسة قيادة مجانية')}
             </Link>
           </div>
           <Scorecard locale={locale} full />
@@ -466,11 +473,11 @@ export async function SupportingPage({ locale, slug }: { locale: Locale; slug: s
             )}
           </p>
           <Link className="eng-text-link" href="/method">
-            {t('Read the full checklist ↗', 'اطلع على القائمة الكاملة ←')}
+            {t('Read the full checklist', 'اطلع على القائمة الكاملة')}
           </Link>
           <br />
           <Link className="eng-text-link" href="/blog">
-            {t('Browse the journal ↗', 'تصفح المقالات ←')}
+            {t('Browse the journal', 'تصفح المقالات')}
           </Link>
         </section>
       )}
@@ -489,7 +496,7 @@ export async function SupportingPage({ locale, slug }: { locale: Locale; slug: s
                 )}
           </p>
           <Link className="eng-text-link" href="/contact">
-            {t('Contact Etleq ↗', 'تواصل مع اطلق ←')}
+            {t('Contact Etleq', 'تواصل مع اطلق')}
           </Link>
         </section>
       )}
