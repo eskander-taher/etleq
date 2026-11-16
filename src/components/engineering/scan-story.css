@@ -147,8 +147,8 @@ html[lang='ar'] .scan-caption h2 {
   align-items: center;
   gap: 12px;
   padding-block: 5px;
-  color: var(--fg-2);
-  opacity: calc(0.4 + var(--s) * 0.6);
+  /* Unchecked rows use the tertiary text colour (6:1); checked rows brighten. No opacity on text. */
+  color: color-mix(in srgb, var(--fg) calc(var(--s) * 100%), var(--fg-3));
 }
 .scan-ledger li[data-risk='warn'] {
   --tint: var(--warn);
@@ -291,6 +291,9 @@ html[lang='ar'] .scan-caption h2 {
   box-shadow: 0 0 46px 2px var(--tint);
   opacity: calc(var(--s) * var(--risk) * 0.65);
   will-change: opacity;
+}
+.scan-layer-num::after {
+  content: attr(data-num);
 }
 .scan-layer-num {
   position: absolute;

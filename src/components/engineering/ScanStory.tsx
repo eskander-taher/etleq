@@ -343,7 +343,7 @@ export function ScanStory({ locale }: { locale: string }) {
                 style={{ '--i': i, '--risk': risk[i] ? 1 : 0, '--side': risk[i] === 'warn' ? -1 : 1 } as CSSProperties}
                 data-risk={risk[i] ?? 'pass'}
               >
-                <span className="scan-layer-num">{String(i + 1).padStart(2, '0')}</span>
+                <span className="scan-layer-num" data-num={String(i + 1).padStart(2, '0')} />
                 {i === 0 && <AppFace locale={locale} />}
               </div>
             ))}

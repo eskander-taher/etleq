@@ -29,7 +29,9 @@ async function answerAll(page: Page, next: string, submit: string) {
     if (await radios.count()) {
       const key = (await radios.first().getAttribute('name')) || ''
       const best = BEST[key]
-      const target = best ? page.locator(`input[type="radio"][value="${best}"]`) : page.locator('input[type="radio"]').first()
+      const target = best
+        ? page.locator(`input[type="radio"][value="${best}"]`)
+        : page.locator('input[type="radio"]').first()
       const heading = await page.locator('main h2').first().textContent()
       // Click the label (mouse selection auto-advances).
       await (best ? page.locator('label', { has: target }) : page.locator('fieldset label').first()).click()
@@ -55,7 +57,15 @@ for (const [locale, prefix, t] of [
   ['ar', '', arMsgs],
   ['en', '/en', enMsgs],
 ] as const) {
-  test(`scorecard completes in ${locale} and reaches tier ready`, async ({ page, baseURL }) => {
+  // The engineering redesign retired the scorecard funnel: /scorecard now redirects to the audit offer
+  // (next.config.ts, docs/engineering-redesign.md). Keep the flow test for if the scorecard returns.
+  test(`retired scorecard redirects to the audit in ${locale}`, async ({ page }) => {
+    await page.goto(`${prefix}/scorecard`)
+    await expect(page).toHaveURL(new RegExp(`${prefix}/audit$`))
+    await expect(page.locator('html')).toHaveAttribute('lang', locale)
+  })
+
+  test.skip(`scorecard completes in ${locale} and reaches tier ready`, async ({ page, baseURL }) => {
     test.slow()
     await setConsent(page, baseURL)
     await page.goto(`${prefix}/scorecard`)
