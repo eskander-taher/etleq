@@ -377,6 +377,105 @@ html[lang='ar'] .eng-launch h1 {
   }
 }
 
+/* Desktop hero object: the app with its layers showing underneath; leans toward the pointer. */
+.eng-launch {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: 32px;
+}
+.hero-device {
+  position: relative;
+  height: min(600px, 66svh);
+  display: grid;
+  place-items: center;
+  perspective: 1600px;
+}
+.hero-tilt {
+  transform-style: preserve-3d;
+  transform: rotateY(calc(var(--px, 0) * 10deg)) rotateX(calc(var(--py, 0) * -8deg));
+  will-change: transform;
+}
+.hero-stack {
+  --spread: 24px;
+  position: relative;
+  width: clamp(190px, 15vw, 240px);
+  aspect-ratio: 0.56;
+  transform-style: preserve-3d;
+  transform: translateY(-6%) rotateX(56deg) rotateZ(-36deg);
+  transition: --spread 0.5s;
+}
+[dir='rtl'] .hero-stack {
+  transform: translateY(-6%) rotateX(56deg) rotateZ(36deg);
+}
+.eng-launch:hover .hero-stack {
+  --spread: 34px;
+}
+.hero-plate {
+  --tint: #5f6b7c;
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--tint) 60%, transparent);
+  background: color-mix(in srgb, var(--tint) 6%, #0b0f14e0);
+  transform: translateZ(calc((6 - var(--i)) * var(--spread)));
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.hero-plate:first-child {
+  background: var(--ink-1);
+  overflow: hidden;
+}
+.hero-plate[data-risk='warn'] {
+  --tint: var(--warn);
+  box-shadow: 0 0 36px #f2b54433;
+}
+.hero-plate[data-risk='critical'] {
+  --tint: var(--critical);
+  background: color-mix(in srgb, var(--critical) 16%, #0b0f14e6);
+  box-shadow: 0 0 50px #ff7b6b55;
+}
+.hero-plate > .num {
+  position: absolute;
+  inset-block-start: 10px;
+  inset-inline-end: 12px;
+  z-index: 1;
+  font-size: 11px;
+  color: var(--fg-3);
+}
+.hero-device-shadow {
+  position: absolute;
+  inset-inline: 18%;
+  bottom: 8%;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, #ff5a1f30, transparent);
+  pointer-events: none;
+}
+@property --spread {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 24px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-plate {
+    animation: hero-plate-in 0.9s calc(0.15s + (6 - var(--i)) * 0.07s) cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  }
+}
+@keyframes hero-plate-in {
+  from {
+    opacity: 0;
+    transform: translateZ(-60px);
+  }
+}
+@media (max-width: 900px) {
+  .eng-launch {
+    display: flex;
+  }
+  .hero-device {
+    display: none;
+  }
+}
+
 /* Fact strip under the hero */
 .eng-trust {
   display: grid;
@@ -619,6 +718,62 @@ a.eng-card:hover {
   color: var(--fg-3);
   font-size: 14px;
   margin-top: 6px;
+}
+.eng-timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-top: 24px;
+}
+.eng-timeline span {
+  position: relative;
+  display: grid;
+  gap: 8px;
+}
+.eng-timeline span::before {
+  content: '';
+  height: 10px;
+  border-radius: 2px;
+  background:
+    linear-gradient(to right, var(--accent) 0 100%) no-repeat 0 0 / 100% 100%,
+    var(--ink-2);
+}
+[dir='rtl'] .eng-timeline span::before {
+  background-position: 100% 0;
+}
+.eng-timeline span::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  inset-inline-end: -1px;
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--fg);
+}
+.eng-timeline small {
+  text-align: end;
+  color: var(--fg-3);
+  font-size: 12px;
+}
+.eng-timeline bdi {
+  color: var(--fg);
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .eng-timeline span::before {
+      animation: eng-fill linear both;
+      animation-timeline: view();
+      animation-range: calc(10% + var(--i) * 8%) calc(30% + var(--i) * 8%);
+    }
+  }
+}
+@keyframes eng-fill {
+  from {
+    background-size:
+      0% 100%,
+      auto;
+  }
 }
 .eng-quote dl {
   display: grid;

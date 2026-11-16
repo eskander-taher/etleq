@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import type { Locale } from '@/i18n/routing'
 import { Link } from '@/i18n/navigation'
 import { ContactForm } from '@/components/forms/ContactForm'
@@ -14,6 +15,7 @@ import { Actions, PricingTable, PageEvent } from './interactive'
 import { AuditIntake } from './AuditIntake'
 import { HomeActions } from './Experience'
 import { ScanStory } from './ScanStory'
+import { HeroStack } from './HeroStack'
 
 const text = (locale: string) => (en: string, ar: string) => pick(locale, [en, ar])
 export function List({ locale, items }: { locale: string; items: Copy[] }) {
@@ -96,6 +98,7 @@ export function Home({ locale }: { locale: Locale }) {
             </li>
           </ul>
         </div>
+        <HeroStack locale={locale} />
         <a className="launch-cue" href="#scan">
           {t('See what we check', 'شاهد ماذا نفحص')}
           <span aria-hidden="true" />
@@ -121,6 +124,22 @@ export function Home({ locale }: { locale: Locale }) {
             <bdi>{t('SAR 18,000', '18,000 ر.س')}</bdi>
           </div>
           <div className="eng-quote-note">{t('per module, before VAT', 'لكل وحدة، قبل الضريبة')}</div>
+          <div
+            className="eng-timeline"
+            role="img"
+            aria-label={t(
+              '40 hours, with a working demo about every 10 hours',
+              '40 ساعة، مع عرض للعمل كل 10 ساعات تقريبًا',
+            )}
+          >
+            {[10, 20, 30, 40].map((h, i) => (
+              <span key={h} style={{ '--i': i } as CSSProperties}>
+                <small>
+                  <bdi className="num">{h}h</bdi> {h === 40 ? t('handover', 'التسليم') : t('demo', 'عرض')}
+                </small>
+              </span>
+            ))}
+          </div>
           <dl>
             <div>
               <dt>{t('Engineering time', 'وقت التنفيذ')}</dt>

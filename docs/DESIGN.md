@@ -26,6 +26,8 @@ The product is a report, so the report is the motif. Anywhere the site shows wha
 - **Launch arc (hero).** The logo mark (launch trajectory) drawn full height once on load, ending in an ignition point. Mirrored in RTL so it rises on the side away from the text.
 - **The X-ray (scroll story, `ScanStory.tsx`).** Scroll position drives every frame, so scrolling back rewinds it. Transforms only, no libraries, so it runs in the Instagram in-app browser. Layer 03 (warning) and 04 (critical) match the sample report. Reduced motion shows one static frame. On short phones the report scales to the room left.
 - The phone's sticky action bar stays hidden while the hero buttons are on screen.
+- **Smoothness rules (learned the hard way).** The drawn frame eases toward the scroll position (time-based, 110 ms) instead of jumping to it. Per-layer colour, glow and pop derive in CSS from one continuous `--beam`, so nothing snaps. No CSS transitions on scroll-driven properties. Glows are pre-drawn; only opacity changes. Layout is measured on resize, never inside the animation frame. Never `will-change: opacity` on a `preserve-3d` container: it flattens the stack.
+- **Desktop extras.** The hero shows the same app as a 7-plate stack (two risk plates glowing underneath) that assembles on load and leans toward the pointer. The X-ray adds a live ledger of all 15 layers that fills as the beam passes. The module quote shows the 40 hours as four 10-hour segments ending in demos, filled by scroll where `animation-timeline` is supported.
 
 ## Color
 

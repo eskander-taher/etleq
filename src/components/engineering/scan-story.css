@@ -1,31 +1,35 @@
 /* The X-ray: scroll takes an app apart into its 15 layers and folds it into the report.
-   Progress variables are written by ScanStory.tsx; these defaults are the first frame. */
+   ScanStory.tsx writes eased progress variables; everything per layer is derived here from --beam,
+   so colour, glow and position change continuously instead of snapping. Defaults are the first frame. */
 .scan {
   --tilt: 0;
   --explode: 0;
   --collapse: 0;
   --report: 0;
+  --beam: 0;
   --header: 76px;
-  --plate-h: clamp(220px, 40svh, 430px);
+  --plate-h: clamp(260px, 46svh, 480px);
   --plate-w: calc(var(--plate-h) * 0.56);
-  --gap: clamp(11px, 2.3svh, 30px);
+  --gap: clamp(12px, 2.5svh, 30px);
   position: relative;
-  height: 340svh;
+  height: 360svh;
+  /* The landing stamp starts oversized; clip (unlike hidden) keeps the sticky stage working. */
+  overflow-x: clip;
 }
 .scan-sticky {
   position: sticky;
   top: var(--header);
   height: calc(100svh - var(--header));
   display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
   align-items: center;
   gap: 48px;
 }
 
-/* Copy column */
+/* Copy column: counter, caption, and (on desktop) the live ledger */
 .scan-copy {
-  position: relative;
-  min-height: 260px;
+  display: grid;
+  align-content: center;
 }
 .scan-counter {
   display: flex;
@@ -33,7 +37,7 @@
   gap: 6px;
   font: 500 15px var(--font-plex-mono);
   color: var(--fg-3);
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 .scan-counter-num {
   font-size: 44px;
@@ -50,27 +54,44 @@
   font:
     600 13px var(--font-plex-sans),
     var(--font-plex-arabic);
+  opacity: 0;
+  transform: scale(0.8);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.scan-found[data-show='true'] {
+  opacity: 1;
+  transform: none;
+}
+.scan-captions {
+  position: relative;
+  min-height: 150px;
 }
 .scan-caption {
   position: absolute;
   inset-inline: 0;
+  top: 0;
   opacity: 0;
-  transform: translateY(14px);
+  transform: translateY(16px);
+  filter: blur(4px);
   transition:
-    opacity 0.35s ease,
-    transform 0.35s ease;
+    opacity 0.45s ease,
+    transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 0.45s ease;
   pointer-events: none;
 }
 .scan-caption[data-active='true'] {
   opacity: 1;
   transform: none;
+  filter: none;
   pointer-events: auto;
 }
 .scan-caption h2 {
-  font-size: clamp(36px, 4.4vw, 60px);
+  font-size: clamp(36px, 4.2vw, 58px);
   line-height: 1.05;
   letter-spacing: -0.035em;
-  margin: 0 0 16px;
+  margin: 0 0 14px;
 }
 html[lang='ar'] .scan-caption h2 {
   line-height: 1.35;
@@ -107,13 +128,66 @@ html[lang='ar'] .scan-caption h2 {
   color: var(--ink-0);
 }
 
+/* Live ledger (desktop): each row fills as the beam passes its layer. */
+.scan-ledger {
+  display: none;
+  list-style: none;
+  margin: 28px 0 0;
+  padding: 0;
+  max-width: 440px;
+  font-size: 14px;
+}
+.scan-ledger li {
+  --s: clamp(0, calc(var(--beam) * 15 - var(--i)), 1);
+  --tint: var(--pass);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-block: 5px;
+  color: var(--fg-2);
+  opacity: calc(0.4 + var(--s) * 0.6);
+}
+.scan-ledger li[data-risk='warn'] {
+  --tint: var(--warn);
+}
+.scan-ledger li[data-risk='critical'] {
+  --tint: var(--critical);
+}
+.scan-ledger li::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--tint);
+  opacity: 0.55;
+  transform: scaleX(var(--s));
+  transform-origin: left;
+}
+[dir='rtl'] .scan-ledger li::after {
+  transform-origin: right;
+}
+.scan-ledger .num {
+  color: var(--fg-3);
+  font-size: 12px;
+}
+.scan-ledger em {
+  margin-inline-start: auto;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tint);
+  opacity: var(--s);
+}
+
 /* Stage */
 .scan-stage {
   position: relative;
   height: 100%;
   display: grid;
   place-items: center;
-  perspective: 1400px;
+  perspective: 1500px;
 }
 .scan-stack {
   position: relative;
@@ -123,6 +197,7 @@ html[lang='ar'] .scan-caption h2 {
   transform: rotateX(calc(var(--tilt) * 58deg)) rotateZ(calc(var(--tilt) * -38deg))
     scale(calc(1 - var(--collapse) * 0.45));
   opacity: calc(1 - var(--collapse));
+  /* Never will-change opacity here: it flattens the 3D stack into one plane. */
   will-change: transform;
 }
 [dir='rtl'] .scan-stack {
@@ -130,50 +205,75 @@ html[lang='ar'] .scan-caption h2 {
     scale(calc(1 - var(--collapse) * 0.45));
 }
 .scan-layer {
-  --pop: 0;
-  --tint: #5f6b7c;
+  --s: clamp(0, calc(var(--beam) * 15 - var(--i)), 1);
+  --z: calc((7 - var(--i)) * (0.4px + var(--gap) * var(--explode)));
+  --tint: var(--pass);
   position: absolute;
   inset: 0;
+  isolation: isolate;
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--tint) 70%, transparent);
-  background: color-mix(in srgb, var(--tint) 7%, #0b0f14d9);
-  transform: translateZ(calc((7 - var(--i)) * (0.4px + var(--gap) * var(--explode))))
-    translateX(calc(var(--pop) * var(--explode) * 48px));
-  transition:
-    border-color 0.25s,
-    background 0.25s,
-    box-shadow 0.25s,
-    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  border: 1px solid #5f6b7c8c;
+  background: #0b0f14d9;
+  transform: translateZ(var(--z)) translateX(calc(var(--risk) * var(--s) * var(--explode) * 48px));
+  will-change: transform;
 }
 [dir='rtl'] .scan-layer {
-  transform: translateZ(calc((7 - var(--i)) * (0.4px + var(--gap) * var(--explode))))
-    translateX(calc(var(--pop) * var(--explode) * -48px));
+  transform: translateZ(var(--z)) translateX(calc(var(--risk) * var(--s) * var(--explode) * -48px));
 }
-.scan-layer[data-state='pass'] {
-  --tint: var(--pass);
-}
-.scan-layer[data-state='warn'] {
+.scan-layer[data-risk='warn'] {
   --tint: var(--warn);
-  --pop: 1;
-  box-shadow: 0 0 40px #f2b54455;
 }
-.scan-layer[data-state='critical'] {
+.scan-layer[data-risk='critical'] {
   --tint: var(--critical);
-  --pop: 1;
-  background: color-mix(in srgb, var(--critical) 22%, #0b0f14e6);
-  box-shadow: 0 0 60px #ff7b6b77;
 }
-.scan-layer[data-current='true'] {
-  --tint: var(--accent);
-  box-shadow: 0 0 50px #ff5a1f88;
+/* Scanned tint: a border and fill in the layer's verdict colour, faded in by --s. */
+.scan-layer::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1px solid var(--tint);
+  background: color-mix(in srgb, var(--tint) 10%, transparent);
+  opacity: var(--s);
+}
+.scan-layer[data-risk='critical']::before,
+.scan-layer[data-risk='warn']::before {
+  background: color-mix(in srgb, var(--tint) 24%, transparent);
+}
+/* Risk glow is drawn once; only its opacity changes. */
+.scan-layer::after {
+  content: '';
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 46px 2px var(--tint);
+  opacity: calc(var(--s) * var(--risk) * 0.65);
+  will-change: opacity;
 }
 .scan-layer-num {
   position: absolute;
   inset-block-start: 10px;
   inset-inline-end: 12px;
   font: 500 11px var(--font-plex-mono);
-  color: color-mix(in srgb, var(--tint) 80%, white);
+  color: var(--fg-3);
   opacity: calc(0.25 + var(--explode) * 0.75);
+}
+/* The scan beam: a glowing frame that travels down through the stack. */
+.scan-beam {
+  position: absolute;
+  inset: -10px;
+  border-radius: 24px;
+  border: 2px solid var(--accent);
+  background: #ff5a1f14;
+  box-shadow:
+    0 0 30px #ff5a1f99,
+    inset 0 0 24px #ff5a1f55;
+  transform: translateZ(calc((7.5 - var(--beam) * 15) * (0.4px + var(--gap) * var(--explode))));
+  opacity: calc(min(var(--beam) * 30, 1) * min((1 - var(--beam)) * 30, 1) * var(--explode));
+  pointer-events: none;
+  will-change: transform, opacity;
 }
 
 /* Layer 01 is the app the visitor recognises */
@@ -246,7 +346,7 @@ html[lang='ar'] .scan-caption h2 {
 /* The report the layers fold into */
 .scan-report {
   position: absolute;
-  width: min(360px, 88%);
+  width: min(400px, 88%);
   background: var(--paper);
   color: var(--paper-ink);
   border-radius: 10px;
@@ -410,6 +510,13 @@ html[lang='ar'] .scan-stamp {
     --header: 64px;
     --plate-h: clamp(190px, 30svh, 300px);
     --gap: clamp(12px, 2.7svh, 24px);
+    height: 340svh;
+  }
+  .scan-captions {
+    min-height: 120px;
+  }
+  .scan-report {
+    width: min(360px, 88%);
   }
   .scan-sticky {
     grid-template-columns: 1fr;
@@ -419,7 +526,7 @@ html[lang='ar'] .scan-stamp {
     padding-block: 20px 84px;
   }
   .scan-copy {
-    min-height: 168px;
+    align-content: start;
   }
   .scan-counter {
     margin-bottom: 10px;
@@ -456,8 +563,25 @@ html[lang='ar'] .scan-stamp {
   .scan[data-phase='4'] .scan-caption p {
     display: none;
   }
-  .scan[data-phase='3'] .scan-copy,
-  .scan[data-phase='4'] .scan-copy {
-    min-height: 112px;
+  .scan[data-phase='3'] .scan-captions,
+  .scan[data-phase='4'] .scan-captions {
+    min-height: 64px;
+  }
+}
+
+/* Desktop with room: show the live ledger of all 15 layers. */
+@media (min-width: 1024px) and (min-height: 740px) {
+  .scan-ledger {
+    display: block;
+  }
+  .scan-captions {
+    min-height: 168px;
+  }
+  /* The ledger already names the layer being checked. */
+  .scan-layer-name {
+    display: none !important;
+  }
+  .scan-caption p {
+    font-size: 18px;
   }
 }
