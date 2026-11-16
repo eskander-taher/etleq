@@ -4,10 +4,10 @@
 .scan {
   --tilt: 0;
   --explode: 0;
-  --collapse: 0;
   --report: 0;
   --beam: 0;
   --gather: 0;
+  --fold: 0;
   --header: 76px;
   --plate-h: clamp(260px, 46svh, 480px);
   --plate-w: calc(var(--plate-h) * 0.56);
@@ -197,15 +197,15 @@ html[lang='ar'] .scan-caption h2 {
   height: var(--plate-h);
   transform-style: preserve-3d;
   transform: translateY(calc(var(--explode) * (1 - var(--gather)) * -5.5%)) rotateX(calc(var(--tilt) * 58deg))
-    rotateZ(calc(var(--tilt) * -38deg)) scale(calc(1 - var(--collapse) * 0.12));
-  opacity: calc(1 - var(--collapse));
+    rotateZ(calc(var(--tilt) * -38deg));
+  z-index: 2;
   /* Optical centring: perspective makes the spread stack sit low, so lift it while spread.
      Never will-change opacity here: it flattens the 3D stack into one plane. */
   will-change: transform;
 }
 [dir='rtl'] .scan-stack {
   transform: translateY(calc(var(--explode) * (1 - var(--gather)) * -5.5%)) rotateX(calc(var(--tilt) * 58deg))
-    rotateZ(calc(var(--tilt) * 38deg)) scale(calc(1 - var(--collapse) * 0.12));
+    rotateZ(calc(var(--tilt) * 38deg));
 }
 .scan-layer {
   --s: clamp(0, calc(var(--beam) * 15 - var(--i)), 1);
@@ -224,11 +224,41 @@ html[lang='ar'] .scan-caption h2 {
   border-radius: 18px;
   border: 1px solid #5f6b7c8c;
   background: #0b0f14d9;
-  transform: translateZ(var(--z)) translateX(var(--pop));
-  will-change: transform;
+  /* A hair of depth stays when flat, so the app layer keeps painting above the rest of its card. */
+  --flat: calc(1 - var(--fold));
+  transform: translate(var(--gx, 0px), var(--gy, 0px)) scale(var(--gsx, 1), var(--gsy, 1))
+    translateZ(calc(var(--z) * var(--flat) + (7 - var(--i)) * 0.4px)) translateX(calc(var(--pop) * var(--flat)));
+  opacity: var(--go, 1);
+  will-change: transform, opacity;
+}
+.scan-layer[data-risk='pass'] {
+  --gx: var(--pass-x);
+  --gy: var(--pass-y);
+  --gsx: var(--pass-sx);
+  --gsy: var(--pass-sy);
+  --go: var(--pass-o);
+}
+/* Once flat, the 12 layers under the app are hidden by it; fading them keeps the flying card light. */
+.scan-layer[data-risk='pass']:not(:first-child) {
+  --go: calc(var(--pass-o) * (1 - var(--fold)));
+}
+.scan-layer[data-risk='warn'] {
+  --gx: var(--warn-x);
+  --gy: var(--warn-y);
+  --gsx: var(--warn-sx);
+  --gsy: var(--warn-sy);
+  --go: var(--warn-o);
+}
+.scan-layer[data-risk='critical'] {
+  --gx: var(--critical-x);
+  --gy: var(--critical-y);
+  --gsx: var(--critical-sx);
+  --gsy: var(--critical-sy);
+  --go: var(--critical-o);
 }
 [dir='rtl'] .scan-layer {
-  transform: translateZ(var(--z)) translateX(calc(var(--pop) * -1));
+  transform: translate(var(--gx, 0px), var(--gy, 0px)) scale(var(--gsx, 1), var(--gsy, 1))
+    translateZ(calc(var(--z) * var(--flat) + (7 - var(--i)) * 0.4px)) translateX(calc(var(--pop) * var(--flat) * -1));
 }
 .scan-layer[data-risk='warn'] {
   --tint: var(--warn);
@@ -268,35 +298,8 @@ html[lang='ar'] .scan-caption h2 {
   inset-inline-end: 12px;
   font: 500 11px var(--font-plex-mono);
   color: var(--fg-3);
-  opacity: calc(0.25 + var(--explode) * 0.75);
+  opacity: calc((0.25 + var(--explode) * 0.75) * (1 - var(--fold)));
 }
-/* Hand-off chips: flat stand-ins for the flagged layers (and the passing block) that fly into the report. */
-.scan-chip {
-  --tint: var(--pass);
-  position: absolute;
-  z-index: 3;
-  top: 0;
-  left: 0; /* logical-css-allow: chip coordinates are measured in physical px from the stage's left edge */
-  border-radius: 8px;
-  border: 1.5px solid var(--tint);
-  background: color-mix(in srgb, var(--tint) 22%, transparent);
-  box-shadow: 0 0 28px color-mix(in srgb, var(--tint) 55%, transparent);
-  backdrop-filter: blur(2px);
-  transform-origin: center;
-  opacity: 0;
-  pointer-events: none;
-  will-change: transform, opacity;
-}
-.scan-chip[data-risk='warn'] {
-  --tint: var(--warn);
-}
-.scan-chip[data-risk='critical'] {
-  --tint: var(--critical);
-}
-.scan[data-reduced='true'] .scan-chip {
-  display: none;
-}
-
 /* The scan beam: a glowing frame that travels down through the stack. */
 .scan-beam {
   position: absolute;
@@ -315,10 +318,12 @@ html[lang='ar'] .scan-caption h2 {
 
 /* Layer 01 is the app the visitor recognises */
 .scan-layer:first-child {
-  background: var(--ink-1);
+  /* As the app's screen fades in flight, its card turns the translucent green of the row it lands on. */
+  background: color-mix(in srgb, var(--ink-1) calc(var(--face, 1) * 100%), #4cc38a2e);
   overflow: hidden;
 }
 .scan-app {
+  opacity: var(--face, 1);
   display: grid;
   gap: 10px;
   padding: 16px 14px;
@@ -389,6 +394,7 @@ html[lang='ar'] .scan-caption h2 {
   border-radius: 10px;
   padding: 18px 20px 20px;
   box-shadow: 0 40px 80px -20px #000;
+  z-index: 1;
   /* The report prints in from the top as the pieces arrive. */
   opacity: min(1, calc(var(--report) * 6));
   clip-path: inset(0 0 calc((1 - var(--report)) * 100%) 0 round 10px);
@@ -426,7 +432,7 @@ html[lang='ar'] .scan-caption h2 {
   margin: 0;
   padding: 0;
 }
-/* Rows fill in as their chip lands. */
+/* Rows fill in as their card lands. */
 .scan-report li:nth-child(1) {
   --row: var(--row0, 1);
 }
@@ -554,7 +560,6 @@ html[lang='ar'] .scan-stamp {
 .scan[data-reduced='true'] {
   --tilt: 1;
   --explode: 1;
-  --collapse: 0;
   --report: 1;
   height: auto;
   padding-block: 64px 140px;

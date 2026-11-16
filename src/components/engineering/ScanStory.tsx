@@ -48,17 +48,20 @@ const SMOOTHING_MS = 110
 const T = {
   beam: [0.3, 0.66],
   gather: [0.66, 0.74],
-  handoff: 0.75,
-  fade: [0.745, 0.79],
-  paper: [0.755, 0.85],
-  done: [0.86, 0.91],
-  stamp: 0.93,
+  fold: [0.74, 0.8],
+  handoff: 0.8,
+  paper: [0.79, 0.87],
+  done: [0.89, 0.93],
+  stamp: 0.94,
 } as const
-/** Each flagged piece flies into its report row: critical first, then warning, then the 13 that pass. */
-const FLIGHTS = [
-  { layer: 3, row: 0, from: 0.755, to: 0.835 },
-  { layer: 2, row: 1, from: 0.77, to: 0.85 },
-  { layer: 7, row: 2, from: 0.785, to: 0.865 },
+/**
+ * Each group of real layers travels into its report row: critical first, then warning, then the 13 that pass.
+ * `side` places the group in the folded trio (red | app | amber); RTL mirrors it.
+ */
+const GROUPS = [
+  { key: 'critical', row: 0, side: 1, from: 0.8, to: 0.87 },
+  { key: 'warn', row: 1, side: -1, from: 0.815, to: 0.885 },
+  { key: 'pass', row: 2, side: 0, from: 0.83, to: 0.9 },
 ] as const
 
 type Box = { x: number; y: number; w: number; h: number }
@@ -68,9 +71,10 @@ type Box = { x: number; y: number; w: number; h: number }
  * Per-layer colour, glow and pop are computed in CSS from continuous variables, so nothing snaps,
  * and React re-renders only when a number in the copy changes.
  *
- * The hand-off from 15 layers to the report is one movement: the 13 passing layers close into a block,
- * the 2 flagged layers float free, then each piece flies (as a flat chip) into its own report row.
- * Chip start and end positions are measured once per resize, never inside the animation frame.
+ * The hand-off is a morph of the same elements, never a swap: the 13 passing layers close into a block and
+ * the 2 flagged layers slide out (gather); the stack rotates flat into three cards (fold); each card then
+ * shrinks and travels into its own report row (fly). The geometry is measured once per resize; each frame
+ * only writes translate/scale variables.
  */
 export function ScanStory({ locale }: { locale: string }) {
   const t = (en: string, ar: string) => pick(locale, [en, ar])
@@ -85,10 +89,9 @@ export function ScanStory({ locale }: { locale: string }) {
     if (!el) return
     const query = window.matchMedia('(prefers-reduced-motion: reduce)')
     const stage = el.querySelector<HTMLElement>('.scan-stage')
+    const stack = el.querySelector<HTMLElement>('.scan-stack')
     const sheet = el.querySelector<HTMLElement>('.scan-report')
-    const plates = Array.from(el.querySelectorAll<HTMLElement>('.scan-layer'))
     const rows = Array.from(el.querySelectorAll<HTMLElement>('.scan-report li'))
-    const chips = Array.from(el.querySelectorAll<HTMLElement>('.scan-chip'))
     const rtl = document.documentElement.dir === 'rtl'
     let frame = 0
     let visible = false
@@ -100,23 +103,56 @@ export function ScanStory({ locale }: { locale: string }) {
     let completed = false
     let top = 0
     let travel = 1
-    let starts: Box[] = []
+    // Geometry in stage pixels: the stack's resting box, the trio card scale, and each row's box.
+    let base: Box | null = null
+    let trio = 0.6
     let ends: Box[] = []
 
+    const setGroups = (p: number) => {
+      const fold = range(p, ...T.fold)
+      GROUPS.forEach((g, k) => {
+        const end = ends[k]
+        let x = 0
+        let y = 0
+        let sx = 1
+        let sy = 1
+        let opacity = 1
+        if (base && end) {
+          const side = rtl ? -g.side : g.side
+          // Fold: from the resting box to a card in the trio.
+          const ax = side * (base.w * trio + 18)
+          const fx = ax * fold
+          const fs = 1 + (trio - 1) * fold
+          // Fly: from the trio card to the row, with a short lift.
+          const m = range(p, g.from, g.to)
+          x = fx + (end.x - base.x - fx) * m
+          y = (end.y - base.y) * m - Math.sin(m * Math.PI) * 28
+          // Height collapses ahead of width, so each card becomes a strip early and never covers landed rows.
+          sx = fs + (end.w / base.w - fs) * m
+          sy = fs + (end.h / base.h - fs) * Math.sqrt(m)
+          const thin = g.key === 'pass' ? 1 - 0.5 * m : 1
+          opacity = thin * (1 - range(p, g.to - 0.01, g.to + 0.025))
+        }
+        el.style.setProperty(`--${g.key}-x`, `${x.toFixed(1)}px`)
+        el.style.setProperty(`--${g.key}-y`, `${y.toFixed(1)}px`)
+        el.style.setProperty(`--${g.key}-sx`, sx.toFixed(4))
+        el.style.setProperty(`--${g.key}-sy`, sy.toFixed(4))
+        el.style.setProperty(`--${g.key}-o`, opacity.toFixed(3))
+      })
+      el.style.setProperty('--face', (1 - range(p, GROUPS[2].from, GROUPS[2].from + 0.035)).toFixed(3))
+    }
+
     const setVars = (p: number) => {
-      el.style.setProperty('--tilt', range(p, 0, 0.16).toFixed(4))
+      const fold = range(p, ...T.fold)
+      el.style.setProperty('--tilt', (range(p, 0, 0.16) * (1 - fold)).toFixed(4))
       el.style.setProperty('--explode', range(p, 0.08, 0.3).toFixed(4))
       el.style.setProperty('--beam', clamp((p - T.beam[0]) / (T.beam[1] - T.beam[0])).toFixed(4))
       el.style.setProperty('--gather', range(p, ...T.gather).toFixed(4))
-      el.style.setProperty('--collapse', range(p, ...T.fade).toFixed(4))
+      el.style.setProperty('--fold', fold.toFixed(4))
       el.style.setProperty('--report', range(p, ...T.paper).toFixed(4))
       el.style.setProperty('--done', range(p, ...T.done).toFixed(4))
-      FLIGHTS.forEach((f, k) => el.style.setProperty(`--row${k}`, range(p, f.to - 0.025, f.to + 0.01).toFixed(4)))
-    }
-
-    const box = (node: Element, origin: DOMRect): Box => {
-      const r = node.getBoundingClientRect()
-      return { x: r.left - origin.left + r.width / 2, y: r.top - origin.top + r.height / 2, w: r.width, h: r.height }
+      GROUPS.forEach((g, k) => el.style.setProperty(`--row${k}`, range(p, g.to - 0.02, g.to + 0.012).toFixed(4)))
+      setGroups(p)
     }
 
     // Layout is read only here (resize, entering view, caption height change), never per frame.
@@ -124,44 +160,26 @@ export function ScanStory({ locale }: { locale: string }) {
       const rect = el.getBoundingClientRect()
       top = rect.top + window.scrollY
       travel = Math.max(1, el.offsetHeight - window.innerHeight)
-      if (!stage || !sheet) return
+      if (!stage || !stack || !sheet) return
       const fit = Math.min(1, (stage.clientHeight - 12) / Math.max(1, sheet.offsetHeight))
       el.style.setProperty('--fit', fit.toFixed(3))
-      const origin = stage.getBoundingClientRect()
-      setVars(T.handoff)
-      starts = FLIGHTS.map((f) => box(plates[f.layer], origin))
+      // offset* ignore transforms: this is the stack's resting box inside the stage.
+      base = {
+        x: stack.offsetLeft + stack.offsetWidth / 2,
+        y: stack.offsetTop + stack.offsetHeight / 2,
+        w: stack.offsetWidth,
+        h: stack.offsetHeight,
+      }
+      trio = Math.min(0.62, (stage.clientWidth - 32) / (3 * base.w + 36))
       setVars(1)
-      ends = FLIGHTS.map((f) => box(rows[f.row], origin))
-      chips.forEach((chip, k) => {
-        chip.style.width = `${ends[k].w}px`
-        chip.style.height = `${ends[k].h}px`
+      const origin = stage.getBoundingClientRect()
+      ends = GROUPS.map((g) => {
+        const r = rows[g.row].getBoundingClientRect()
+        return { x: r.left - origin.left + r.width / 2, y: r.top - origin.top + r.height / 2, w: r.width, h: r.height }
       })
       setVars(current)
-      placeChips(current)
     }
     refit.current = measure
-
-    const placeChips = (p: number) => {
-      chips.forEach((chip, k) => {
-        const s = starts[k]
-        const e = ends[k]
-        const f = FLIGHTS[k]
-        if (!s || !e) return
-        const m = range(p, f.from, f.to)
-        const startW = s.w * 0.55
-        const startH = Math.max(e.h, 30)
-        const x = s.x + (e.x - s.x) * m
-        // A short arc: chips rise a little before settling into their row.
-        const y = s.y + (e.y - s.y) * m - Math.sin(m * Math.PI) * 36
-        const sx = (startW + (e.w - startW) * m) / e.w
-        const sy = (startH + (e.h - startH) * m) / e.h
-        const rot = (rtl ? 30 : -30) * (1 - m)
-        chip.style.transform = `translate(${(x - e.w / 2).toFixed(1)}px, ${(y - e.h / 2).toFixed(1)}px) rotate(${rot.toFixed(2)}deg) scale(${sx.toFixed(3)}, ${sy.toFixed(3)})`
-        const appear = clamp((p - f.from + 0.012) / 0.02)
-        const settle = 1 - range(p, f.to - 0.012, f.to + 0.018)
-        chip.style.opacity = (appear * settle).toFixed(3)
-      })
-    }
 
     const readTarget = () => {
       target = clamp((window.scrollY - top) / travel)
@@ -169,7 +187,6 @@ export function ScanStory({ locale }: { locale: string }) {
 
     const draw = (p: number) => {
       setVars(p)
-      placeChips(p)
       const s = Math.min(15, Math.floor(clamp((p - T.beam[0]) / (T.beam[1] - T.beam[0])) * 15.999))
       const ph = p < 0.08 ? 0 : p < T.beam[0] ? 1 : p < T.beam[1] ? 2 : p < T.handoff ? 3 : p < T.stamp ? 4 : 5
       if (s !== lastScanned) setScanned((lastScanned = s))
@@ -238,7 +255,7 @@ export function ScanStory({ locale }: { locale: string }) {
     }
   }, [])
 
-  // The final captions change height; re-measure so the report fits and chips land on the rows.
+  // The final captions change height; re-measure so the report fits and the cards land on the rows.
   useEffect(() => {
     if (phase >= 3 && !reduced) refit.current()
   }, [phase, reduced])
@@ -332,9 +349,6 @@ export function ScanStory({ locale }: { locale: string }) {
             ))}
             <div className="scan-beam" />
           </div>
-          <div className="scan-chip" data-risk="critical" aria-hidden="true" />
-          <div className="scan-chip" data-risk="warn" aria-hidden="true" />
-          <div className="scan-chip" data-risk="pass" aria-hidden="true" />
 
           <div className="scan-report" inert={phase < 4}>
             <div className="scan-report-head">
