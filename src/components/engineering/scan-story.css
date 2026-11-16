@@ -325,66 +325,83 @@ html[lang='ar'] .scan-caption h2 {
   background: color-mix(in srgb, var(--ink-1) calc(var(--face, 1) * 100%), #4cc38a2e);
   overflow: hidden;
 }
+/* The app screen is drawn in units of its own plate (cqw/cqh), so it scales like a screenshot
+   at any plate size instead of overflowing on phones. Used by the X-ray and the desktop hero. */
+.scan-layer:first-child,
+.hero-plate:first-child {
+  container-type: size;
+}
+.scan-layer:first-child .scan-layer-num,
+.hero-plate:first-child > .num {
+  display: none;
+}
 .scan-app {
   opacity: var(--face, 1);
   display: grid;
-  gap: 10px;
-  padding: 16px 14px;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: 4.5cqw;
   height: 100%;
-  grid-template-rows: auto auto 1fr auto;
+  padding: 8cqw 7cqw 7cqw;
+  box-sizing: border-box;
 }
 .scan-app-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
+  gap: 3.5cqw;
+  min-width: 0;
+  font-size: 6.2cqw;
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .scan-app-bar i {
-  width: 18px;
-  height: 18px;
-  border-radius: 5px;
+  flex-shrink: 0;
+  width: 8.5cqw;
+  height: 8.5cqw;
+  border-radius: 2.4cqw;
   background: var(--accent);
 }
 .scan-app-tiles {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 4cqw;
 }
 .scan-app-tiles div {
-  padding: 10px;
-  border-radius: 8px;
+  min-width: 0;
+  padding: 4.5cqw 5cqw;
+  border-radius: 3.6cqw;
   background: var(--ink-2);
 }
 .scan-app-tiles small {
   display: block;
-  font-size: 10px;
+  font-size: 4.8cqw;
   color: var(--fg-3);
 }
 .scan-app-tiles b {
-  font: 500 22px var(--font-plex-mono);
+  display: block;
+  font: 500 11cqw/1.15 var(--font-plex-mono);
 }
 .scan-app-chart {
   display: flex;
   align-items: end;
-  gap: 5px;
-  padding: 10px;
-  border-radius: 8px;
+  gap: 2.4cqw;
+  padding: 5cqw;
+  border-radius: 3.6cqw;
   background: var(--ink-2);
 }
 .scan-app-chart i {
   flex: 1;
-  border-radius: 3px 3px 0 0;
+  border-radius: 1.4cqw 1.4cqw 0 0;
   background: color-mix(in srgb, var(--accent) 70%, var(--fg));
 }
 .scan-app-button {
   display: grid;
   place-items: center;
-  min-height: 38px;
-  border-radius: 8px;
+  padding-block: 4.6cqw;
+  border-radius: 3.6cqw;
   background: var(--fg);
   color: var(--ink-0);
-  font-size: 13px;
+  font-size: 6cqw;
   font-weight: 600;
 }
 
@@ -585,10 +602,12 @@ html[lang='ar'] .scan-stamp {
 @media (max-width: 900px) {
   .scan {
     --header: 64px;
-    --plate-h: clamp(190px, 30svh, 300px);
+    /* Phones: a bigger, slightly wider plate so the app reads at a glance. */
+    --plate-h: clamp(240px, 38svh, 340px);
+    --plate-w: calc(var(--plate-h) * 0.62);
     --gap: clamp(12px, 2.7svh, 24px);
     --slide-scan: 22px;
-    --slide-out: 26px;
+    --slide-out: 16px;
     height: 340svh;
   }
   .scan-captions {
@@ -638,6 +657,10 @@ html[lang='ar'] .scan-stamp {
 }
 /* Short phones: in the final step the report needs the room more than the caption's second line. */
 @media (max-width: 900px) and (max-height: 700px) {
+  /* Tighter spread so the full stack stays above the phone's action bar. */
+  .scan {
+    --gap: clamp(10px, 2.1svh, 18px);
+  }
   .scan[data-phase='4'] .scan-caption p,
   .scan[data-phase='5'] .scan-caption p {
     display: none;
