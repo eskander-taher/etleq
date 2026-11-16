@@ -7,6 +7,7 @@
   --collapse: 0;
   --report: 0;
   --beam: 0;
+  --gather: 0;
   --header: 76px;
   --plate-h: clamp(260px, 46svh, 480px);
   --plate-w: calc(var(--plate-h) * 0.56);
@@ -195,18 +196,22 @@ html[lang='ar'] .scan-caption h2 {
   height: var(--plate-h);
   transform-style: preserve-3d;
   transform: rotateX(calc(var(--tilt) * 58deg)) rotateZ(calc(var(--tilt) * -38deg))
-    scale(calc(1 - var(--collapse) * 0.45));
+    scale(calc(1 - var(--collapse) * 0.12));
   opacity: calc(1 - var(--collapse));
   /* Never will-change opacity here: it flattens the 3D stack into one plane. */
   will-change: transform;
 }
 [dir='rtl'] .scan-stack {
   transform: rotateX(calc(var(--tilt) * 58deg)) rotateZ(calc(var(--tilt) * 38deg))
-    scale(calc(1 - var(--collapse) * 0.45));
+    scale(calc(1 - var(--collapse) * 0.12));
 }
 .scan-layer {
   --s: clamp(0, calc(var(--beam) * 15 - var(--i)), 1);
-  --z: calc((7 - var(--i)) * (0.4px + var(--gap) * var(--explode)));
+  --z: calc(
+    (7 - var(--i)) * (0.4px + var(--gap) * var(--explode) * (1 - var(--gather) * (1 - var(--risk)))) + var(--risk) *
+      var(--gather) * 12px
+  );
+  --pop: calc(var(--risk) * (var(--s) * var(--explode) * 48px + var(--gather) * 72px));
   --tint: var(--pass);
   position: absolute;
   inset: 0;
@@ -214,11 +219,11 @@ html[lang='ar'] .scan-caption h2 {
   border-radius: 18px;
   border: 1px solid #5f6b7c8c;
   background: #0b0f14d9;
-  transform: translateZ(var(--z)) translateX(calc(var(--risk) * var(--s) * var(--explode) * 48px));
+  transform: translateZ(var(--z)) translateX(var(--pop));
   will-change: transform;
 }
 [dir='rtl'] .scan-layer {
-  transform: translateZ(var(--z)) translateX(calc(var(--risk) * var(--s) * var(--explode) * -48px));
+  transform: translateZ(var(--z)) translateX(calc(var(--pop) * -1));
 }
 .scan-layer[data-risk='warn'] {
   --tint: var(--warn);
@@ -260,6 +265,33 @@ html[lang='ar'] .scan-caption h2 {
   color: var(--fg-3);
   opacity: calc(0.25 + var(--explode) * 0.75);
 }
+/* Hand-off chips: flat stand-ins for the flagged layers (and the passing block) that fly into the report. */
+.scan-chip {
+  --tint: var(--pass);
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  left: 0; /* logical-css-allow: chip coordinates are measured in physical px from the stage's left edge */
+  border-radius: 8px;
+  border: 1.5px solid var(--tint);
+  background: color-mix(in srgb, var(--tint) 22%, transparent);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--tint) 55%, transparent);
+  backdrop-filter: blur(2px);
+  transform-origin: center;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.scan-chip[data-risk='warn'] {
+  --tint: var(--warn);
+}
+.scan-chip[data-risk='critical'] {
+  --tint: var(--critical);
+}
+.scan[data-reduced='true'] .scan-chip {
+  display: none;
+}
+
 /* The scan beam: a glowing frame that travels down through the stack. */
 .scan-beam {
   position: absolute;
@@ -352,9 +384,10 @@ html[lang='ar'] .scan-caption h2 {
   border-radius: 10px;
   padding: 18px 20px 20px;
   box-shadow: 0 40px 80px -20px #000;
-  opacity: var(--report);
-  transform: translateY(calc((1 - var(--report)) * 45%)) rotate(calc(var(--report) * -1.5deg + 1.5deg))
-    scale(var(--fit, 1));
+  /* The report prints in from the top as the pieces arrive. */
+  opacity: min(1, calc(var(--report) * 6));
+  clip-path: inset(0 0 calc((1 - var(--report)) * 100%) 0 round 10px);
+  transform: scale(var(--fit, 1));
 }
 .scan-report-head {
   display: flex;
@@ -387,6 +420,37 @@ html[lang='ar'] .scan-caption h2 {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+/* Rows fill in as their chip lands. */
+.scan-report li:nth-child(1) {
+  --row: var(--row0, 1);
+}
+.scan-report li:nth-child(2) {
+  --row: var(--row1, 1);
+}
+.scan-report li:nth-child(3) {
+  --row: var(--row2, 1);
+}
+.scan-report li > * {
+  opacity: var(--row);
+}
+.scan-report li[data-risk='critical'] {
+  background: linear-gradient(90deg, #b4231814, transparent) no-repeat;
+  background-size: calc(var(--row) * 100%) 100%;
+}
+.scan-report li[data-risk='warn'] {
+  background: linear-gradient(90deg, #8a5a0014, transparent) no-repeat;
+  background-size: calc(var(--row) * 100%) 100%;
+}
+.scan-report-score {
+  opacity: var(--row2, 1);
+}
+.scan-report-quote,
+.scan-end {
+  opacity: var(--done, 1);
+}
+[dir='rtl'] .scan-report li[data-risk] {
+  background-position: right;
 }
 .scan-report li {
   display: flex;
@@ -445,7 +509,7 @@ html[lang='ar'] .scan-caption h2 {
 html[lang='ar'] .scan-stamp {
   letter-spacing: 0;
 }
-.scan[data-phase='4'] .scan-stamp {
+.scan[data-phase='5'] .scan-stamp {
   opacity: 1;
 }
 
@@ -466,7 +530,7 @@ html[lang='ar'] .scan-stamp {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .scan[data-phase='4'] .scan-stamp {
+  .scan[data-phase='5'] .scan-stamp {
     animation: scan-stamp 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) both;
   }
 }
@@ -559,12 +623,12 @@ html[lang='ar'] .scan-stamp {
 }
 /* Short phones: in the final step the report needs the room more than the caption's second line. */
 @media (max-width: 900px) and (max-height: 700px) {
-  .scan[data-phase='3'] .scan-caption p,
-  .scan[data-phase='4'] .scan-caption p {
+  .scan[data-phase='4'] .scan-caption p,
+  .scan[data-phase='5'] .scan-caption p {
     display: none;
   }
-  .scan[data-phase='3'] .scan-captions,
-  .scan[data-phase='4'] .scan-captions {
+  .scan[data-phase='4'] .scan-captions,
+  .scan[data-phase='5'] .scan-captions {
     min-height: 64px;
   }
 }
