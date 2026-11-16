@@ -42,7 +42,10 @@ describe('Organization sameAs guard', () => {
     }) as Obj
     expect(org.sameAs).toEqual(['https://x.com/etleq'])
     expect(org.founder[0].sameAs).toEqual(['https://www.linkedin.com/in/a'])
-    const onlyFake = organizationNode({ full: true, seo: { sameAs: [{ url: 'https://instagram.com/example-etleq' }] } }) as Obj
+    const onlyFake = organizationNode({
+      full: true,
+      seo: { sameAs: [{ url: 'https://instagram.com/example-etleq' }] },
+    }) as Obj
     expect(onlyFake.sameAs).toBeUndefined()
   })
 })
@@ -90,15 +93,14 @@ describe('Service schema on solution pages', () => {
 })
 
 describe('one-liner', () => {
-  const fixedPrice = /fixed[- ]price|سعر ثابت|بسعر ثابت|السعر الثابت/i
-
-  it('matches the approved lines and never says "fixed price"', () => {
-    expect(DEFAULT_ONE_LINER.ar).toBe(
-      'اطلق استوديو يبني منصّتك البرمجية بالعربية ويطلقها خلال 30 يوم عمل، مع الدفع عبر مدى والاستضافة.',
-    )
-    expect(DEFAULT_ONE_LINER.en).toMatch(/30 working days/)
-    expect(DEFAULT_ONE_LINER.en).toMatch(/mada/)
-    for (const line of Object.values(DEFAULT_ONE_LINER)) expect(line).not.toMatch(fixedPrice)
+  it('describes the audit and fixed engineering modules without the retired launch promise', () => {
+    for (const line of Object.values(DEFAULT_ONE_LINER)) {
+      expect(line).toContain('750')
+      expect(line).toContain('40')
+      expect(line).not.toMatch(/30 working days|30 يوم/)
+    }
+    expect(DEFAULT_ONE_LINER.en).toContain('audited AI engineering')
+    expect(DEFAULT_ONE_LINER.ar).toContain('بسعر ثابت')
   })
 
   it('is the default for the Organization description and llms.txt', () => {
@@ -107,7 +109,8 @@ describe('one-liner', () => {
     const llms = buildLlmsTxt({})
     expect(llms).toContain(`> ${DEFAULT_ONE_LINER.en}`)
     expect(llms).toContain(`> ${DEFAULT_ONE_LINER.ar}`)
-    expect(llms).not.toMatch(fixedPrice)
+    expect(llms).toContain('/audit')
+    expect(llms).not.toContain('/launch-30')
   })
 
   it('home messages carry no stale meta description', () => {

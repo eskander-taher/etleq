@@ -13,11 +13,11 @@ export const SITE_NAME: Record<SeoLocale, string> = { ar: 'اطلق', en: 'Etleq
 /**
  * Code default for the one-line description (home meta description, Organization
  * description, llms.txt). SeoDefaults.oneLiner / defaultDescription override it.
- * The offer model is not decided, so it names no price model.
+ * The audited engineering offer is defined in the November 2026 website spec.
  */
 export const DEFAULT_ONE_LINER: Record<SeoLocale, string> = {
-  ar: 'اطلق استوديو يبني منصّتك البرمجية بالعربية ويطلقها خلال 30 يوم عمل، مع الدفع عبر مدى والاستضافة.',
-  en: 'Etleq is a studio that builds your software platform in Arabic and launches it in 30 working days, with mada payments and hosting.',
+  ar: 'اطلق تبني أنظمتك بالذكاء الاصطناعي بوحدات من 40 ساعة بسعر ثابت. فحص تقني من 15 طبقة مقابل 750 ريال. الكود ملكك بالكامل.',
+  en: 'Etleq delivers audited AI engineering in fixed 40-hour modules. Start with a SAR 750 production audit. Arabic-first software, fully yours.',
 }
 
 /** Absolute URL for a locale-less path ('/models/x') in the given locale. */

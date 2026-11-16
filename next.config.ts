@@ -14,6 +14,27 @@ const nextConfig: NextConfig = {
     remotePatterns: [{ protocol: 'https', hostname: '**' }],
   },
   // Also serve the IndexNow key at the conventional /<key>.txt (pings point to /indexnow-key.txt).
+  async redirects() {
+    const moves: Record<string, string> = {
+      '/launch-30': '/services',
+      '/how-it-works': '/method',
+      '/book': '/contact',
+      '/scorecard': '/audit',
+      '/models': '/services',
+      '/solutions': '/services',
+      '/projects': '/work',
+      '/cost': '/pricing',
+      '/compare': '/pricing',
+      '/playbook': '/learn',
+    }
+    return Object.entries(moves).flatMap(([source, destination]) =>
+      ['', '/ar', '/en'].map((prefix) => ({
+        source: prefix + source,
+        destination: prefix + destination,
+        permanent: true,
+      })),
+    )
+  },
   async rewrites() {
     return indexNowKey && /^[a-zA-Z0-9-]{8,128}$/.test(indexNowKey)
       ? [{ source: `/${indexNowKey}.txt`, destination: '/indexnow-key.txt' }]

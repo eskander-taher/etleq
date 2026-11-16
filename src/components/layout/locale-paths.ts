@@ -1,9 +1,9 @@
 import type { Locale } from '@/i18n/routing'
 
-/** Strip the /en prefix from a browser pathname: '/en/blog' → '/blog', '/en' → '/'. */
+/** Also accept the internal /ar pathname exposed during production prerendering. */
 export function stripLocale(pathname: string) {
-  if (pathname === '/en') return '/'
-  if (pathname.startsWith('/en/')) return pathname.slice(3)
+  if (pathname === '/en' || pathname === '/ar') return '/'
+  if (pathname.startsWith('/en/') || pathname.startsWith('/ar/')) return pathname.slice(3)
   return pathname || '/'
 }
 

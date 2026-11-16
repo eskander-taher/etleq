@@ -21,6 +21,9 @@ declare global {
 }
 
 export type AnalyticsEvent =
+  | 'audit_page_view'
+  | 'audit_form_started'
+  | 'pricing_viewed'
   | 'cta_click'
   | 'scorecard_start'
   | 'scorecard_step'

@@ -3,16 +3,16 @@ import { absoluteUrl, DEFAULT_ONE_LINER } from '@/lib/seo'
 // Optional /llms.txt (brief §12): site summary + hubs + top pages, generated from the CMS.
 
 const HUBS: Array<{ path: string; en: string; ar: string }> = [
-  { path: '/launch-30', en: 'Launch 30: the offer', ar: 'اطلق 30: العرض' },
-  { path: '/how-it-works', en: 'How it works', ar: 'كيف نعمل' },
-  { path: '/models', en: 'SaaS models library', ar: 'مكتبة نماذج SaaS' },
-  { path: '/cost', en: 'Cost guides', ar: 'أدلة التكلفة' },
-  { path: '/projects', en: 'Projects and case studies', ar: 'المشاريع' },
+  { path: '/audit', en: 'Production Audit — SAR 750', ar: 'الفحص التقني — 750 ريال' },
+  { path: '/method', en: 'Our method', ar: 'منهجيتنا' },
+  { path: '/services', en: 'Services', ar: 'الخدمات' },
+  { path: '/pricing', en: 'Pricing', ar: 'الأسعار' },
+  { path: '/work', en: 'Proof and sample audit', ar: 'النتائج ونموذج الفحص' },
   { path: '/blog', en: 'Blog', ar: 'المدونة' },
   { path: '/news', en: 'News', ar: 'الأخبار' },
   { path: '/faq', en: 'FAQ', ar: 'الأسئلة الشائعة' },
   { path: '/about', en: 'About Etleq', ar: 'من نحن' },
-  { path: '/scorecard', en: 'Readiness scorecard', ar: 'تقييم الجاهزية' },
+  { path: '/contact', en: 'Book a free call', ar: 'احجز مكالمة مجانية' },
   { path: '/careers', en: 'Careers', ar: 'الوظائف' },
 ]
 
@@ -27,7 +27,13 @@ export interface LlmsInput {
 }
 
 /** Pure llms.txt builder. Every URL comes from `absoluteUrl` (NEXT_PUBLIC_SITE_URL). */
-export function buildLlmsTxt({ oneLiner, models = [], solutions = [], guides = [], includeSamples }: LlmsInput): string {
+export function buildLlmsTxt({
+  oneLiner,
+  models = [],
+  solutions = [],
+  guides = [],
+  includeSamples,
+}: LlmsInput): string {
   const ok = (d: Doc) => typeof d.slug === 'string' && (includeSamples || !d.isSample)
   const list = (docs: Doc[], base: (d: Doc) => string) =>
     docs

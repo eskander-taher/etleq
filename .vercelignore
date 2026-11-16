@@ -1,0 +1,18 @@
+# Production uses the environment configured in Vercel.
+.env*
+.git
+.next
+.vercel
+node_modules
+*.log
+*.tsbuildinfo
+.mongo-data
+/media
+/private-media
+
+# Local previews, recordings and test artifacts are not deployment source.
+brag-output*
+test-results
+playwright-report
+coverage
+tests/e2e/*-snapshots
