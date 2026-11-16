@@ -1,6 +1,6 @@
 'use client'
 
-import { useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { X } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import { pick } from './content'
@@ -17,9 +17,24 @@ export function HomeActions({ locale, turnstileSiteKey }: { locale: 'ar' | 'en';
   const hydrated = useHydrated()
   const ready = hydrated && typeof HTMLDialogElement !== 'undefined' && 'showModal' in HTMLDialogElement.prototype
   const t = (en: string, ar: string) => pick(locale, [en, ar])
+  const actions = useRef<HTMLDivElement>(null)
+  // The phone's sticky action bar would repeat these buttons while they are on screen.
+  useEffect(() => {
+    const el = actions.current
+    if (!el || !('IntersectionObserver' in window)) return
+    const root = document.documentElement
+    const observer = new IntersectionObserver(([entry]) => {
+      root.dataset.heroActions = entry.isIntersecting ? 'visible' : 'hidden'
+    })
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      delete root.dataset.heroActions
+    }
+  }, [])
   return (
     <>
-      <div className="eng-actions">
+      <div className="eng-actions" ref={actions}>
         {ready ? (
           <button
             type="button"

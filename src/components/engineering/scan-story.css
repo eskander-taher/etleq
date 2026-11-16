@@ -1,0 +1,463 @@
+/* The X-ray: scroll takes an app apart into its 15 layers and folds it into the report.
+   Progress variables are written by ScanStory.tsx; these defaults are the first frame. */
+.scan {
+  --tilt: 0;
+  --explode: 0;
+  --collapse: 0;
+  --report: 0;
+  --header: 76px;
+  --plate-h: clamp(220px, 40svh, 430px);
+  --plate-w: calc(var(--plate-h) * 0.56);
+  --gap: clamp(11px, 2.3svh, 30px);
+  position: relative;
+  height: 340svh;
+}
+.scan-sticky {
+  position: sticky;
+  top: var(--header);
+  height: calc(100svh - var(--header));
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  align-items: center;
+  gap: 48px;
+}
+
+/* Copy column */
+.scan-copy {
+  position: relative;
+  min-height: 260px;
+}
+.scan-counter {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font: 500 15px var(--font-plex-mono);
+  color: var(--fg-3);
+  margin-bottom: 20px;
+}
+.scan-counter-num {
+  font-size: 44px;
+  line-height: 1;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.scan-found {
+  margin-inline-start: 14px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #ff7b6b1f;
+  color: var(--critical);
+  font:
+    600 13px var(--font-plex-sans),
+    var(--font-plex-arabic);
+}
+.scan-caption {
+  position: absolute;
+  inset-inline: 0;
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+  pointer-events: none;
+}
+.scan-caption[data-active='true'] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.scan-caption h2 {
+  font-size: clamp(36px, 4.4vw, 60px);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin: 0 0 16px;
+}
+html[lang='ar'] .scan-caption h2 {
+  line-height: 1.35;
+}
+.scan-caption p {
+  color: var(--fg-2);
+  font-size: 19px;
+  margin: 0;
+  max-width: 420px;
+}
+.scan-layer-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  font-size: 22px !important;
+  color: var(--fg) !important;
+}
+.scan-layer-name bdi {
+  color: var(--fg-3);
+}
+.scan-layer-name span {
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.scan-layer-name[data-risk='critical'] span {
+  background: var(--critical);
+  color: var(--ink-0);
+}
+.scan-layer-name[data-risk='warn'] span {
+  background: var(--warn);
+  color: var(--ink-0);
+}
+
+/* Stage */
+.scan-stage {
+  position: relative;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  perspective: 1400px;
+}
+.scan-stack {
+  position: relative;
+  width: var(--plate-w);
+  height: var(--plate-h);
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--tilt) * 58deg)) rotateZ(calc(var(--tilt) * -38deg))
+    scale(calc(1 - var(--collapse) * 0.45));
+  opacity: calc(1 - var(--collapse));
+  will-change: transform;
+}
+[dir='rtl'] .scan-stack {
+  transform: rotateX(calc(var(--tilt) * 58deg)) rotateZ(calc(var(--tilt) * 38deg))
+    scale(calc(1 - var(--collapse) * 0.45));
+}
+.scan-layer {
+  --pop: 0;
+  --tint: #5f6b7c;
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--tint) 70%, transparent);
+  background: color-mix(in srgb, var(--tint) 7%, #0b0f14d9);
+  transform: translateZ(calc((7 - var(--i)) * (0.4px + var(--gap) * var(--explode))))
+    translateX(calc(var(--pop) * var(--explode) * 48px));
+  transition:
+    border-color 0.25s,
+    background 0.25s,
+    box-shadow 0.25s,
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+[dir='rtl'] .scan-layer {
+  transform: translateZ(calc((7 - var(--i)) * (0.4px + var(--gap) * var(--explode))))
+    translateX(calc(var(--pop) * var(--explode) * -48px));
+}
+.scan-layer[data-state='pass'] {
+  --tint: var(--pass);
+}
+.scan-layer[data-state='warn'] {
+  --tint: var(--warn);
+  --pop: 1;
+  box-shadow: 0 0 40px #f2b54455;
+}
+.scan-layer[data-state='critical'] {
+  --tint: var(--critical);
+  --pop: 1;
+  background: color-mix(in srgb, var(--critical) 22%, #0b0f14e6);
+  box-shadow: 0 0 60px #ff7b6b77;
+}
+.scan-layer[data-current='true'] {
+  --tint: var(--accent);
+  box-shadow: 0 0 50px #ff5a1f88;
+}
+.scan-layer-num {
+  position: absolute;
+  inset-block-start: 10px;
+  inset-inline-end: 12px;
+  font: 500 11px var(--font-plex-mono);
+  color: color-mix(in srgb, var(--tint) 80%, white);
+  opacity: calc(0.25 + var(--explode) * 0.75);
+}
+
+/* Layer 01 is the app the visitor recognises */
+.scan-layer:first-child {
+  background: var(--ink-1);
+  overflow: hidden;
+}
+.scan-app {
+  display: grid;
+  gap: 10px;
+  padding: 16px 14px;
+  height: 100%;
+  grid-template-rows: auto auto 1fr auto;
+}
+.scan-app-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.scan-app-bar i {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: var(--accent);
+}
+.scan-app-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.scan-app-tiles div {
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--ink-2);
+}
+.scan-app-tiles small {
+  display: block;
+  font-size: 10px;
+  color: var(--fg-3);
+}
+.scan-app-tiles b {
+  font: 500 22px var(--font-plex-mono);
+}
+.scan-app-chart {
+  display: flex;
+  align-items: end;
+  gap: 5px;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--ink-2);
+}
+.scan-app-chart i {
+  flex: 1;
+  border-radius: 3px 3px 0 0;
+  background: color-mix(in srgb, var(--accent) 70%, var(--fg));
+}
+.scan-app-button {
+  display: grid;
+  place-items: center;
+  min-height: 38px;
+  border-radius: 8px;
+  background: var(--fg);
+  color: var(--ink-0);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* The report the layers fold into */
+.scan-report {
+  position: absolute;
+  width: min(360px, 88%);
+  background: var(--paper);
+  color: var(--paper-ink);
+  border-radius: 10px;
+  padding: 18px 20px 20px;
+  box-shadow: 0 40px 80px -20px #000;
+  opacity: var(--report);
+  transform: translateY(calc((1 - var(--report)) * 45%)) rotate(calc(var(--report) * -1.5deg + 1.5deg))
+    scale(var(--fit, 1));
+}
+.scan-report-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--paper-ink);
+  font:
+    500 11px var(--font-plex-mono),
+    var(--font-plex-arabic);
+  color: var(--paper-muted);
+}
+.scan-report-score {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-block: 14px 8px;
+}
+.scan-report-score b {
+  font-size: 48px;
+  line-height: 1;
+}
+.scan-report-score span {
+  max-width: 10ch;
+  color: var(--paper-muted);
+  font-size: 14px;
+  line-height: 1.3;
+}
+.scan-report ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.scan-report li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-block: 10px;
+  border-top: 1px solid var(--paper-line);
+  font-size: 14px;
+}
+.scan-report li .num {
+  font-size: 12px;
+  color: var(--paper-muted);
+  min-width: 18px;
+}
+.scan-report li em {
+  margin-inline-start: auto;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--paper-pass);
+}
+.scan-report li[data-risk='critical'] em {
+  color: var(--paper-critical);
+}
+.scan-report li[data-risk='warn'] em {
+  color: var(--paper-warn);
+}
+.scan-report-quote {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 6px;
+  padding: 12px;
+  border-radius: 6px;
+  background: var(--paper-ink);
+  color: var(--paper);
+  font-size: 13px;
+}
+.scan-stamp {
+  position: absolute;
+  inset-block-start: 50px;
+  inset-inline-end: 5%;
+  padding: 6px 16px;
+  border: 3px solid var(--paper-critical);
+  border-radius: 6px;
+  color: var(--paper-critical);
+  font:
+    800 22px var(--font-alexandria),
+    var(--font-plex-arabic);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: #f3eee6e6;
+  transform: rotate(-12deg);
+  opacity: 0;
+}
+html[lang='ar'] .scan-stamp {
+  letter-spacing: 0;
+}
+.scan[data-phase='4'] .scan-stamp {
+  opacity: 1;
+}
+
+.scan-end {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  margin-top: 14px;
+}
+.scan-end .eng-button {
+  width: 100%;
+  padding-inline: 12px;
+  white-space: nowrap;
+}
+.scan-end .eng-text-link {
+  color: var(--paper-ink);
+  font-size: 14px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scan[data-phase='4'] .scan-stamp {
+    animation: scan-stamp 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+  }
+}
+@keyframes scan-stamp {
+  from {
+    opacity: 0;
+    transform: rotate(-12deg) scale(2.4);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-12deg) scale(1);
+  }
+}
+
+/* Reduced motion: one static, readable frame. */
+.scan[data-reduced='true'] {
+  --tilt: 1;
+  --explode: 1;
+  --collapse: 0;
+  --report: 1;
+  height: auto;
+  padding-block: 64px 140px;
+}
+.scan[data-reduced='true'] .scan-sticky {
+  position: static;
+  height: auto;
+}
+.scan[data-reduced='true'] .scan-stage {
+  gap: 48px;
+}
+.scan[data-reduced='true'] .scan-stage,
+.scan[data-reduced='true'] .scan-report {
+  position: relative;
+}
+.scan[data-reduced='true'] .scan-stack {
+  margin-block: 120px;
+}
+
+@media (max-width: 900px) {
+  .scan {
+    --header: 64px;
+    --plate-h: clamp(190px, 30svh, 300px);
+    --gap: clamp(12px, 2.7svh, 24px);
+  }
+  .scan-sticky {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    align-items: stretch;
+    gap: 0;
+    padding-block: 20px 84px;
+  }
+  .scan-copy {
+    min-height: 168px;
+  }
+  .scan-counter {
+    margin-bottom: 10px;
+  }
+  .scan-counter-num {
+    font-size: 34px;
+  }
+  .scan-caption h2 {
+    font-size: 34px;
+    margin-bottom: 8px;
+  }
+  .scan-caption p {
+    font-size: 16px;
+  }
+  .scan-layer-name {
+    font-size: 18px !important;
+  }
+  .scan-report-quote {
+    display: none;
+  }
+  .scan-stamp {
+    font-size: 17px;
+    padding: 5px 12px;
+  }
+}
+@media (min-width: 641px) and (max-width: 900px) {
+  .scan {
+    --header: 76px;
+  }
+}
+/* Short phones: in the final step the report needs the room more than the caption's second line. */
+@media (max-width: 900px) and (max-height: 700px) {
+  .scan[data-phase='3'] .scan-caption p,
+  .scan[data-phase='4'] .scan-caption p {
+    display: none;
+  }
+  .scan[data-phase='3'] .scan-copy,
+  .scan[data-phase='4'] .scan-copy {
+    min-height: 112px;
+  }
+}

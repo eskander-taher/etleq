@@ -15,11 +15,17 @@ The product is a report, so the report is the motif. Anywhere the site shows wha
 
 ## Dials
 
-| Dial   | Value | Reason                                                                                                                               |
-| ------ | ----- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| ENERGY | 2     | Confident display type and one bright accent; no glow, no gradients.                                                                 |
-| RHYTHM | 2     | Sequence, paper sheet, quote block and split FAQ each take a different shape, so the page does not repeat heading + grid + hairline. |
-| MOTION | 1     | The hero walkthrough is the only motion. Sections no longer fade in (headings sat grey mid-fade).                                    |
+| Dial   | Value | Reason                                                                                                                                                                                            |
+| ------ | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ENERGY | 3     | Visitors arrive from Instagram reels on a phone: the first screen must stop a thumb. Giant display type and the launch arc.                                                                       |
+| RHYTHM | 2     | Sequence, paper sheet, quote block and split FAQ each take a different shape, so the page does not repeat heading + grid + hairline.                                                              |
+| MOTION | 3     | One scroll-driven story (the X-ray) explains the product: the app splits into its 15 real layers, two risks light up, the layers fold into the report. Motion carries the message; nothing loops. |
+
+## Signature moments
+
+- **Launch arc (hero).** The logo mark (launch trajectory) drawn full height once on load, ending in an ignition point. Mirrored in RTL so it rises on the side away from the text.
+- **The X-ray (scroll story, `ScanStory.tsx`).** Scroll position drives every frame, so scrolling back rewinds it. Transforms only, no libraries, so it runs in the Instagram in-app browser. Layer 03 (warning) and 04 (critical) match the sample report. Reduced motion shows one static frame. On short phones the report scales to the room left.
+- The phone's sticky action bar stays hidden while the hero buttons are on screen.
 
 ## Color
 

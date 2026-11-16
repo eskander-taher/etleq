@@ -13,7 +13,7 @@ import { pick, services, layers, rules, faqs, type Copy } from './content'
 import { Actions, PricingTable, PageEvent } from './interactive'
 import { AuditIntake } from './AuditIntake'
 import { HomeActions } from './Experience'
-import { AuditStory } from './AuditStory'
+import { ScanStory } from './ScanStory'
 
 const text = (locale: string) => (en: string, ar: string) => pick(locale, [en, ar])
 export function List({ locale, items }: { locale: string; items: Copy[] }) {
@@ -53,94 +53,58 @@ export function Final({ locale }: { locale: string }) {
     </section>
   )
 }
-const steps: [string, string, string, string][] = [
-  [
-    'Share your app',
-    'شارك تطبيقك',
-    'Tell us what it does. We agree the scope and secure access before the review.',
-    'أخبرنا بما يفعله. نتفق على النطاق والوصول الآمن قبل الفحص.',
-  ],
-  [
-    'Get the facts',
-    'اعرف النتيجة',
-    'Receive a bilingual report with what passes, what is risky and what must be fixed.',
-    'استلم تقريرًا باللغتين يوضح ما ينجح، وما يحتاج تحسينًا، وما يجب إصلاحه.',
-  ],
-  [
-    'Choose what happens next',
-    'اختر الخطوة التالية',
-    'Use the report with your team, or let us fix it in clearly scoped, fixed-price modules.',
-    'نفذ الخطة مع فريقك أو دعنا نصلحها بوحدات محددة النطاق والسعر.',
-  ],
-]
 export function Home({ locale }: { locale: Locale }) {
   const t = text(locale)
   return (
     <div className="eng-wrap eng-home">
-      <section className="eng-hero eng-hero-experience">
-        <div>
+      <section className="eng-launch">
+        <svg className="launch-arc" viewBox="0 0 400 520" aria-hidden="true" preserveAspectRatio="xMidYMax meet">
+          <defs>
+            <linearGradient id="launch-trail" x1="0" y1="1" x2="1" y2="0">
+              <stop offset="0" stopColor="#ff5a1f" stopOpacity="0.15" />
+              <stop offset="1" stopColor="#ff5a1f" />
+            </linearGradient>
+          </defs>
+          <path className="launch-path" pathLength={1} d="M48 496C190 490 300 410 336 34" />
+          <circle className="launch-pad" cx="48" cy="496" r="10" />
+          <circle className="launch-tip" cx="336" cy="34" r="7" />
+        </svg>
+        <div className="launch-copy">
           <h1>
             {t('Built with AI.', 'بنيته بالذكاء الاصطناعي.')}
             <em>{t('Ready for real users?', 'هل هو جاهز لعملائك؟')}</em>
           </h1>
           <p className="eng-lead">
             {t(
-              'Find out in 48 hours. We check your app across 15 engineering layers and give you a clear plan to launch with confidence.',
-              'اعرف خلال 48 ساعة. نفحص تطبيقك عبر 15 طبقة هندسية، ونقدم لك خطة واضحة لتجهيزه للإطلاق.',
+              'We check your app across 15 engineering layers and hand you a clear plan to launch.',
+              'نفحص تطبيقك عبر 15 طبقة هندسية ونسلمك خطة واضحة للإطلاق.',
             )}
           </p>
           <HomeActions locale={locale} turnstileSiteKey={env.turnstileSiteKey || null} />
-          <div className="hero-delivery">
-            <span>{t('15-layer report', 'تقرير من 15 طبقة')}</span>
-            <span>{t('Fix plan and fixed quote', 'خطة إصلاح وسعر ثابت')}</span>
-            <span>{t('No obligation to build with us', 'دون إلزام بالتنفيذ معنا')}</span>
-          </div>
-          <p className="eng-micro">
-            {t('One-time fee. SAR 862.50 including VAT.', 'رسوم لمرة واحدة. 862.50 ريال شامل الضريبة.')}
-          </p>
-        </div>
-        <AuditStory locale={locale} />
-      </section>
-      <div className="eng-trust">
-        <span>{t('15 layers. One clear scorecard.', '15 طبقة. تقرير واضح.')}</span>
-        <span>{t('Arabic-first. Built for the Gulf.', 'العربية أولًا. للسوق الخليجي.')}</span>
-        <span>{t('Your code stays yours. Always.', 'الكود ملكك. دائمًا.')}</span>
-      </div>
-      <section className="eng-section">
-        <div className="eng-section-heading">
-          <h2>{t('From uncertainty to a clear next step.', 'من الأسئلة إلى خطوة واضحة.')}</h2>
-          <Link className="eng-text-link" href="/method">
-            {t('Our method', 'منهجيتنا')}
-          </Link>
-        </div>
-        <ol className="eng-steps">
-          {steps.map(([en, ar, desc, descAr], i) => (
-            <li key={en}>
-              <span className="eng-step-num">{String(i + 1).padStart(2, '0')}</span>
-              <h3>{t(en, ar)}</h3>
-              <p>{t(desc, descAr)}</p>
+          <ul className="launch-facts">
+            <li>
+              <b className="num">48h</b>
+              <span>{t('to your report', 'حتى تستلم التقرير')}</span>
             </li>
-          ))}
-        </ol>
-      </section>
-      <section className="eng-section eng-proof">
-        <div>
-          <h2>{t('A report you can act on.', 'تقرير تعرف بعده ماذا تفعل.')}</h2>
-          <p>
-            {t(
-              'Security, permissions, performance, Arabic support and deployment. Every finding comes with a severity, a location and a next step.',
-              'الأمان والصلاحيات والأداء ودعم العربية والنشر. لكل ملاحظة درجة خطورة وموقع وخطوة تالية.',
-            )}
-          </p>
-          <Link className="eng-text-link" href="/audit/sample">
-            {t('Read the sample report', 'اطلع على نموذج التقرير')}
-          </Link>
+            <li>
+              <b className="num">15</b>
+              <span>{t('layers checked', 'طبقة نفحصها')}</span>
+            </li>
+            <li>
+              <b className="num">750</b>
+              <span>{t('SAR, one time', 'ريال، مرة واحدة')}</span>
+            </li>
+          </ul>
         </div>
-        <Scorecard locale={locale} />
+        <a className="launch-cue" href="#scan">
+          {t('See what we check', 'شاهد ماذا نفحص')}
+          <span aria-hidden="true" />
+        </a>
       </section>
+      <ScanStory locale={locale} />
       <section className="eng-section eng-module">
         <div>
-          <div className="eng-kicker">{t('Need us to build it?', 'تحتاج من ينفذ؟')}</div>
+          <div className="eng-kicker">{t('Need us to fix it?', 'تحتاج من يصلحه؟')}</div>
           <h2>{t('One module. One fixed price.', 'وحدة واحدة. سعر ثابت.')}</h2>
           <p>
             {t(

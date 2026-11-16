@@ -240,6 +240,143 @@ html[lang='ar'] .eng-hero h1 {
   font-size: 14px;
 }
 
+/* Launch hero: the logo's trajectory, drawn at full size. Mobile-first: fills the first screen. */
+.eng-launch {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100svh - 76px);
+  padding-block: 56px 88px;
+}
+.launch-arc {
+  position: absolute;
+  z-index: -1;
+  inset-block: 6% 4%;
+  inset-inline-end: -2%;
+  width: 52%;
+  height: 90%;
+  overflow: visible;
+}
+[dir='rtl'] .launch-arc {
+  transform: scaleX(-1);
+}
+.launch-path {
+  fill: none;
+  stroke: url(#launch-trail);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.launch-pad {
+  fill: var(--accent);
+}
+.launch-tip {
+  transform-box: fill-box;
+  transform-origin: center;
+  fill: var(--fg);
+  filter: drop-shadow(0 0 10px #ff5a1f) drop-shadow(0 0 24px #ff5a1f);
+}
+.launch-copy {
+  max-width: 640px;
+}
+.eng-launch h1 {
+  font-size: clamp(44px, 6.4vw, 88px);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  margin: 0 0 24px;
+}
+html[lang='ar'] .eng-launch h1 {
+  font-size: clamp(42px, 5.6vw, 76px);
+  line-height: 1.3;
+}
+.eng-launch h1 em {
+  display: block;
+  font-style: normal;
+  color: var(--accent);
+}
+.launch-facts {
+  display: flex;
+  gap: 36px;
+  margin: 40px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.launch-facts li {
+  display: grid;
+  gap: 2px;
+}
+.launch-facts b {
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+.launch-facts span {
+  color: var(--fg-3);
+  font-size: 14px;
+}
+.launch-cue {
+  position: absolute;
+  inset-block-end: 24px;
+  inset-inline-start: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  color: var(--fg-2);
+  font-size: 14px;
+}
+.launch-cue span {
+  width: 1px;
+  height: 28px;
+  background: linear-gradient(var(--accent), transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .launch-path {
+    animation: launch-draw 1.5s 0.2s cubic-bezier(0.6, 0, 0.2, 1) both;
+  }
+  .launch-tip {
+    animation: launch-tip 0.5s 1.55s ease-out both;
+  }
+  .launch-pad {
+    animation: launch-pad 0.4s ease-out both;
+  }
+  .launch-cue span {
+    animation: launch-cue 1.8s 2.2s ease-in-out 3;
+    transform-origin: top;
+  }
+}
+@keyframes launch-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes launch-tip {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  60% {
+    transform: scale(1.6);
+  }
+}
+@keyframes launch-pad {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes launch-cue {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.4);
+  }
+}
+
 /* Fact strip under the hero */
 .eng-trust {
   display: grid;
@@ -613,6 +750,7 @@ a.eng-card:hover {
 }
 .eng-mobile-actions {
   display: none;
+  transition: transform 0.25s ease;
 }
 
 /* Inner pages */
@@ -1024,6 +1162,38 @@ html[lang='ar'] .eng-mobile-actions .eng-button {
   .eng-wrap {
     width: calc(100% - 32px);
   }
+  .eng-launch {
+    justify-content: flex-start;
+    min-height: calc(100svh - 64px - 72px);
+    padding-block: 28px 72px;
+  }
+  .launch-arc {
+    inset-block: 0 auto;
+    inset-inline-end: -16px;
+    width: 72%;
+    height: 46%;
+    opacity: 0.85;
+  }
+  .eng-launch h1 {
+    font-size: clamp(40px, 12vw, 52px);
+    margin-top: 18svh;
+  }
+  html[lang='ar'] .eng-launch h1 {
+    font-size: clamp(38px, 11vw, 48px);
+  }
+  .launch-facts {
+    gap: 20px;
+    margin-top: 28px;
+  }
+  .launch-facts b {
+    font-size: 26px;
+  }
+  .launch-facts span {
+    font-size: 13px;
+  }
+  .launch-cue {
+    inset-block-end: 12px;
+  }
   .eng-header-inner {
     min-height: 64px;
     gap: 8px;
@@ -1150,6 +1320,9 @@ html[lang='ar'] .eng-mobile-actions .eng-button {
     padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
     background: color-mix(in srgb, var(--ink-0) 96%, transparent);
     border-top: 1px solid var(--line);
+  }
+  html[data-hero-actions='visible'] .eng-mobile-actions {
+    transform: translateY(110%);
   }
   .eng-mobile-actions .eng-button {
     min-height: 48px;
